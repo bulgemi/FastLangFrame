@@ -1,5 +1,11 @@
 # FastLangFrame
 
+## 아키텍처
+
+![FastLangFrame Architecture](assets/fastlangframe_architecture.png)
+
+FastLangFrame 프레임워크 아키텍처는 Langchain/Langgraph 기반에 Core, Tool, Test, 확장 포인트로 구성되어 있습니다.
+
 ## 철학
 
 ![FastLangFrame Philosophy](assets/fastlangframe_philosophy.png)
