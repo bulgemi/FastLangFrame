@@ -1,0 +1,4 @@
+package_directory: .
+graph_path: ./mari_agent/graph_builder.py:mari_graph
+env_file: .env
+requirements_file: ./requirements.txt

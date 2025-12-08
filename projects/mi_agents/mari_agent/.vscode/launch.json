@@ -1,0 +1,26 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "[🌱]adxp-cli run (single)",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "adxp_cli.cli",
+            "args": [
+                "agent",
+                "run",
+                "--host",
+                "127.0.0.1",
+                "--port",
+                "3000",
+                "--graph_yaml",
+                "./graph.yaml"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "justMyCode": false,
+            "envFile": "${workspaceFolder}/mari_agent/.env"
+        }
+    ]
+}
+
