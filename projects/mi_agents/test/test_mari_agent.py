@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 from langserve import RemoteRunnable
 
-from mari_agent.graph_builder import builder
+from mari_agent.graph.builder import builder
 
 # 로거 설정
 logger = logging.getLogger(__name__)
