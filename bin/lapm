@@ -1,8 +1,10 @@
 #!/bin/bash
 
+# --- FastLangFrame Project Manager (lapm) ---
+
 # 0. 스크립트 위치 및 프로젝트 루트 확인
 SOURCE="${BASH_SOURCE[0]:-$0}"
-while [ -h "$SOURCE" ]; do # symlink 처리
+while [ -h "$SOURCE" ]; do
   DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
   SOURCE="$(readlink "$SOURCE")"
   [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
@@ -10,105 +12,109 @@ done
 SCRIPT_DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 BASE_DIR="$( dirname "$SCRIPT_DIR" )"
 
-echo "=================================================="
-echo "        FastLangFrame - Project Manager (lapm)    "
-echo "=================================================="
-echo ""
+show_help() {
+    echo "Usage:"
+    echo "  lapm <project_name> [create|build|deploy] [options]"
+    echo ""
+    echo "Commands:"
+    echo "  create [llm_choice] [tpl_choice]  Generate a new project from template"
+    echo "  build                             Build Docker image for the project"
+    echo "  deploy                            Deploy project to Kubernetes"
+    echo ""
+    echo "Example (Create):"
+    echo "  ./bin/lapm my_agent create 2 5"
+    echo "  ./bin/lapm my_agent 2 5 (Legacy support)"
+}
 
-# 1. 프로젝트명 및 초기값 설정
 PROJECT_NAME="$1"
-LLM_CHOICE="$2"
-TPL_CHOICE="$3"
+COMMAND="$2"
 
 if [ -z "$PROJECT_NAME" ]; then
+    show_help
     read -p "프로젝트명을 입력하세요: " PROJECT_NAME
-fi
-
-if [ -z "$PROJECT_NAME" ]; then
-    echo "오류: 프로젝트명을 입력해야 합니다."
-    exit 1
+    if [ -z "$PROJECT_NAME" ]; then exit 1; fi
 fi
 
 PROJECT_DIR="$BASE_DIR/projects/$PROJECT_NAME"
 
-# 2. LLM Provider 선택
-if [ -z "$LLM_CHOICE" ]; then
-    echo ""
-    echo "LLM Provider를 선택하세요:"
-    echo "  1) openai, 2) azure, 3) deepseek, 4) gemini, 5) claude, 6) local"
-    read -p "선택 (1-6): " LLM_CHOICE
-fi
-
-case $LLM_CHOICE in
-    1) LLM_PROVIDER="openai" ;;
-    2) LLM_PROVIDER="azure" ;;
-    3) LLM_PROVIDER="deepseek" ;;
-    4) LLM_PROVIDER="gemini" ;;
-    5) LLM_PROVIDER="claude" ;;
-    6) LLM_PROVIDER="local" ;;
-    *) echo "잘못된 선택입니다 ($LLM_CHOICE)."; exit 1 ;;
-esac
-
-# 3. 템플릿 선택
-if [ -z "$TPL_CHOICE" ]; then
-    echo ""
-    echo "템플릿을 선택하세요:"
-    echo "  1) simple_agent, 2) rag_agent, 3) multi_agent, 4) mcp_agent, 5) deep_agent"
-    read -p "선택 (1-5): " TPL_CHOICE
-fi
-
-case $TPL_CHOICE in
-    1) TEMPLATE="simple_agent" ;;
-    2) TEMPLATE="rag_agent" ;;
-    3) TEMPLATE="multi_agent" ;;
-    4) TEMPLATE="mcp_agent" ;;
-    5) TEMPLATE="deep_agent" ;;
-    *) echo "잘못된 선택입니다 ($TPL_CHOICE)."; exit 1 ;;
-esac
-
-echo ""
-echo "=================================================="
-echo "프로젝트명  : $PROJECT_NAME"
-echo "LLM Provider: $LLM_PROVIDER"
-echo "템플릿      : $TEMPLATE"
-echo "상세 경로   : $PROJECT_DIR"
-echo "=================================================="
-echo ""
-
-# 4. copier를 이용한 프로젝트 설정 
-TEMPLATE_DIR="$BASE_DIR/templates/$TEMPLATE"
-
-if [ ! -d "$TEMPLATE_DIR" ]; then
-    echo "경고: 아직 '$TEMPLATE_DIR' 템플릿 파일들이 생성되지 않았습니다."
-    mkdir -p "$PROJECT_DIR"
-    echo "프로젝트 디렉토리 '$PROJECT_DIR'가 빈 채로 생성되었습니다."
+# Legacy support for 'lapm {project_name} {llm_choice} {tpl_choice}'
+if [[ "$COMMAND" =~ ^[1-6]$ ]]; then
+    LLM_CHOICE="$COMMAND"
+    TPL_CHOICE="$3"
+    COMMAND="create"
 else
-    echo "템플릿 기반으로 프로젝트를 구성합니다..."
-    
-    # Copier 실행 명령어 결정 (poetry 장비 여부 및 직접 설치 여부 확인)
-    COPIER_CMD=""
-    if command -v copier >/dev/null 2>&1; then
-        COPIER_CMD="copier"
-    elif command -v poetry >/dev/null 2>&1 && poetry run copier --version >/dev/null 2>&1; then
-        COPIER_CMD="poetry run copier"
-    fi
-
-    if [ -z "$COPIER_CMD" ]; then
-        echo "❌ 오류: 'copier' 명령어를 찾을 수 없습니다."
-        echo "해결 방법:"
-        echo "  1. pip install copier"
-        echo "  2. poetry install  (poetry 사용 시)"
-        exit 1
-    fi
-
-    # copier를 이용해 템플릿 복사
-    $COPIER_CMD copy -f -d project_name="$PROJECT_NAME" -d llm_provider="$LLM_PROVIDER" "$TEMPLATE_DIR" "$PROJECT_DIR"
-    
-    if [ $? -eq 0 ]; then
-        echo ""
-        echo "✅ 프로젝트 생성이 완료되었습니다: $PROJECT_DIR"
-    else
-        echo "❌ Copier 실행 중 오류가 발생했습니다."
-        exit 1
-    fi
+    LLM_CHOICE="$3"
+    TPL_CHOICE="$4"
 fi
+
+# Default command is 'create' if not specified
+if [ -z "$COMMAND" ]; then
+    COMMAND="create"
+fi
+
+case $COMMAND in
+    create)
+        # --- Project Creation Logic ---
+        if [ -z "$LLM_CHOICE" ]; then
+            echo "LLM Provider를 선택하세요: (1:openai, 2:azure, 3:deepseek, 4:gemini, 5:claude, 6:local)"
+            read -p "선택 (1-6): " LLM_CHOICE
+        fi
+        case $LLM_CHOICE in
+            1) LLM_PROVIDER="openai" ;; 2) LLM_PROVIDER="azure" ;; 3) LLM_PROVIDER="deepseek" ;;
+            4) LLM_PROVIDER="gemini" ;; 5) LLM_PROVIDER="claude" ;; 6) LLM_PROVIDER="local" ;;
+            *) LLM_PROVIDER="$LLM_CHOICE" ;;
+        esac
+
+        if [ -z "$TPL_CHOICE" ]; then
+            echo "템플릿을 선택하세요: (1:simple_agent, 2:rag_agent, 3:multi_agent, 4:mcp_agent, 5:deep_agent)"
+            read -p "선택 (1-5): " TPL_CHOICE
+        fi
+        case $TPL_CHOICE in
+            1) TEMPLATE="simple_agent" ;; 2) TEMPLATE="rag_agent" ;; 3) TEMPLATE="multi_agent" ;;
+            4) TEMPLATE="mcp_agent" ;; 5) TEMPLATE="deep_agent" ;;
+            *) TEMPLATE="$TPL_CHOICE" ;;
+        esac
+
+        TEMPLATE_DIR="$BASE_DIR/templates/$TEMPLATE"
+        echo "Creating project '$PROJECT_NAME' with template '$TEMPLATE'..."
+        
+        # Copier check and run
+        COPIER_CMD="copier"
+        if ! command -v copier >/dev/null 2>&1; then
+            COPIER_CMD="poetry run copier"
+        fi
+        
+        $COPIER_CMD copy -f -d project_name="$PROJECT_NAME" -d llm_provider="$LLM_PROVIDER" "$TEMPLATE_DIR" "$PROJECT_DIR"
+        
+        # Note: Docker and K8s files are already inside the agent template <%project_name%> folder.
+        # We just need to make them executable in the generated project.
+        chmod +x "$PROJECT_DIR/$PROJECT_NAME/docker/docker-build.sh" "$PROJECT_DIR/$PROJECT_NAME/k8s/k8s-deploy.sh" 2>/dev/null
+        echo "✅ Project created at $PROJECT_DIR"
+        ;;
+
+    build)
+        # Check if project exists and find docker-build.sh
+        BUILD_SCRIPT="$PROJECT_DIR/$PROJECT_NAME/docker/docker-build.sh"
+        if [ ! -f "$BUILD_SCRIPT" ]; then
+            echo "❌ Error: Docker build script not found at $BUILD_SCRIPT"
+            exit 1
+        fi
+        cd "$PROJECT_DIR/$PROJECT_NAME" && ./docker/docker-build.sh
+        ;;
+
+    deploy)
+        # Check if project exists and find k8s-deploy.sh
+        DEPLOY_SCRIPT="$PROJECT_DIR/$PROJECT_NAME/k8s/k8s-deploy.sh"
+        if [ ! -f "$DEPLOY_SCRIPT" ]; then
+            echo "❌ Error: K8s deploy script not found at $DEPLOY_SCRIPT"
+            exit 1
+        fi
+        cd "$PROJECT_DIR/$PROJECT_NAME" && ./k8s/k8s-deploy.sh
+        ;;
+
+    *)
+        echo "❌ Unknown command: $COMMAND"
+        show_help
+        exit 1
+        ;;
+esac

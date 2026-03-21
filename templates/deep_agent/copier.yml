@@ -20,3 +20,6 @@ _templates_suffix: ""
 _envops:
   variable_start_string: '<%'
   variable_end_string: '%>'
+k8s_name:
+  type: str
+  default: "<% project_name | replace('_', '-') %>"
