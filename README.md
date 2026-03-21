@@ -123,3 +123,27 @@ FastLangFrame은 다음과 같은 핵심 철학을 바탕으로 설계되었습�
 6. Chat UI 테스트 실행
     * 생성된 프로젝트 폴더 내에서 `streamlit run {project_name}/chat_test/app.py` 실행
     * 웹 브라우저를 통해 에이전트와 실시간 대화 및 기능 검증
+
+## Streamlit Chat Test UI
+
+FastLangFrame은 생성된 에이전트를 즉시 테스트할 수 있는 웹 기반 Chat UI를 제공합니다.
+
+### 실행 방법
+
+1. 생성된 프로젝트 폴더로 이동합니다.
+2. 다음 명령어를 실행하여 Streamlit 앱을 구동합니다:
+
+   ```bash
+   # /projects/test_deep 디렉토리 기준 예시
+   streamlit run test_deep/chat_test/app.py
+   ```
+
+3. 브라우저에서 `http://localhost:8501` (또는 지정된 포트)로 접속하여 에이전트와 대화합니다.
+
+### 주요 기능
+
+* **실시간 노드 실행 추적**: 각 에이전트의 내부 실행 상태(LangGraph 노드, 도구 호출 등)를 실시간으로 확인 가능합니다.
+* **히스토리 초기화**: 우측 사이드바의 버튼을 통해 대화 내용을 초기화하고 새 테스트를 시작할 수 있습니다.
+* **다양한 에이전트 지원**: Simple, RAG, Multi, MCP, Deep 등 모든 에이전트 유형에 최적화된 UI를 제공합니다.
+
+![Chat Test UI Screenshot](docs/images/chat_test_screenshot.png)
