@@ -1,4 +1,0 @@
-package_directory: .
-graph_path: ./apps/agents/mi_agent/flows/mari_agent_graph.py:runnable_graph
-env_file: .env
-requirements_file: ./requirements.txt
