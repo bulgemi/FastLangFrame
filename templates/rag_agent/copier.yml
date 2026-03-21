@@ -1,0 +1,22 @@
+project_name:
+  type: str
+  help: "What is your agent project name?"
+  default: "my_agent_project"
+
+llm_provider:
+  type: str
+  help: "Which LLM Provider are you using?"
+  choices:
+    - openai
+    - azure
+    - deepseek
+    - gemini
+    - claude
+    - local
+  default: "openai"
+
+_templates_suffix: ""
+
+_envops:
+  variable_start_string: '<%'
+  variable_end_string: '%>'
