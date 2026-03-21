@@ -63,6 +63,7 @@ FastLangFrame은 다음과 같은 핵심 철학을 바탕으로 설계되었습�
 
 ## 디렉토리 구조
 
+``` text
 .
 ├── LICENSE: 오픈소스 라이선스 파일
 ├── README.md: 프로젝트 소개 및 가이드 파일
@@ -97,6 +98,7 @@ FastLangFrame은 다음과 같은 핵심 철학을 바탕으로 설계되었습�
      ├── multi_agent: Langchain 기반 Multi Agent 템플릿
      ├── mcp_agent: Langchain 기반 MCP Agent 템플릿
      └── deep_agent: Langgraph 기반 Deep Agent 템플릿
+```
 
 ## 동작 흐름
 
