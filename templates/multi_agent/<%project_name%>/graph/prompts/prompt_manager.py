@@ -19,25 +19,12 @@ PROMPT_BASE_PATH = "<%project_name%>.graph.prompts"
 
 
 class PromptTag(str, Enum):
-    # company_code_2008 = "sk_siltron"
-    # company_code_2010 = "skt"
-    company_code_2011 = "sk_hynix"
-    # company_code_2013 = "sk_ens"
-    # company_code_2018 = "sk_on"
-    # company_code_2019 = "sk_innovation"
-    company_code_2020 = "sk_energy"
-    # company_code_2024 = "sk_gas"
-    # company_code_2025 = "kolon"
-    default = "default"  # ToDo: 기본 태그 프롬프트 추가
+    default = "default"
 
     @classmethod
     def to_company_prompt_tag(cls, company_code: str = "") -> str:
-        tag_name = f"company_code_{company_code}"
-        if hasattr(cls, tag_name):
-            return getattr(cls, tag_name).value
-        return (
-            cls.company_code_2020.value
-        )  # 현재는 "sk_energy" 프롬프트가 기본으로 사용됨
+        # 기본 'default' 태그를 반환하도록 고정
+        return cls.default.value
 
     @classmethod
     def to_prompt_tag(cls, prompt_code: str) -> str:
