@@ -21,20 +21,29 @@ show_help() {
     echo "  build                             Build Docker image for the project"
     echo "  deploy                            Deploy project to Kubernetes"
     echo ""
+    echo "Options:"
+    echo "  -h, --help                        Show this help message"
+    echo ""
     echo "Example (Create):"
     echo "  ./bin/lapm my_agent create 2 5"
     echo "  ./bin/lapm my_agent 2 5 (Legacy support)"
 }
 
-PROJECT_NAME="$1"
-COMMAND="$2"
-
-if [ -z "$PROJECT_NAME" ]; then
+# 1. 아규먼트 체크 (도움말 포함)
+if [[ "$1" == "-h" || "$1" == "--help" || -z "$1" ]]; then
     show_help
-    read -p "프로젝트명을 입력하세요: " PROJECT_NAME
-    if [ -z "$PROJECT_NAME" ]; then exit 1; fi
+    if [[ -z "$1" ]]; then
+        echo ""
+        read -p "프로젝트명을 입력하세요 (또는 취소 Ctrl+C): " PROJECT_NAME
+        if [ -z "$PROJECT_NAME" ]; then exit 0; fi
+    else
+        exit 0
+    fi
+else
+    PROJECT_NAME="$1"
 fi
 
+COMMAND="$2"
 PROJECT_DIR="$BASE_DIR/projects/$PROJECT_NAME"
 
 # Legacy support for 'lapm {project_name} {llm_choice} {tpl_choice}'
