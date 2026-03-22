@@ -66,6 +66,8 @@ FastLangFrame은 다음과 같은 핵심 철학을 바탕으로 설계되었습�
 * fastapi
 * Langchain
 * Langgraph
+* deepagents
+* gunicorn
 * Pydantic
 * Alembic
 * SQLAlchemy
@@ -109,7 +111,7 @@ FastLangFrame은 다음과 같은 핵심 철학을 바탕으로 설계되었습�
      ├── rag_agent: Langchain 기반 RAG Agent 템플릿
      ├── multi_agent: Langchain 기반 Multi Agent 템플릿
      ├── mcp_agent: Langchain 기반 MCP Agent 템플릿
-     └── deep_agent: Langgraph 기반 Deep Agent 템플릿
+     └── deep_agent: deepagents 기반 Deep Agent 템플릿
 ```
 
 ## 동작 흐름 (Quick Start)

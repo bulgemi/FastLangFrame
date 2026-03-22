@@ -1,34 +1,28 @@
-from langgraph.graph import StateGraph, START, END
-from langgraph.prebuilt import ToolNode, tools_condition
-
-from .state import AgentState
-from .nodes import call_model
+from deepagents import create_deep_agent
+from src.utils.connectors.llm.llm_client import get_langchain_chat_model
 from .tools import tools
 
-# 1. StateGraph 정의
-workflow = StateGraph(AgentState)
+# 1. LLM 모델 초기화
+llm = get_langchain_chat_model()
 
-# 2. 노드 추가
-workflow.add_node("agent", call_model)
-tool_node = ToolNode(tools)
-workflow.add_node("tools", tool_node)
-
-# 3. 엣지 설정
-workflow.add_edge(START, "agent")
-workflow.add_conditional_edges(
-    "agent",
-    tools_condition,
+# 2. deepagents를 이용한 에이전트 그래프 생성
+# create_deep_agent는 내부적으로 LangGraph의 StateGraph를 구축하고 컴파일하여 반환합니다.
+agent_graph = create_deep_agent(
+    model=llm,
+    system_prompt="You are a helpful Deep Agent. Use tools when necessary to solve complex tasks.",
+    tools=tools
 )
-workflow.add_edge("tools", "agent")
 
-# 4. 컴파일
-agent_graph = workflow.compile()
-
-# Standardized builder instance
+# Standardized builder instance for FastLangFrame API bridge
 class DeepAgentBuilder:
     def __init__(self, graph):
         self.agent_graph = graph
+
     async def ainvoke(self, input: dict, config=None):
+        """
+        에이전트 실행 (비동기)
+        deepagents는 기본적으로 LangGraph 입력 형식을 따릅니다.
+        """
         return await self.agent_graph.ainvoke(input, config=config)
 
 builder = DeepAgentBuilder(agent_graph)
