@@ -25,11 +25,21 @@ FastLangFrame은 다음과 같은 핵심 철학을 바탕으로 설계되었습�
 
 ### Core
 
-* **LLM Agent Project Manager(lapm)**: Agent 프로젝트 관리 및 실행을 위한 Core 컴포넌트
+* **LLM Agent Project Manager (lapm)**: 프로젝트 생성, 빌드, 배포를 위한 통합 CLI 도구
+  * `create`: 템플릿 기반 프로젝트 생성
+  * `build`: Docker 이미지 빌드
+  * `deploy`: Kubernetes 환경 배포
 
-### Graph
+### Graph (API Server)
 
-* langchain, lang graph 기반 Agent or Deep Agent 핵심 패키지
+* **FastAPI 기반 표준 API 서버**: 모든 에이전트 프로젝트에 기본 내장 (Default Port: 8888)
+  * **Swagger UI 제공**: `{host}:8888/docs`를 통해 엔드포인트 대화식 테스트 가능
+  * **표준 엔드포인트**:
+    * `POST /invoke`: 에이전트 단일 실행
+    * `POST /stream`: 실시간 이벤트 스트리밍 (SSE)
+    * `POST /invoke_batch`: 다중 입력 병렬 처리
+    * `POST /invoke_stream_batch`: 다중 입력 개별 스트리밍 (Interleaved SSE)
+* **LLM 아키텍처**: LangChain 및 LangGraph를 활용한 선형/비선형 에이전트 워크플로우 구현
 
 ### Utils
 
@@ -52,6 +62,8 @@ FastLangFrame은 다음과 같은 핵심 철학을 바탕으로 설계되었습�
 
 * Python 3.12
 * copier
+* streamlit
+* fastapi
 * Langchain
 * Langgraph
 * Pydantic
@@ -100,29 +112,40 @@ FastLangFrame은 다음과 같은 핵심 철학을 바탕으로 설계되었습�
      └── deep_agent: Langgraph 기반 Deep Agent 템플릿
 ```
 
-## 동작 흐름
+## 동작 흐름 (Quick Start)
 
-1. bin/lapm 실행
-2. `프로젝트명` 입력
-3. LLM Provider 선택
-    * openai
-    * azure
-    * deepseek
-    * gemini
-    * claude
-    * local
-4. 템플릿 선택
-    * simple_agent: Langchain 기반 Simple Agent
-    * rag_agent: Langchain 기반 RAG Agent
-    * multi_agent: Langchain 기반 Multi Agent
-    * mcp_agent: Langchain 기반 MCP Agent
-    * deep_agent: Langgraph 기반 Deep Agent
-5. 템플릿에 따라 프로젝트 생성
-    * copier를 사용하여 템플릿에 따라 프로젝트 생성
-    * LLM Provider, DB, Redis, Opensearch 등 설정은 사용자가 직접 프로젝트 폴더 내에서 Config 파일 수정
-6. Chat UI 테스트 실행
-    * 생성된 프로젝트 폴더 내에서 `streamlit run {project_name}/chat_test/app.py` 실행
-    * 웹 브라우저를 통해 에이전트와 실시간 대화 및 기능 검증
+1. **프로젝트 생성**:
+
+   ```bash
+   # ./bin/lapm <프로젝트명> create <LLM_NUMBER> <TEMPLATE_NUMBER>
+   ./bin/lapm my_agent create 1 1
+   ```
+
+   * **LLM Provider 선택 (1-6)**: 1:openai, 2:azure, 3:deepseek, 4:gemini, 5:claude, 6:local
+   * **템플릿 선택 (1-5)**: 1:simple_agent, 2:rag_agent, 3:multi_agent, 4:mcp_agent, 5:deep_agent
+
+2. **환경 변수 설정**:
+   생성된 프로젝트 폴더 내 `.env` 파일을 수정합니다.
+   * **OpenAI**: `OPENAI_API_KEY`, `MODEL_NAME`
+   * **Azure**: `AZURE_OPENAI_API_KEY`, `AZURE_OPENAI_ENDPOINT`, `AZURE_DEPLOYMENT_NAME`
+
+3. **API 서버 실행 및 검증**:
+
+   ```bash
+   # 생성된 프로젝트 내부 폴더로 이동 후 실행
+   cd projects/my_agent/my_agent
+   python3 main.py --port 8888
+   ```
+
+   * 브라우저에서 `http://localhost:8888/docs` 접속하여 Swagger UI 테스트
+
+4. **Chat UI 테스트 실행**:
+
+   ```bash
+   streamlit run chat_test/app.py
+   ```
+
+   * 웹 브라우저를 통해 실시간 대화 및 실행 로그(Node Trace) 확인
 
 ## Streamlit Chat Test UI
 
