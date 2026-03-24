@@ -12,6 +12,10 @@ def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> Fas
     엔드포인트가 장착된 FastAPI 앱을 생성하여 반환합니다.
     """
     app = FastAPI(title=title)
+    
+    @app.get("/", summary="Health Check")
+    async def root():
+        return {"status": "ok", "message": f"Welcome to {title}"}
 
     @app.post("/invoke", summary="Agent 실행")
     async def invoke(req: AgentInvokeRequest):

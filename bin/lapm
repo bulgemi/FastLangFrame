@@ -99,9 +99,9 @@ case $COMMAND in
         cp "$BASE_DIR/pyproject.toml" "$PROJECT_DIR/$PROJECT_NAME/pyproject.toml"
         # Update name in pyproject.toml (using a platform-compatible sed)
         if [[ "$OSTYPE" == "darwin"* ]]; then
-            sed -i '' "s/^name = .\"[^\"]*\"/name = \"$PROJECT_NAME\"/" "$PROJECT_DIR/$PROJECT_NAME/pyproject.toml"
+            sed -i '' "s/^name = .*/name = \"$PROJECT_NAME\"/" "$PROJECT_DIR/$PROJECT_NAME/pyproject.toml"
         else
-            sed -i "s/^name = .\"[^\"]*\"/name = \"$PROJECT_NAME\"/" "$PROJECT_DIR/$PROJECT_NAME/pyproject.toml"
+            sed -i "s/^name = .*/name = \"$PROJECT_NAME\"/" "$PROJECT_DIR/$PROJECT_NAME/pyproject.toml"
         fi
 
         # Note: Docker and K8s files are already inside the agent template <%project_name%> folder.
