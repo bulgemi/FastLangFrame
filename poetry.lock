@@ -584,19 +584,19 @@ packaging = ">=20.9"
 
 [[package]]
 name = "fastapi"
-version = "0.135.1"
+version = "0.135.2"
 description = "FastAPI framework, high performance, easy to learn, fast to code, ready for production"
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "fastapi-0.135.1-py3-none-any.whl", hash = "sha256:46e2fc5745924b7c840f71ddd277382af29ce1cdb7d5eab5bf697e3fb9999c9e"},
-    {file = "fastapi-0.135.1.tar.gz", hash = "sha256:d04115b508d936d254cea545b7312ecaa58a7b3a0f84952535b4c9afae7668cd"},
+    {file = "fastapi-0.135.2-py3-none-any.whl", hash = "sha256:0af0447d541867e8db2a6a25c23a8c4bd80e2394ac5529bd87501bbb9e240ca5"},
+    {file = "fastapi-0.135.2.tar.gz", hash = "sha256:88a832095359755527b7f63bb4c6bc9edb8329a026189eed83d6c1afcf419d56"},
 ]
 
 [package.dependencies]
 annotated-doc = ">=0.0.2"
-pydantic = ">=2.7.0"
+pydantic = ">=2.9.0"
 starlette = ">=0.46.0"
 typing-extensions = ">=4.8.0"
 typing-inspection = ">=0.4.2"
@@ -1052,14 +1052,14 @@ jsonpointer = ">=1.9"
 
 [[package]]
 name = "jsonpointer"
-version = "3.1.0"
+version = "3.1.1"
 description = "Identify specific nodes in a JSON document (RFC 6901) "
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "jsonpointer-3.1.0-py3-none-any.whl", hash = "sha256:f82aa0f745001f169b96473348370b43c3f581446889c41c807bab1db11c8e7b"},
-    {file = "jsonpointer-3.1.0.tar.gz", hash = "sha256:f9b39abd59ba8c1de8a4ff16141605d2a8dacc4dd6cf399672cf237bfe47c211"},
+    {file = "jsonpointer-3.1.1-py3-none-any.whl", hash = "sha256:8ff8b95779d071ba472cf5bc913028df06031797532f08a7d5b602d8b2a488ca"},
+    {file = "jsonpointer-3.1.1.tar.gz", hash = "sha256:0b801c7db33a904024f6004d526dcc53bbb8a4a0f4e32bfd10beadf60adf1900"},
 ]
 
 [[package]]
@@ -1155,14 +1155,14 @@ pydantic = ">=2.7.4,<3.0.0"
 
 [[package]]
 name = "langchain-core"
-version = "1.2.20"
+version = "1.2.21"
 description = "Building applications with LLMs through composability"
 optional = false
 python-versions = "<4.0.0,>=3.10.0"
 groups = ["main"]
 files = [
-    {file = "langchain_core-1.2.20-py3-none-any.whl", hash = "sha256:b65ff678f3c3dc1f1b4d03a3af5ee3b8d51f9be5181d74eb53c6c11cd9dd5e68"},
-    {file = "langchain_core-1.2.20.tar.gz", hash = "sha256:c7ac8b976039b5832abb989fef058b88c270594ba331efc79e835df046e7dc44"},
+    {file = "langchain_core-1.2.21-py3-none-any.whl", hash = "sha256:486cb405e2ecb0c407cb5fb5379ed0f919eb4b8a868b60cc8c3c15a3dfb560a7"},
+    {file = "langchain_core-1.2.21.tar.gz", hash = "sha256:1a121d13976dc0908d5a8222262810ea483a4cf2b05006bdba75df5b11b554b3"},
 ]
 
 [package.dependencies]

@@ -95,6 +95,15 @@ case $COMMAND in
         
         $COPIER_CMD copy -f -d project_name="$PROJECT_NAME" -d llm_provider="$LLM_PROVIDER" "$TEMPLATE_DIR" "$PROJECT_DIR"
         
+        # Copy root pyproject.toml to the new project and update its name
+        cp "$BASE_DIR/pyproject.toml" "$PROJECT_DIR/$PROJECT_NAME/pyproject.toml"
+        # Update name in pyproject.toml (using a platform-compatible sed)
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            sed -i '' "s/^name = .\"[^\"]*\"/name = \"$PROJECT_NAME\"/" "$PROJECT_DIR/$PROJECT_NAME/pyproject.toml"
+        else
+            sed -i "s/^name = .\"[^\"]*\"/name = \"$PROJECT_NAME\"/" "$PROJECT_DIR/$PROJECT_NAME/pyproject.toml"
+        fi
+
         # Note: Docker and K8s files are already inside the agent template <%project_name%> folder.
         # We just need to make them executable in the generated project.
         chmod +x "$PROJECT_DIR/$PROJECT_NAME/docker/docker-build.sh" "$PROJECT_DIR/$PROJECT_NAME/k8s/k8s-deploy.sh" 2>/dev/null
