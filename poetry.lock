@@ -2917,6 +2917,24 @@ pymysql = ["pymysql"]
 sqlcipher = ["sqlcipher3_binary"]
 
 [[package]]
+name = "st-chat-input-multimodal"
+version = "1.0.6"
+description = "Streamlit multimodal chat input component with text, image, and voice support"
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+files = [
+    {file = "st_chat_input_multimodal-1.0.6-py3-none-any.whl", hash = "sha256:4bcd6065df87cab6960f534da43ff83d156926ab3b0191d59443ee71024b99ad"},
+    {file = "st_chat_input_multimodal-1.0.6.tar.gz", hash = "sha256:ac655f12383d4c81d4027f0edff6974a45bff35820c34d37ee2547a19120794a"},
+]
+
+[package.dependencies]
+streamlit = ">=1.2"
+
+[package.extras]
+dev = ["black (>=22.0)", "flake8 (>=5.0)", "mypy (>=1.0)", "pytest (>=7.0)", "pytest-cov (>=4.0)"]
+
+[[package]]
 name = "starlette"
 version = "1.0.0"
 description = "The little ASGI library that shines."
@@ -3636,4 +3654,4 @@ cffi = ["cffi (>=1.17,<2.0) ; platform_python_implementation != \"PyPy\" and pyt
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12"
-content-hash = "c62a3eedd0d17c8e7403b90d3e3b760ac81357cac951d2e8a5d450437b99d2ba"
+content-hash = "631969c1e10eb2dcacc4b721eb8709f6e9b74773a4108cb0ae74f98a81efb6dc"

@@ -2,7 +2,9 @@ import os
 import sys
 import streamlit as st
 import asyncio
+import base64
 from dotenv import load_dotenv
+from st_chat_input_multimodal import multimodal_chat_input
 
 # 1. 경로 설정 (패키지 구조와 프로젝트 루트 고려)
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -55,11 +57,28 @@ def run_async(coro):
     return loop.run_until_complete(coro)
 
 # 사용자 입력
-if prompt := st.chat_input("에이전트에게 복잡한 요청을 해보세요..."):
-    # 업로드된 파일 확인
-    uploaded_file = st.session_state.get("uploaded_file")
-    image_bytes = uploaded_file.getvalue() if uploaded_file else None
+chat_result = multimodal_chat_input(
+    placeholder="에이전트에게 복합적인 요청을 해보세요...",
+    enable_voice_input=True,
+    voice_language="ko-KR",
+    key="chat_input"
+)
+
+if chat_result:
+    prompt = chat_result.get("text")
+    files = chat_result.get("files", [])
     
+    image_bytes = None
+    if files:
+        # 첫 번째 파일만 처리 (이미지)
+        file_data = files[0].get("data")
+        if file_data:
+            try:
+                base64_data = file_data.split(',')[1] if ',' in file_data else file_data
+                image_bytes = base64.b64decode(base64_data)
+            except Exception as e:
+                st.error(f"이미지 디코딩 실패: {e}")
+
     # 세션 상태에 저장 (화면 표시용)
     st.session_state.messages.append({
         "role": "user", 
@@ -68,7 +87,8 @@ if prompt := st.chat_input("에이전트에게 복잡한 요청을 해보세요.
     })
     
     with st.chat_message("user"):
-        st.markdown(prompt)
+        if prompt:
+            st.markdown(prompt)
         if image_bytes:
             try:
                 st.image(image_bytes, caption="Uploaded Image", use_container_width=True)
@@ -115,12 +135,7 @@ with st.sidebar:
     st.info("**Engine**: LangGraph")
     
     st.markdown("---")
-    st.header("Multimodal Input")
-    st.session_state.uploaded_file = st.file_uploader(
-        "이미지를 업로드하세요", 
-        type=["jpg", "jpeg", "png"],
-        help="이미지를 선택한 후 채팅을 입력하면 에이전트에게 함께 전달됩니다."
-    )
+    st.header("Actions")
     
     if st.button("대화 기록 초기화"):
         st.session_state.messages = []
