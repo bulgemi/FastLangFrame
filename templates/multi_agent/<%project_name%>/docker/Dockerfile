@@ -10,6 +10,8 @@ RUN pip install poetry && poetry config virtualenvs.create false && poetry insta
 WORKDIR /app
 COPY src ./src
 COPY projects/<%project_name%>/<%project_name%> ./<%project_name%>
+# Copy .env from project root if it exists
+COPY projects/<%project_name%>/.env* ./<%project_name%>/
 
 # 3. Setup runtime environment
 ENV PYTHONPATH=/app
