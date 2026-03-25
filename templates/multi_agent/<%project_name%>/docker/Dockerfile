@@ -15,5 +15,4 @@ COPY projects/<%project_name%>/<%project_name%> ./<%project_name%>
 ENV PYTHONPATH=/app
 WORKDIR /app/<%project_name%>
 EXPOSE 8888
-EXPOSE 9888
 ENTRYPOINT ["sh", "-c", "gunicorn main:app --workers $(nproc) --worker-class uvicorn.workers.UvicornWorker --threads 3 --bind 0.0.0.0:8888"]
