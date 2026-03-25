@@ -12,6 +12,7 @@ class FastLangFrameSettings(BaseSettings):
     )
 
     # LLM Settings
+    llm_provider: str = Field(default="openai", alias="LLM_PROVIDER")
     llm_api_key: str = Field(
         default="default_key",
         validation_alias=AliasChoices(
