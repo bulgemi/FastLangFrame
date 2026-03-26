@@ -128,8 +128,14 @@ FastLangFrame은 다음과 같은 핵심 철학을 바탕으로 설계되었습�
 
 2. **환경 변수 설정**:
    생성된 프로젝트 폴더 내 `.env` 파일을 수정합니다.
-   * **OpenAI**: `OPENAI_API_KEY`, `MODEL_NAME`
+   * **OpenAI**: `OPENAI_API_KEY`, `MODEL_NAME` (또는 `OPENAI_MODEL_NAME`)
    * **Azure**: `AZURE_OPENAI_API_KEY`, `AZURE_OPENAI_ENDPOINT`, `AZURE_DEPLOYMENT_NAME`
+   * **Anthropic (Claude)**: `ANTHROPIC_API_KEY`, `CLAUDE_MODEL_NAME` (또는 `MODEL_NAME`)
+   * **Google (Gemini)**: `GOOGLE_API_KEY`, `GEMINI_MODEL_NAME` (또는 `MODEL_NAME`)
+   * **DeepSeek**: `DEEPSEEK_API_KEY`, `DEEPSEEK_MODEL_NAME` (또는 `MODEL_NAME`)
+
+   * **다중 모델 설정 (선택 사항)**: `LLM_MODELS_JSON`을 통해 역할별 모델 구성을 설정할 수 있습니다.
+     예시: `LLM_MODELS_JSON='{"fast": {"provider": "openai", "model": "gpt-4o-mini"}, "smart": {"provider": "anthropic", "model": "claude-3-5-sonnet-20240620"}}'`
 
 3. **API 서버 실행 및 검증**:
 
