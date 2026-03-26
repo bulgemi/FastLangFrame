@@ -1,4 +1,5 @@
-from typing import Optional, List
+import json
+from typing import Optional, List, Dict, Any
 from pydantic import Field, AliasChoices
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -12,6 +13,7 @@ class FastLangFrameSettings(BaseSettings):
     )
 
     # LLM Settings
+    llm_provider: str = Field(default="openai", alias="LLM_PROVIDER")
     llm_api_key: str = Field(
         default="default_key",
         validation_alias=AliasChoices(
@@ -71,6 +73,20 @@ class FastLangFrameSettings(BaseSettings):
     phoenix_enabled: bool = False
     phoenix_endpoint: Optional[str] = None
     project_name: str = "fastlangframe-agent"
+
+    # Multi-Model Configuration (JSON string)
+    llm_models_json: Optional[str] = Field(default=None, alias="LLM_MODELS_JSON")
+
+    @property
+    def llm_models(self) -> Dict[str, Dict[str, Any]]:
+        """Parses the JSON model configuration into a dictionary"""
+        if not self.llm_models_json:
+            return {}
+        try:
+            return json.loads(self.llm_models_json)
+        except json.JSONDecodeError:
+            # Fallback or log error
+            return {}
 
 _settings_instance: Optional[FastLangFrameSettings] = None
 
