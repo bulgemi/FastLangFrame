@@ -9,7 +9,8 @@ class FastLangFrameSettings(BaseSettings):
         env_file=".env", 
         env_file_encoding="utf-8",
         extra="ignore",
-        case_sensitive=False
+        case_sensitive=False,
+        protected_namespaces=('settings_',)
     )
 
     # LLM Settings
@@ -20,9 +21,11 @@ class FastLangFrameSettings(BaseSettings):
             "llm_api_key",
             "OPENAI_API_KEY",
             "AZURE_OPENAI_API_KEY",
-            "DEEPSEEK_API_KEY",
-            "GEMINI_API_KEY",
+            "ANTHROPIC_API_KEY",
             "CLAUDE_API_KEY",
+            "GOOGLE_API_KEY",
+            "GEMINI_API_KEY",
+            "DEEPSEEK_API_KEY",
             "LLM_API_KEY"
         )
     )
@@ -54,6 +57,13 @@ class FastLangFrameSettings(BaseSettings):
     azure_openai_endpoint: Optional[str] = Field(default=None, alias="AZURE_OPENAI_ENDPOINT")
     azure_openai_api_version: str = Field(default="2024-02-15-preview", alias="AZURE_OPENAI_API_VERSION")
     azure_deployment_name: Optional[str] = Field(default=None, alias="AZURE_DEPLOYMENT_NAME")
+
+    # Anthropic (Claude) Specific
+    anthropic_api_key: Optional[str] = Field(default=None, alias="ANTHROPIC_API_KEY")
+    anthropic_api_url: Optional[str] = Field(default=None, alias="ANTHROPIC_API_URL")
+
+    # Google (Gemini) Specific
+    google_api_key: Optional[str] = Field(default=None, alias="GOOGLE_API_KEY")
 
     deep_thinking_model_name: Optional[str] = None
     light_thinking_model_name: Optional[str] = None

@@ -1,7 +1,10 @@
 import httpx
 from typing import Optional
 from openai import AsyncOpenAI
+from pydantic import SecretStr
 from langchain_openai import ChatOpenAI, AzureChatOpenAI
+from langchain_anthropic import ChatAnthropic
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.language_models.chat_models import BaseChatModel
 from src.common.configs.settings import FastLangFrameSettings, get_settings
 from src.common.logging.decorators import log_connector
@@ -18,7 +21,7 @@ async def get_async_openai_client(settings: Optional[FastLangFrameSettings] = No
     )
 
 @log_connector
-def get_langchain_chat_model(model_name: Optional[str] = None) -> ChatOpenAI:
+def get_langchain_chat_model(model_name: Optional[str] = None) -> BaseChatModel:
     """Returns a Langchain Chat Model (OpenAI or Azure)"""
     settings = get_settings()
     
@@ -35,19 +38,42 @@ def get_langchain_chat_model(model_name: Optional[str] = None) -> ChatOpenAI:
             settings.model_name
         )
         return AzureChatOpenAI(
-            azure_deployment=deployment,
-            api_key=settings.azure_openai_api_key or settings.llm_api_key,
+            deployment_name=deployment,
+            openai_api_key=SecretStr(settings.azure_openai_api_key or settings.llm_api_key),
             azure_endpoint=settings.azure_openai_endpoint or settings.llm_endpoint,
-            api_version=settings.azure_openai_api_version,
+            openai_api_version=settings.azure_openai_api_version,
             validate_base_url=False,
+        )
+    
+    # Claude (Anthropic) logic
+    is_claude = (
+        settings.anthropic_api_key or 
+        (settings.llm_provider.lower() in ["claude", "anthropic"])
+    )
+    if is_claude:
+        return ChatAnthropic(
+            model_name=model_name or settings.model_name,
+            anthropic_api_key=SecretStr(settings.anthropic_api_key or settings.llm_api_key),
+            anthropic_api_url=settings.anthropic_api_url or settings.llm_endpoint if "anthropic" in (settings.llm_endpoint or "") else None,
+        )
+        
+    # Gemini (Google) logic
+    is_gemini = (
+        settings.google_api_key or 
+        (settings.llm_provider.lower() in ["gemini", "google"])
+    )
+    if is_gemini:
+        return ChatGoogleGenerativeAI(
+            model=model_name or settings.model_name,
+            google_api_key=SecretStr(settings.google_api_key or settings.llm_api_key),
         )
     
     # Standard OpenAI logic
     name_to_use = model_name or settings.model_name
     return ChatOpenAI(
-        model=name_to_use,
-        api_key=settings.llm_api_key,
-        base_url=settings.llm_endpoint,
+        model_name=name_to_use,
+        openai_api_key=SecretStr(settings.llm_api_key),
+        openai_api_base=settings.llm_endpoint,
         http_client=httpx.Client(verify=False, timeout=settings.llm_timeout_sec)
     )
 
@@ -70,17 +96,30 @@ def get_llm_by_role(role: str) -> BaseChatModel:
     
     if provider == "azure":
         return AzureChatOpenAI(
-            azure_deployment=config.get("deployment") or config.get("model"),
-            api_key=config.get("api_key") or settings.azure_openai_api_key or settings.llm_api_key,
+            deployment_name=config.get("deployment") or config.get("model"),
+            openai_api_key=SecretStr(config.get("api_key") or settings.azure_openai_api_key or settings.llm_api_key),
             azure_endpoint=config.get("endpoint") or settings.azure_openai_endpoint or settings.llm_endpoint,
-            api_version=config.get("api_version") or settings.azure_openai_api_version,
+            openai_api_version=config.get("api_version") or settings.azure_openai_api_version,
             validate_base_url=False,
+        )
+    
+    if provider in ["claude", "anthropic"]:
+        return ChatAnthropic(
+            model_name=config.get("model") or config.get("deployment") or settings.model_name,
+            anthropic_api_key=SecretStr(config.get("api_key") or settings.anthropic_api_key or settings.llm_api_key),
+            anthropic_api_url=config.get("endpoint") or settings.anthropic_api_url,
+        )
+        
+    if provider in ["gemini", "google"]:
+        return ChatGoogleGenerativeAI(
+            model=config.get("model") or config.get("deployment") or settings.model_name,
+            google_api_key=SecretStr(config.get("api_key") or settings.google_api_key or settings.llm_api_key),
         )
     
     # Default to OpenAI logic for other providers (can be extended)
     return ChatOpenAI(
-        model=config.get("model") or config.get("deployment") or settings.model_name,
-        api_key=config.get("api_key") or settings.llm_api_key,
-        base_url=config.get("endpoint") or settings.llm_endpoint,
+        model_name=config.get("model") or config.get("deployment") or settings.model_name,
+        openai_api_key=SecretStr(config.get("api_key") or settings.llm_api_key),
+        openai_api_base=config.get("endpoint") or settings.llm_endpoint,
         http_client=httpx.Client(verify=False, timeout=settings.llm_timeout_sec)
     )
