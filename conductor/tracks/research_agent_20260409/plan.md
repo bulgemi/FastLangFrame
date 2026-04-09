@@ -10,11 +10,11 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Project Initialization and Setup' (573b8fb) (Protocol in workflow.md)
 
 ## Phase 2: Core Agent Implementation
-- [ ] Task: Implement Search Agent node
+- [x] Task: Implement Search Agent node (via researcher_tool)
     - [ ] Write unit tests for the Search Agent node in `projects/research_agent/test/`
     - [ ] Implement the Search Agent logic in `projects/research_agent/graph/nodes.py`
     - [ ] Verify tests pass
-- [ ] Task: Implement Summarizer Agent node
+- [x] Task: Implement Summarizer Agent node (via writer_tool)
     - [ ] Write unit tests for the Summarizer Agent node
     - [ ] Implement the Summarizer Agent logic in `projects/research_agent/graph/nodes.py`
     - [ ] Verify tests pass
