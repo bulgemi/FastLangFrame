@@ -2,12 +2,12 @@
 
 ## Phase 1: Project Initialization and Setup
 - [x] Task: Generate the 'research_agent' project using the `multi_agent` template (e475806)
-    - [ ] Run `lapm` CLI to create the project: `./bin/lapm research_agent create 1 3` (OpenAI, Multi-Agent)
-    - [ ] Verify the project directory `projects/research_agent` is created
+    - [x] Task: Run `lapm` CLI to create the project (e475806): `./bin/lapm research_agent create 1 3` (OpenAI, Multi-Agent)
+    - [x] Task: Verify the project directory `projects/research_agent` is created (e475806)
 - [x] Task: Configure environment variables
-    - [ ] Copy `.env.example` to `.env` in the project directory
-    - [ ] Add necessary API keys to `.env`
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Project Initialization and Setup' (Protocol in workflow.md)
+    - [x] Task: Copy `.env.example` to `.env` in the project directory (4787d62)
+    - [x] Task: Add necessary API keys to `.env` (4787d62)
+- [x] Task: Conductor - User Manual Verification 'Phase 1: Project Initialization and Setup' (573b8fb) (Protocol in workflow.md)
 
 ## Phase 2: Core Agent Implementation
 - [ ] Task: Implement Search Agent node
