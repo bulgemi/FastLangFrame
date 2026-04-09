@@ -4,7 +4,7 @@
 - [x] Task: Generate the 'research_agent' project using the `multi_agent` template (e475806)
     - [ ] Run `lapm` CLI to create the project: `./bin/lapm research_agent create 1 3` (OpenAI, Multi-Agent)
     - [ ] Verify the project directory `projects/research_agent` is created
-- [ ] Task: Configure environment variables
+- [x] Task: Configure environment variables
     - [ ] Copy `.env.example` to `.env` in the project directory
     - [ ] Add necessary API keys to `.env`
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: Project Initialization and Setup' (Protocol in workflow.md)
