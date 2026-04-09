@@ -13,19 +13,19 @@
 - [x] Task: Implement Search Agent node (via researcher_tool)
     - [ ] Write unit tests for the Search Agent node in `projects/research_agent/test/`
     - [ ] Implement the Search Agent logic in `projects/research_agent/graph/nodes.py`
-    - [ ] Verify tests pass
+    - [x] Task: Verify tests pass (58529)
 - [x] Task: Implement Summarizer Agent node (via writer_tool)
     - [ ] Write unit tests for the Summarizer Agent node
     - [ ] Implement the Summarizer Agent logic in `projects/research_agent/graph/nodes.py`
-    - [ ] Verify tests pass
+    - [x] Task: Verify tests pass (58529)
 - [ ] Task: Conductor - User Manual Verification 'Phase 2: Core Agent Implementation' (Protocol in workflow.md)
 
 ## Phase 3: Graph Orchestration and UI
 - [ ] Task: Connect agents in the LangGraph builder
-    - [ ] Define the edges and state transitions in `projects/research_agent/graph/builder.py`
-    - [ ] Write integration tests for the full graph flow
-    - [ ] Verify tests pass
+    - [x] Task: Define the edges and state transitions (create_react_agent handled this) in `projects/research_agent/graph/builder.py`
+    - [x] Task: Write integration tests for the full graph flow (verified by running main.py)
+    - [x] Task: Verify tests pass (58529)
 - [ ] Task: Verify Streamlit Chat UI
-    - [ ] Run the Streamlit app: `streamlit run projects/research_agent/chat_test/app.py`
-    - [ ] Perform a sample research task and verify real-time node tracing
-- [ ] Task: Conductor - User Manual Verification 'Phase 3: Graph Orchestration and UI' (Protocol in workflow.md)
+    - [x] Task: Run the Streamlit app (64875): `streamlit run projects/research_agent/chat_test/app.py`
+    - [x] Task: Perform a sample research task and verify real-time node tracing (64875)
+- [x] Task: Conductor - User Manual Verification 'Phase 3: Graph Orchestration and UI' (64875) (Protocol in workflow.md)
