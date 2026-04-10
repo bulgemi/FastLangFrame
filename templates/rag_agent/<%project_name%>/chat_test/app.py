@@ -30,9 +30,11 @@ from langchain_core.messages import HumanMessage
 from src.utils.multimodal import create_multimodal_message
 
 try:
-    from <%project_name%> import builder
+    from <%project_name%>.graph.builder import builder
 except ImportError:
-    from <%project_name%> import builder
+    import sys
+    sys.path.append(PROJECT_ROOT)
+    from <%project_name%>.graph.builder import builder
 
 st.set_page_config(page_title="RAG Chat", page_icon="📚", layout="wide")
 st.title("📚 RAG Chat")
