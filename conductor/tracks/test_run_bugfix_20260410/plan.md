@@ -11,6 +11,6 @@
 - [x] Task: Conductor - User Manual Verification 'Implementation (Adjust Imports)' (Protocol in workflow.md) (0d68808)
 
 ## Phase 3: Verification
-- [ ] Task: Verify that `python gemini_agent/test_run.py` executes successfully from the `projects/` directory without raising `ModuleNotFoundError`.
-- [ ] Task: Run the general test suite (`pytest`) to ensure no other imports or functionalities were broken by this change.
-- [ ] Task: Conductor - User Manual Verification 'Verification' (Protocol in workflow.md)
+- [x] Task: Verify that `python gemini_agent/test_run.py` executes successfully from the `projects/` directory without raising `ModuleNotFoundError`. (0d68808)
+- [x] Task: Run the general test suite (`pytest`) to ensure no other imports or functionalities were broken by this change. (0d68808)
+- [x] Task: Conductor - User Manual Verification 'Verification' (Protocol in workflow.md) (0d68808)
