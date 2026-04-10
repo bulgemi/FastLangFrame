@@ -19,5 +19,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [~] **Track: FastAPI Swagger Schema Improvement**
+- [x] **Track: FastAPI Swagger Schema Improvement**
   *Link: [./tracks/fastapi_swagger_schema_improvement_20260410/](./tracks/fastapi_swagger_schema_improvement_20260410/)*
