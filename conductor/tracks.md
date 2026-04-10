@@ -9,5 +9,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: Fix ModuleNotFoundError for langchain.schema in Streamlit Chat Test**
+- [~] **Track: Fix ModuleNotFoundError for langchain.schema in Streamlit Chat Test**
   *Link: [./tracks/langchain_import_fix_20260411/](./tracks/langchain_import_fix_20260411/)*
