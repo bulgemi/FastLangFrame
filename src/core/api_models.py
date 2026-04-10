@@ -5,8 +5,8 @@ class AgentInvokeRequest(BaseModel):
     """단일 에이전트 실행을 위한 요청 모델"""
     input: Dict[str, Any] = Field(
         ..., 
-        description="에이전트에 전달될 입력 딕셔너리. 예: {'text': 'hi'}",
-        examples=[{"text": "hi"}, {"text": "Summarize the latest news about AI"}]
+        description="에이전트에 전달될 입력 딕셔너리. 예: {'messages': 'hi'}",
+        examples=[{"messages": "hi"}, {"messages": "Summarize the latest news about AI"}]
     )
     config: Optional[Dict[str, Any]] = Field(
         default=None, 
@@ -25,7 +25,7 @@ class AgentBatchRequest(BaseModel):
     inputs: List[Dict[str, Any]] = Field(
         ..., 
         description="여러 개의 입력을 담은 리스트",
-        examples=[[{"text": "hi"}, {"text": "hello"}]]
+        examples=[[{"messages": "hi"}, {"messages": "hello"}]]
     )
     config: Optional[Dict[str, Any]] = Field(
         default=None, 
