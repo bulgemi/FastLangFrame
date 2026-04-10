@@ -25,7 +25,7 @@ async def test_invoke(test_app):
     async with AsyncClient(transport=ASGITransport(app=test_app), base_url="http://test") as ac:
         response = await ac.post("/invoke", json={"input": {"text": "hello"}})
     assert response.status_code == 200
-    assert response.json() == {"result": {"response": "Mock hello"}}
+    assert response.json() == {"result": {"response": "Mock hello"}, "status": "ok", "error": None}
 
 @pytest.mark.asyncio
 async def test_stream(test_app):
@@ -44,7 +44,7 @@ async def test_invoke_batch(test_app):
     async with AsyncClient(transport=ASGITransport(app=test_app), base_url="http://test") as ac:
         response = await ac.post("/invoke_batch", json={"inputs": [{"text": "a"}, {"text": "b"}]})
     assert response.status_code == 200
-    assert response.json() == {"results": [{"response": "Mock a"}, {"response": "Mock b"}]}
+    assert response.json() == {"results": [{"response": "Mock a"}, {"response": "Mock b"}], "status": "ok", "error": None}
 
 @pytest.mark.asyncio
 async def test_invoke_stream_batch(test_app):

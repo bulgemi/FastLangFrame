@@ -1,0 +1,8 @@
+{
+  "track_id": "fastapi_swagger_schema_improvement_20260410",
+  "type": "improvement",
+  "status": "new",
+  "created_at": "2026-04-10T15:00:00Z",
+  "updated_at": "2026-04-10T15:00:00Z",
+  "description": "Improve Agent FastAPI Swagger schema, providing sample user queries (e.g., 'hi') to allow immediate Swagger execution"
+}
