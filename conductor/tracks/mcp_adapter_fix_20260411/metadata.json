@@ -1,0 +1,8 @@
+{
+  "track_id": "mcp_adapter_fix_20260411",
+  "type": "bug",
+  "status": "new",
+  "created_at": "2026-04-11T00:00:00Z",
+  "updated_at": "2026-04-11T00:00:00Z",
+  "description": "Fix ModuleNotFoundError: No module named langchain_mcp_adapters in research agent chat test"
+}
