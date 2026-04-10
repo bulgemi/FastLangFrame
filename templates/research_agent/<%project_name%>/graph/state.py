@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from research_agent.common.types.nodes import (
+from <%project_name%>.common.types.nodes import (
     ResearchPlannerNodeOutput,
     ResearchSearchNodeOutput,
     ResearchSynthesisNodeOutput,

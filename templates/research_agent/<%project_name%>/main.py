@@ -12,7 +12,7 @@ sys.path.insert(0, PROJECT_ROOT)
 sys.path.insert(0, FRAMEWORK_ROOT)
 
 import uvicorn
-from research_agent.graph.builder import agent_graph
+from <%project_name%>.graph.builder import agent_graph
 from src.core.server import create_agent_app
 
 # FastAPI app creation

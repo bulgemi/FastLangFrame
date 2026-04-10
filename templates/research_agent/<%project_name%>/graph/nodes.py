@@ -23,7 +23,7 @@ from langgraph.config import get_stream_writer
 from langgraph.types import StreamWriter
 from pydantic import BaseModel, ConfigDict
 
-from research_agent.common.types.nodes import (
+from <%project_name%>.common.types.nodes import (
     InputT,
     OutputT,
     ResearchPlannerNodeInput,
@@ -33,16 +33,16 @@ from research_agent.common.types.nodes import (
     ResearchSynthesisNodeInput,
     ResearchSynthesisNodeOutput,
 )
-from research_agent.common.types.schemas import (
+from <%project_name%>.common.types.schemas import (
     StreamData,
     StreamInfo,
     StreamStatus,
 )
-from research_agent.graph.llms import ainvoke_llm, LlmClient
-from research_agent.graph.prompts.prompt_manager import (
+from <%project_name%>.graph.llms import ainvoke_llm, LlmClient
+from <%project_name%>.graph.prompts.prompt_manager import (
     build_formatted_prompts,
 )
-from research_agent.graph.state import ResearchGraphState
+from <%project_name%>.graph.state import ResearchGraphState
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

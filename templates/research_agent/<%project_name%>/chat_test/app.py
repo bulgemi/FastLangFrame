@@ -26,11 +26,11 @@ from langchain_core.messages import HumanMessage
 from src.utils.multimodal import create_multimodal_message
 
 try:
-    from research_agent.graph.builder import builder
+    from <%project_name%>.graph.builder import builder
 except ImportError:
     import sys
     sys.path.append(PROJECT_ROOT)
-    from research_agent.graph.builder import builder
+    from <%project_name%>.graph.builder import builder
 
 st.set_page_config(page_title="Research Agent", page_icon="🔍", layout="wide")
 st.title("🔍 Research Agent")
@@ -132,7 +132,7 @@ if chat_result:
 
 with st.sidebar:
     st.header("Project Info")
-    st.info(f"**Project**: research_agent")
+    st.info(f"**Project**: <%project_name%>")
     st.info("**Engine**: LangGraph")
     
     st.markdown("---")

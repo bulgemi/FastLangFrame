@@ -1,11 +1,11 @@
 from langgraph.graph import END, StateGraph
 
-from research_agent.graph.nodes import (
+from <%project_name%>.graph.nodes import (
     ResearchPlannerNode,
     ResearchSearchNode,
     ResearchSynthesisNode,
 )
-from research_agent.graph.state import ResearchGraphState
+from <%project_name%>.graph.state import ResearchGraphState
 
 
 class ResearchAgentBuilder:

@@ -21,14 +21,14 @@ from typing import TypeVar
 
 from pydantic import BaseModel, Field, field_validator
 
-from research_agent.common.config import mari_config
-from research_agent.common.types.schemas import (
+from <%project_name%>.common.config import mari_config
+from <%project_name%>.common.types.schemas import (
     DataBundle,
     PeriodQuery,
     PromptResource,
     Step,
 )
-from research_agent.graph.prompts.prompt_manager import PromptTag
+from <%project_name%>.graph.prompts.prompt_manager import PromptTag
 
 InputT = TypeVar("InputT", bound=BaseModel)
 OutputT = TypeVar("OutputT", bound=BaseModel)

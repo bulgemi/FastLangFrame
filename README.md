@@ -1,180 +1,115 @@
-# FastLangFrame
+# FastLangFrame 🚀
 
 ## 아키텍처
 
 ![FastLangFrame Architecture](assets/fastlangframe_architecture.png)
 
-FastLangFrame 프레임워크 아키텍처는 Langchain/Langgraph 기반에 Core, Tool, Test, 확장 포인트, 표준 구조 제공으로 구성되어 있습니다.
+FastLangFrame은 LangChain 및 LangGraph를 기반으로 한 경량급 LLM 에이전트 개발 프레임워크입니다. 표준화된 코어 엔진, 재사용 가능한 툴 세트, 그리고 다양한 프로젝트 템플릿을 제공하여 복잡한 에이전트 시스템을 신속하게 구축하고 안정적으로 운영할 수 있도록 돕습니다.
 
-## 철학
+## 핵심 가치 (Core Philosophy)
 
 ![FastLangFrame Philosophy](assets/fastlangframe_philosophy.png)
 
-FastLangFrame은 다음과 같은 핵심 철학을 바탕으로 설계되었습니다.
+*   **유연함 (Flexibility)**: 선형/비선형 그래프 워크플로우를 자유롭게 구성 가능
+*   **경량화 (Lightweight)**: 최소한의 핵심 의존성으로 빠른 실행 속도 및 낮은 오버헤드 유지
+*   **신속한 구현 (Rapid Prototyping)**: CLI 도구(`lapm`)와 템플릿을 통한 즉각적인 프로젝트 시작
+*   **표준 구조 (Standardization)**: 유지보수가 용이한 일관된 프로젝트 레이아웃 및 API 규격 제공
 
-* **유연함**: 다양한 요구사항과 환경에 유연하게 대응할 수 있는 구조를 지향합니다.
-* **경량화**: 불필요한 의존성을 줄이고 핵심 기능에 집중하여 가볍고 빠르게 동작합니다.
-* **빠른 구현 및 검증**: 아이디어를 신속하게 구현하고 검증할 수 있는 환경을 제공합니다.
-* **명확한 구조 제공**: 개발자가 쉽게 이해하고 확장할 수 있는 명확하고 직관적인 프로젝트 구조를 제공합니다.
+## 주요 구성요소 (Components)
 
-## 아이콘
+### 🛠️ Core Engine (`src/core`)
+*   **Graph Builder**: 복잡한 LangGraph 워크플로우를 쉽게 구성할 수 있는 인터페이스 제공
+*   **Runtime Context**: HTTP, LLM, MCP 요청을 위한 세마포어 기반 자원 관리 및 상태 제어
+*   **API Server**: FastAPI 기반의 고성능 비동기 API 서버 (Default: 8888 포트)
+    *   `/invoke`: 단일 호출 (Blocking)
+    *   `/stream`: 실시간 SSE 스트리밍
+    *   `/invoke_batch`: 다중 입력 병렬 처리
+    *   `/invoke_stream_batch`: 다중 입력 개별 스트리밍 (Interleaved SSE)
 
-![FastLangFrame Icon](assets/icons/favicon-32x32.png)
+### 🧰 Utilities & Connectors (`src/utils`)
+*   **Connectors**: Database (PostgreSQL, MySQL), Redis, OpenSearch, HTTP, MCP, VectorDB 등 다양한 외부 시스템 연동 모듈 완비
+*   **Multimodal**: 이미지, 오디오 등 멀티모달 데이터 처리 지원
 
-## 구성요소
+### 📦 Project Manager (`lapm`)
+*   통합 CLI 도구를 통한 프로젝트 생애주기 관리
+*   `create`: 템플릿 기반 보일러플레이트 생성
+*   `build`: 최적화된 Docker 이미지 빌드
+*   `deploy`: Kubernetes 매니페스트 생성 및 배포
 
-### Core
+### 🧪 Test & Monitoring
+*   **Streamlit Chat UI**: 생성된 에이전트를 즉시 테스트할 수 있는 웹 인터페이스
+*   **Node Trace**: 실행 중인 에이전트의 각 단계(Node)를 시각적으로 추적
 
-* **LLM Agent Project Manager (lapm)**: 프로젝트 생성, 빌드, 배포를 위한 통합 CLI 도구
-  * `create`: 템플릿 기반 프로젝트 생성
-  * `build`: Docker 이미지 빌드
-  * `deploy`: Kubernetes 환경 배포
+## 템플릿 종류
 
-### Graph (API Server)
+*   **Simple Agent**: 기본적인 LangChain 기반 단일 에이전트
+*   **RAG Agent**: 지식 기반 검색 및 답변이 가능한 RAG 최적화 구조
+*   **Multi-Agent**: 다수의 에이전트가 협업하는 분산 워크플로우
+*   **MCP Agent**: Model Context Protocol을 활용한 강력한 확장성 제공
+*   **Deep Agent**: `deepagents` 라이브러리를 활용한 고도화된 추론 에이전트
 
-* **FastAPI 기반 표준 API 서버**: 모든 에이전트 프로젝트에 기본 내장 (Default Port: 8888)
-  * **Swagger UI 제공**: `{host}:8888/docs`를 통해 엔드포인트 대화식 테스트 가능
-  * **표준 엔드포인트**:
-    * `POST /invoke`: 에이전트 단일 실행
-    * `POST /stream`: 실시간 이벤트 스트리밍 (SSE)
-    * `POST /invoke_batch`: 다중 입력 병렬 처리
-    * `POST /invoke_stream_batch`: 다중 입력 개별 스트리밍 (Interleaved SSE)
-* **LLM 아키텍처**: LangChain 및 LangGraph를 활용한 선형/비선형 에이전트 워크플로우 구현
+## 기술 스택 (S/W Stack)
 
-### Utils
-
-* Database(MySQL, PostgreSQL), Opensearch, Redis 연동 유틸리티 패키지
-
-### Test
-
-* 구현한 LLM Agent 또는 Deep Agent의 기능을 검증하기 위한 테스트 패키지
-* stremlit 기반 UI 테스트 기능 제공
-
-### 확장 포인트
-
-* MCP, Skill 등 외부 모듈 연동을 위한 확장 포인트
-
-## 템플릿
-
-* 다양한 구성의 LLM Agent 또는 Deep Agent를 위한 템플릿 (copier 기반)
-
-## S/W Stack
-
-* Python 3.12
-* copier
-* streamlit
-* fastapi
-* Langchain
-* Langgraph
-* deepagents
-* gunicorn
-* Pydantic
-* Alembic
-* SQLAlchemy
-* Opensearch
-* Redis
-* poetry
+*   **Runtime**: Python 3.12+
+*   **Framework**: LangChain, LangGraph, FastAPI, deepagents
+*   **DevOps**: Docker, Kubernetes, Poetry, Copier
+*   **Storage/Middleware**: SQLAlchemy (PostgreSQL/MySQL), Alembic, Redis, OpenSearch
+*   **UI/Test**: Streamlit, Pytest
 
 ## 디렉토리 구조
 
-``` text
+```text
 .
-├── LICENSE: 오픈소스 라이선스 파일
-├── README.md: 프로젝트 소개 및 가이드 파일
-├── assets: 마크다운 등에서 사용되는 정적 자원(이미지 등)
-│   └── icons: 서비스/앱 아이콘 모음
-├── bin: 실행 가능한 쉘 스크립트 도구들
-├── docs: 문서 파일 디렉토리
-├── projects: FastLangFrame을 기반으로 구현된 실제 프로젝트 모음
-│   └── {project_name}: 실제 구현된 Agent 프로젝트
-│      ├── core: 코어 모듈
-│      ├── common: 공통 모듈
-│      ├── graph: 그래프 모듈
-│      ├── prompts: 프롬프트 모듈
-│      ├── states: 상태 모듈
-│      ├── utils: 유틸리티 모듈
-│      ├── config: 설정 모듈
-│      ├── docker: 도커 관련 파일
-│      ├── k8s: 쿠버네티스 관련 파일
-│      ├── chat_test: stremlit 기반 UI 테스트
-│      └── tools: Tool, MCP, Skills 모듈
-├── pyproject.toml: 의존성 및 환경 설정 메타 파일
-├── src: FastLangFrame 핵심 소스코드 폴더
-│   ├── core: 프레임워크 핵심 기능 로직
-│   ├── common: 프레임워크 공통 모듈
-│   └── utils: 유틸리티 함수 묶음
-├── test: FastLangFrame 단위 테스트 코드 폴더
-└── templates: 프로젝트 보일러플레이트 템플릿(Copier) 저장소
-     ├── docker: 도커 관련 파일 템플릿
-     ├── k8s: 쿠버네티스 관련 파일 템플릿
-     ├── simple_agent: Langchain 기반 Simple Agent 템플릿
-     ├── rag_agent: Langchain 기반 RAG Agent 템플릿
-     ├── multi_agent: Langchain 기반 Multi Agent 템플릿
-     ├── mcp_agent: Langchain 기반 MCP Agent 템플릿
-     └── deep_agent: deepagents 기반 Deep Agent 템플릿
+├── bin/                    # lapm 등 실행 가능한 CLI 도구
+├── conductor/              # 프로젝트 관리 및 워크플로우 가이드 (Product, Specs, Plans)
+├── projects/               # 생성된 개별 에이전트 프로젝트 저장소
+├── src/                    # FastLangFrame 핵심 프레임워크 소스
+│   ├── core/               # 그래프 빌더, 런타임, API 서버 로직
+│   │   └── runtime/        # 자원 관리 및 세마포어 제어
+│   ├── common/             # 공통 예외, 설정, 상수, 로깅
+│   └── utils/              # 각종 커넥터(DB, LLM, MCP 등) 및 유틸리티
+├── templates/              # 프로젝트 생성을 위한 Copier 템플릿
+├── test/                   # 프레임워크 단위 테스트
+└── assets/                 # 이미지, 아이콘 등 정적 자원
 ```
 
-## 동작 흐름 (Quick Start)
+## 시작하기 (Quick Start)
 
-1. **프로젝트 생성**:
+### 1. 프로젝트 생성
+`lapm` CLI를 사용하여 새로운 프로젝트를 생성합니다.
 
-   ```bash
-   # ./bin/lapm <프로젝트명> create <LLM_NUMBER> <TEMPLATE_NUMBER>
-   ./bin/lapm my_agent create 1 1
-   ```
+```bash
+# ./bin/lapm <프로젝트명> create <LLM_provider_choice> <Template_choice>
+./bin/lapm my_agent create 1 1
+```
+*   **LLM Provider**: 1:OpenAI, 2:Azure, 3:DeepSeek, 4:Gemini, 5:Claude, 6:Local
+*   **Template**: 1:Simple, 2:RAG, 3:Multi, 4:MCP, 5:Deep
 
-   * **LLM Provider 선택 (1-6)**: 1:openai, 2:azure, 3:deepseek, 4:gemini, 5:claude, 6:local
-   * **템플릿 선택 (1-5)**: 1:simple_agent, 2:rag_agent, 3:multi_agent, 4:mcp_agent, 5:deep_agent
+### 2. 환경 설정
+생성된 프로젝트 폴더 (`projects/my_agent/my_agent`) 내의 `.env` 파일을 수정하여 API Key 및 모델 정보를 설정합니다.
 
-2. **환경 변수 설정**:
-   생성된 프로젝트 폴더 내 `.env` 파일을 수정합니다.
-   * **OpenAI**: `OPENAI_API_KEY`, `MODEL_NAME` (또는 `OPENAI_MODEL_NAME`)
-   * **Azure**: `AZURE_OPENAI_API_KEY`, `AZURE_OPENAI_ENDPOINT`, `AZURE_DEPLOYMENT_NAME`
-   * **Anthropic (Claude)**: `ANTHROPIC_API_KEY`, `CLAUDE_MODEL_NAME` (또는 `MODEL_NAME`)
-   * **Google (Gemini)**: `GOOGLE_API_KEY`, `GEMINI_MODEL_NAME` (또는 `MODEL_NAME`)
-   * **DeepSeek**: `DEEPSEEK_API_KEY`, `DEEPSEEK_MODEL_NAME` (또는 `MODEL_NAME`)
+### 3. 서버 실행
+```bash
+cd projects/my_agent/my_agent
+python3 main.py --port 8888
+```
+*   브라우저에서 `http://localhost:8888/docs` 접속하여 Swagger UI 테스트
 
-   * **다중 모델 설정 (선택 사항)**: `LLM_MODELS_JSON`을 통해 역할별 모델 구성을 설정할 수 있습니다.
-     예시: `LLM_MODELS_JSON='{"fast": {"provider": "openai", "model": "gpt-4o-mini"}, "smart": {"provider": "anthropic", "model": "claude-3-5-sonnet-20240620"}}'`
+### 4. UI 테스트 실행
+```bash
+streamlit run chat_test/app.py
+```
 
-3. **API 서버 실행 및 검증**:
+## Chat Test UI 가이드
 
-   ```bash
-   # 생성된 프로젝트 내부 폴더로 이동 후 실행
-   cd projects/my_agent/my_agent
-   python3 main.py --port 8888
-   ```
+FastLangFrame은 에이전트의 추론 과정을 시각화하여 디버깅을 돕는 전용 UI를 제공합니다.
 
-   * 브라우저에서 `http://localhost:8888/docs` 접속하여 Swagger UI 테스트
-
-4. **Chat UI 테스트 실행**:
-
-   ```bash
-   streamlit run chat_test/app.py
-   ```
-
-   * 웹 브라우저를 통해 실시간 대화 및 실행 로그(Node Trace) 확인
-
-## Streamlit Chat Test UI
-
-FastLangFrame은 생성된 에이전트를 즉시 테스트할 수 있는 웹 기반 Chat UI를 제공합니다.
-
-### 실행 방법
-
-1. 생성된 프로젝트 폴더로 이동합니다.
-2. 다음 명령어를 실행하여 Streamlit 앱을 구동합니다:
-
-   ```bash
-   # /projects/test_deep 디렉토리 기준 예시
-   streamlit run test_deep/chat_test/app.py
-   ```
-
-3. 브라우저에서 `http://localhost:8501` (또는 지정된 포트)로 접속하여 에이전트와 대화합니다.
-
-### 주요 기능
-
-* **실시간 노드 실행 추적**: 각 에이전트의 내부 실행 상태(LangGraph 노드, 도구 호출 등)를 실시간으로 확인 가능합니다.
-* **히스토리 초기화**: 우측 사이드바의 버튼을 통해 대화 내용을 초기화하고 새 테스트를 시작할 수 있습니다.
-* **다양한 에이전트 지원**: Simple, RAG, Multi, MCP, Deep 등 모든 에이전트 유형에 최적화된 UI를 제공합니다.
+*   **실시간 추적**: LangGraph의 각 노드 실행 상태와 도구 호출 결과를 실시간 확인
+*   **로그 뷰어**: 에이전트 내부에서 발생하는 상세 로그를 스트리밍 형태로 제공
+*   **히스토리 관리**: 대화 초기화 및 세션별 테스트 데이터 관리
 
 ![Chat Test UI Screenshot](docs/images/chat_test_screenshot.png)
+
+## 라이선스
+
+이 프로젝트는 [MIT License](LICENSE)를 따릅니다.
