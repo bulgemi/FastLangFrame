@@ -9,5 +9,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: 실행 위치에 따라 test_run.py 실행시 ModuleNotFoundError Bugfix**
+- [x] **Track: 실행 위치에 따라 test_run.py 실행시 ModuleNotFoundError Bugfix**
 *Link: [./tracks/test_run_bugfix_20260410/](./tracks/test_run_bugfix_20260410/)*
