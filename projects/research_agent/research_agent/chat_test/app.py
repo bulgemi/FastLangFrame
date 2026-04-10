@@ -8,13 +8,9 @@ from st_chat_input_multimodal import multimodal_chat_input
 
 # 1. 경로 설정 (패키지 구조와 프로젝트 루트 고려)
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-# PACKAGE_ROOT = <%project_name%>
 PACKAGE_ROOT = os.path.abspath(os.path.join(CURRENT_DIR, ".."))
-# PROJECT_ROOT = projects/<%project_name%>
 PROJECT_ROOT = os.path.abspath(os.path.join(PACKAGE_ROOT, ".."))
-# PROJECTS_DIR = projects
 PROJECTS_DIR = os.path.abspath(os.path.join(PROJECT_ROOT, ".."))
-# FRAMEWORK_ROOT = FastLangFrame (여기에 src 존재)
 FRAMEWORK_ROOT = os.path.abspath(os.path.join(PROJECTS_DIR, ".."))
 
 # 2. 환경 변수 우선 로드 (패키지 임포트 전)
@@ -30,15 +26,13 @@ from langchain_core.messages import HumanMessage
 from src.utils.multimodal import create_multimodal_message
 
 try:
-    from <%project_name%>.graph.builder import builder
+    from research_agent import builder
 except ImportError:
-    import sys
-    sys.path.append(PROJECT_ROOT)
-    from <%project_name%>.graph.builder import builder
+    from research_agent import builder
 
-st.set_page_config(page_title="RAG Chat", page_icon="📚", layout="wide")
-st.title("📚 RAG Chat")
-st.caption("RAG 기반 에이전트 테스트 UI입니다.")
+st.set_page_config(page_title="Multi-Agent", page_icon="🤝", layout="wide")
+st.title("🤝 Multi-Agent")
+st.caption("멀티 에이전트 협업 테스트 UI입니다.")
 st.markdown("---")
 
 if "messages" not in st.session_state:
@@ -124,7 +118,7 @@ if chat_result:
                 else:
                     full_response = str(response)
                 
-                status.update(label="답변 완료!", state="complete", expanded=False)
+                status.update(label="최종 답변 완료!", state="complete", expanded=False)
             except Exception as e:
                 full_response = f"⚠️ **에러 발생**: {str(e)}"
                 status.update(label="오류 발생", state="error", expanded=True)
@@ -136,7 +130,7 @@ if chat_result:
 
 with st.sidebar:
     st.header("Project Info")
-    st.info(f"**Project**: <%project_name%>")
+    st.info(f"**Project**: research_agent")
     st.info("**Engine**: LangGraph")
     
     st.markdown("---")

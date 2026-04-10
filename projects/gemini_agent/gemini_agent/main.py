@@ -1,18 +1,16 @@
 import os
 import sys
 
-# 1. 경로 설정 (패키지 구조와 프로젝트 루트 고려)
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-PROJECT_ROOT = os.path.abspath(os.path.join(CURRENT_DIR, ".."))
-PROJECTS_DIR = os.path.abspath(os.path.join(PROJECT_ROOT, ".."))
-FRAMEWORK_ROOT = os.path.abspath(os.path.join(PROJECTS_DIR, ".."))
-
-# 2. 경로 추가 (패키지 임포트 전)
-sys.path.insert(0, PROJECT_ROOT)
-sys.path.insert(0, FRAMEWORK_ROOT)
+# Set PYTHONPATH to root and the current project
+current_script_dir = os.path.dirname(os.path.abspath(__file__))
+package_root = os.path.dirname(current_script_dir)
+# Identify root as the parent of 'projects/'
+root_dir = os.path.abspath(os.path.join(package_root, "../../"))
+sys.path.insert(0, root_dir)
+sys.path.insert(0, package_root)
 
 import uvicorn
-from <%project_name%>.graph.builder import agent_graph
+from gemini_agent.graph.builder import agent_graph
 from src.core.server import create_agent_app
 
 # FastAPI app creation
