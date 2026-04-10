@@ -16,3 +16,8 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [x] **Track: streamlit UI에서 질의시 FileNotFoundError bugfix**
 *Link: [./tracks/streamlit_ui_file_not_found_bugfix_20260410/](./tracks/streamlit_ui_file_not_found_bugfix_20260410/)*
+
+---
+
+- [~] **Track: FastAPI Swagger Schema Improvement**
+  *Link: [./tracks/fastapi_swagger_schema_improvement_20260410/](./tracks/fastapi_swagger_schema_improvement_20260410/)*
