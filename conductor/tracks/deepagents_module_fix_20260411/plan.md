@@ -1,9 +1,9 @@
 # Implementation Plan: Fix ModuleNotFoundError for 'deepagents'
 
 ## Phase 1: Setup and Red Phase
-- [ ] Task: Create a failing test case that generates a deep agent from the template and verifies if the agent's server can start or if `deepagents` can be imported.
-- [ ] Task: Verify that the test fails with `ModuleNotFoundError` to confirm the issue.
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Setup and Red Phase' (Protocol in workflow.md)
+- [x] Task: Create a failing test case that generates a deep agent from the template and verifies if the agent's server can start or if `deepagents` can be imported.
+- [x] Task: Verify that the test fails with `ModuleNotFoundError` to confirm the issue.
+- [~] Task: Conductor - User Manual Verification 'Phase 1: Setup and Red Phase' (Protocol in workflow.md)
 
 ## Phase 2: Implementation (Green Phase)
 - [ ] Task: Fix the `deep_agent` template by correcting the import statement in `templates/deep_agent/<%project_name%>/graph/builder.py` or updating the template's dependency configuration.
