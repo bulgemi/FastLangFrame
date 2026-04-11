@@ -10,7 +10,7 @@ services:
     volumes:
       - database:/var/lib/postgresql/data
     environment:
-      POSTGRES_PASSWORD: ${PG_PASS:-fastlangframe_db_pass}
+      POSTGRES_PASSWORD: ${PG_PASS:?error}
       POSTGRES_USER: ${PG_USER:-authentik}
       POSTGRES_DB: ${PG_DB:-authentik}
     env_file:
@@ -29,16 +29,14 @@ services:
       - redis:/data
 
   server:
-    image: ${AUTHENTIK_IMAGE:-ghcr.io/goauthentik/server:2024.2.2}
+    image: ${AUTHENTIK_IMAGE:-ghcr.io/goauthentik/server:2024.12.3}
     command: server
     environment:
       AUTHENTIK_REDIS__HOST: redis
       AUTHENTIK_POSTGRESQL__HOST: postgresql
       AUTHENTIK_POSTGRESQL__USER: ${PG_USER:-authentik}
       AUTHENTIK_POSTGRESQL__NAME: ${PG_DB:-authentik}
-      AUTHENTIK_POSTGRESQL__PASSWORD: ${PG_PASS:-fastlangframe_db_pass}
-      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY:-fastlangframe_secret_key}
-      AUTHENTIK_BOOTSTRAP_PASSWORD: ${AUTHENTIK_BOOTSTRAP_PASSWORD:-FastLangFrame1!}
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${PG_PASS:?error}
     volumes:
       - ./media:/media
       - ./custom-templates:/templates
@@ -48,20 +46,20 @@ services:
       - "${COMPOSE_PORT_HTTP:-9000}:9000"
       - "${COMPOSE_PORT_HTTPS:-9443}:9443"
     depends_on:
-      - postgresql
-      - redis
+      postgresql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
   worker:
-    image: ${AUTHENTIK_IMAGE:-ghcr.io/goauthentik/server:2024.2.2}
+    image: ${AUTHENTIK_IMAGE:-ghcr.io/goauthentik/server:2024.12.3}
     command: worker
     environment:
       AUTHENTIK_REDIS__HOST: redis
       AUTHENTIK_POSTGRESQL__HOST: postgresql
       AUTHENTIK_POSTGRESQL__USER: ${PG_USER:-authentik}
       AUTHENTIK_POSTGRESQL__NAME: ${PG_DB:-authentik}
-      AUTHENTIK_POSTGRESQL__PASSWORD: ${PG_PASS:-fastlangframe_db_pass}
-      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY:-fastlangframe_secret_key}
-      AUTHENTIK_BOOTSTRAP_PASSWORD: ${AUTHENTIK_BOOTSTRAP_PASSWORD:-FastLangFrame1!}
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${PG_PASS:?error}
     # This is optional, and can be removed if you don't need
     # to run any tasks that require docker control
     # (like the Outpost integration)
@@ -74,8 +72,10 @@ services:
     env_file:
       - .env
     depends_on:
-      - postgresql
-      - redis
+      postgresql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
 volumes:
   database:
