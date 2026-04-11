@@ -1,0 +1,8 @@
+{
+  "track_id": "streamlit_multimodal_fix_20260411",
+  "type": "bug",
+  "status": "new",
+  "created_at": "2026-04-11T12:00:00Z",
+  "updated_at": "2026-04-11T12:00:00Z",
+  "description": "deep agent chat test streamlit 기동시 오류발생, ModuleNotFoundError: No module named 'st_chat_input_multimodal'"
+}
