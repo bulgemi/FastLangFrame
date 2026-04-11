@@ -1,6 +1,5 @@
 import streamlit as st
 import httpx
-import jwt
 from typing import Optional, Dict, Any
 from urllib.parse import urlencode
 from src.common.configs.settings import get_settings
