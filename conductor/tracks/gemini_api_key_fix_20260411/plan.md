@@ -8,7 +8,7 @@
 - [ ] Task: Run the test suite to confirm the new test passes and no other tests are broken.
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Investigation and Bug Fix' (Protocol in workflow.md) 6bbee66
 
-## Phase 2: System Validation
-- [~] Task: Run `streamlit run projects/research_agent/chat_test/app.py` with the `GOOGLE_API_KEY` correctly set in `.env` to verify the error is resolved.
-- [ ] Task: Run the full test suite and verify test coverage meets the >80% requirement.
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: System Validation' (Protocol in workflow.md)
+## Phase 2: System Validation [checkpoint: 4eea209]
+- [x] Task: Run `streamlit run projects/research_agent/chat_test/app.py` with the `GOOGLE_API_KEY` correctly set in `.env` to verify the error is resolved. 4eea209
+- [x] Task: Run the full test suite and verify test coverage meets the >80% requirement. 4eea209
+- [x] Task: Conductor - User Manual Verification 'Phase 2: System Validation' (Protocol in workflow.md) 4eea209
