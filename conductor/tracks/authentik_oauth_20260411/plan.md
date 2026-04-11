@@ -22,13 +22,13 @@
     - [x] Update standard API endpoints to use the new auth dependencies.
 - [x] Task: Conductor - User Manual Verification 'Phase 2: FastAPI Backend Security' (Protocol in workflow.md) [1caebdf]
 
-## Phase 3: Streamlit UI Integration
-- [ ] Task: Implement OAuth Redirect Flow in Streamlit
-    - [ ] Create UI components and logic for "Login with Authentik" button.
-    - [ ] Implement redirect to Authentik authorization URL.
-    - [ ] Implement callback logic to handle the authorization code exchange for tokens.
-- [ ] Task: Session Management in Streamlit
-    - [ ] Store access tokens securely in Streamlit session state.
-    - [ ] Display authenticated user details (name, role) in the UI sidebar.
-    - [ ] Restrict access to main application logic unless authenticated.
-- [ ] Task: Conductor - User Manual Verification 'Phase 3: Streamlit UI Integration' (Protocol in workflow.md)
+## Phase 3: Streamlit UI Integration [checkpoint: b0b4c07]
+- [x] Task: Implement OAuth Redirect Flow in Streamlit [dced5d2]
+    - [x] Create UI components and logic for "Login with Authentik" button.
+    - [x] Implement redirect to Authentik authorization URL.
+    - [x] Implement callback logic to handle the authorization code exchange for tokens.
+- [x] Task: Session Management in Streamlit [dced5d2]
+    - [x] Store access tokens securely in Streamlit session state.
+    - [x] Display authenticated user details (name, role) per sidebar logic.
+    - [x] Restrict access to main application logic unless authenticated.
+- [x] Task: Conductor - User Manual Verification 'Phase 3: Streamlit UI Integration' (Protocol in workflow.md) [b0b4c07]
