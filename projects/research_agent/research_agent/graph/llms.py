@@ -5,58 +5,24 @@ from typing import AsyncIterator, Type
 
 import httpx
 from langchain_core.exceptions import OutputParserException
-from langchain_core.messages import BaseMessage
+from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage
 from langchain_core.output_parsers import PydanticOutputParser
 from langchain_core.tools import BaseTool
-from langchain_openai.chat_models import ChatOpenAI
 from langgraph.prebuilt import create_react_agent
 from pydantic import BaseModel
 
 from research_agent.common.config import mari_config
+from src.utils.connectors.llm.llm_client import get_langchain_chat_model
 
 http_client = httpx.Client(verify=False)
 http_async_client = httpx.AsyncClient(verify=False)
 
+def _create_ax_chat_model(model_name: str) -> any:
+    # Use framework's get_langchain_chat_model for proper provider support
+    return get_langchain_chat_model(model_name=model_name, settings=mari_config)
 
-def _create_ax_chat_model(
-    api_key: str, endpoint: str, serving_name: str, callbacks: list, headers: dict
-) -> ChatOpenAI:
-    return ChatOpenAI(
-        api_key=api_key,
-        base_url=endpoint,
-        model=serving_name,
-        callbacks=callbacks,
-        default_headers=headers,
-        temperature=0,
-        http_client=http_client,
-        http_async_client=http_async_client,
-    )
-
-
-def _get_ax_llm_headers(api_key) -> dict[str, str]:
-    return {
-        "api-key": api_key,
-        "Content-Type": "application/json",
-    }
-
-
-_llm_gpt_4o = _create_ax_chat_model(
-    api_key=mari_config.LLM_API_KEY,
-    endpoint=mari_config.LLM_ENDPOINT,
-    serving_name=mari_config.LLM_MODEL_GPT_4o,
-    callbacks=[],
-    headers=_get_ax_llm_headers(mari_config.LLM_API_KEY),
-)
-
-
-_llm_gpt_4_1 = _create_ax_chat_model(
-    api_key=mari_config.LLM_API_KEY,
-    endpoint=mari_config.LLM_ENDPOINT,
-    serving_name=mari_config.LLM_MODEL_GPT_4_1,
-    callbacks=[],
-    headers=_get_ax_llm_headers(mari_config.LLM_API_KEY),
-)
-
+_llm_gpt_4o = _create_ax_chat_model(mari_config.LLM_MODEL_GPT_4o)
+_llm_gpt_4_1 = _create_ax_chat_model(mari_config.LLM_MODEL_GPT_4_1)
 
 class LlmClient(Enum):
     llm_gpt_4o = _llm_gpt_4o
@@ -73,22 +39,29 @@ async def ainvoke_llm(
 ) -> BaseModel | dict | str:
     """
     LLM 클라이언트와 메시지, 출력 타입을 받아 비동기로 LLM을 호출하고 결과를 반환합니다.
-
-    Args:
-        messages (list): LLM에 전달할 메시지 리스트
-        llm_client (LlmClient): 사용할 LLM 클라이언트 Enum (기본: llm_gpt_4_1)
-        output_type (Type[BaseModel] | None): 출력 모델 타입 (Pydantic BaseModel 등)
-
-    Returns:
-        output_type 인스턴스 또는 LLM의 일반 응답 결과
     """
     try:
         llm = llm_client()
+        
+        # Gemini-specific fix: Ensure at least one HumanMessage exists
+        if mari_config.llm_provider.lower() in ["gemini", "google"]:
+            has_human = any(isinstance(m, HumanMessage) for m in messages)
+            if not has_human:
+                if len(messages) == 1 and isinstance(messages[0], SystemMessage):
+                    # Convert single SystemMessage to HumanMessage
+                    messages = [HumanMessage(content=messages[0].content)]
+                else:
+                    # Append empty HumanMessage
+                    messages.append(HumanMessage(content="Please proceed."))
+
         if output_type:
-            llm = llm | PydanticOutputParser(pydantic_object=output_type)
+            # Use native structured output if available, else fallback to parser
+            try:
+                llm = llm.with_structured_output(output_type)
+            except Exception:
+                llm = llm | PydanticOutputParser(pydantic_object=output_type)
+        
         content = await llm.ainvoke(messages)
-        if output_type and isinstance(content, str):
-            return json.loads(content)
         return content
 
     except OutputParserException as e:
@@ -110,6 +83,16 @@ async def astream_llm(
 ) -> AsyncIterator[str]:
     try:
         llm = llm_client()
+
+        # Gemini-specific fix: Ensure at least one HumanMessage exists
+        if mari_config.llm_provider.lower() in ["gemini", "google"]:
+            has_human = any(isinstance(m, HumanMessage) for m in messages)
+            if not has_human:
+                if len(messages) == 1 and isinstance(messages[0], SystemMessage):
+                    messages = [HumanMessage(content=messages[0].content)]
+                else:
+                    messages.append(HumanMessage(content="Please proceed."))
+
         async for chunk in llm.astream(messages):
             if hasattr(chunk, "content") and chunk.content:
                 yield chunk.content

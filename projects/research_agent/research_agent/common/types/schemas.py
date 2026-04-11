@@ -1,6 +1,6 @@
 from enum import Enum
 
-from langchain.schema import HumanMessage, SystemMessage
+from langchain_core.messages import HumanMessage, SystemMessage
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -37,7 +37,7 @@ class PromptResource(BaseModel):
     prompt_id: str = Field(..., description="프롬프트 ID")
     prompt_name: str = Field(..., description="프롬프트 이름")
     description: str = Field("", description="프롬프트 설명")
-    tags: list[str] = Field("", description="프롬프트 태그 목록")
+    tags: list[str] = Field("", description="프롬프트 태그 목록")  # ty:ignore[invalid-assignment]
     variables: list[str] = Field([], description="프롬프트 변수 목록")
     messages: list[HumanMessage | SystemMessage] = Field(
         [], description="프롬프트 메시지 목록"
