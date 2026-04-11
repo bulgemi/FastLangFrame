@@ -10,17 +10,17 @@
     - [x] Add Authentik services (server, worker, redis, postgres) to main project's `docker-compose.yml` with default credentials (`admin`/`FastLangFrame1!`).
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Environment & Infrastructure Setup' (Protocol in workflow.md) [04b7449]
 
-## Phase 2: FastAPI Backend Security
-- [ ] Task: Implement JWT Validation Dependency
-    - [ ] Write failing test for JWT signature validation and token decoding (mocking JWKS) in a new test file `test_auth.py`.
-    - [ ] Implement authentication dependency using `fastapi.security` to fetch JWKS and validate tokens.
-    - [ ] Ensure JWT validation tests pass.
-- [ ] Task: Implement Role-Based Access Control (RBAC)
-    - [ ] Write failing test for role extraction and authorization logic in `test_auth.py`.
-    - [ ] Implement RBAC dependency to check for roles mapped from the Authentik token.
-    - [ ] Ensure RBAC tests pass.
-    - [ ] Update standard API endpoints to use the new auth dependencies.
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: FastAPI Backend Security' (Protocol in workflow.md)
+## Phase 2: FastAPI Backend Security [checkpoint: 1caebdf]
+- [x] Task: Implement JWT Validation Dependency [dced5d2]
+    - [x] Write failing test for JWT signature validation and token decoding (mocking JWKS) in a new test file `test_auth.py`.
+    - [x] Implement authentication dependency using `fastapi.security` to fetch JWKS and validate tokens.
+    - [x] Ensure JWT validation tests pass.
+- [x] Task: Implement Role-Based Access Control (RBAC) [dced5d2]
+    - [x] Write failing test for role extraction and authorization logic in `test_auth.py`.
+    - [x] Implement RBAC dependency to check for roles mapped from the Authentik token.
+    - [x] Ensure RBAC tests pass.
+    - [x] Update standard API endpoints to use the new auth dependencies.
+- [x] Task: Conductor - User Manual Verification 'Phase 2: FastAPI Backend Security' (Protocol in workflow.md) [1caebdf]
 
 ## Phase 3: Streamlit UI Integration
 - [ ] Task: Implement OAuth Redirect Flow in Streamlit
