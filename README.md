@@ -112,8 +112,9 @@ FastLangFrame은 LangChain 및 LangGraph를 기반으로 한 경량급 LLM 에�
 ### 3. 서버 실행
 
 ```bash
-cd projects/my_agent/my_agent
-python3 main.py --port 8888
+cd projects/my_agent
+poetry install
+poetry run python my_agent/main.py --port 8888
 ```
 
 * 브라우저에서 `http://localhost:8888/docs` 접속하여 Swagger UI 테스트 (Authorize 버튼을 통해 OAuth 인증 가능)
@@ -121,7 +122,8 @@ python3 main.py --port 8888
 ### 4. UI 테스트 실행
 
 ```bash
-streamlit run chat_test/app.py
+cd projects/my_agent
+poetry run streamlit run my_agent/chat_test/app.py
 ```
 
 * 최초 접속 시 Authentik 로그인 페이지로 리다이렉트됩니다.
