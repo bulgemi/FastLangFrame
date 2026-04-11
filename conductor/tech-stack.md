@@ -14,6 +14,11 @@
 - **Streamlit**: Provides the interactive chat UI for testing agents.
 - **Pytest**: Primary testing framework.
 
+## Security & Identity
+- **Authentik**: Open-source identity provider for OAuth2/OIDC.
+- **PyJWT**: For JWT token validation and RBAC.
+- **FastAPI Security**: Built-in modules for OAuth2 flow management.
+
 ## Infrastructure & Deployment
 - **Docker**: For containerizing agent projects.
 - **Kubernetes (K8s)**: Target deployment platform.
