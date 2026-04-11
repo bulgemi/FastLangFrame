@@ -10,7 +10,7 @@
 - [x] Task: Run the test suite and confirm the previously failing test now passes.
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Implementation (Green Phase)' (Protocol in workflow.md)
 
-## Phase 3: Refactoring and Documentation
+## Phase 3: Refactoring and Documentation [checkpoint: 9b37ee6]
 - [x] Task: Review the template generation setup to ensure no other dependencies are missing.
 - [x] Task: Update any relevant documentation (e.g., template README) regarding how to run the newly generated agent.
-- [~] Task: Conductor - User Manual Verification 'Phase 3: Refactoring and Documentation' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 3: Refactoring and Documentation' (Protocol in workflow.md)
