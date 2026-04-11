@@ -1,8 +1,8 @@
 # Implementation Plan: Fix ModuleNotFoundError for 'st_chat_input_multimodal'
 
 ## Phase 1: Setup and Red Phase
-- [ ] Task: Reproduce the error by generating a deep agent project and running `streamlit run chat_test/app.py` without `poetry run` to confirm the `ModuleNotFoundError` for `st_chat_input_multimodal`.
-- [ ] Task: Verify whether `st_chat_input_multimodal` is defined in the project's dependencies (`pyproject.toml`) and correctly installed in the root Poetry environment.
+- [x] Task: Reproduce the error by generating a deep agent project and running `streamlit run chat_test/app.py` without `poetry run` to confirm the `ModuleNotFoundError` for `st_chat_input_multimodal`.
+- [x] Task: Verify whether `st_chat_input_multimodal` is defined in the project's dependencies (`pyproject.toml`) and correctly installed in the root Poetry environment.
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: Setup and Red Phase' (Protocol in workflow.md)
 
 ## Phase 2: Implementation (Green Phase)
