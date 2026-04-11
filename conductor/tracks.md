@@ -11,3 +11,8 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [x] **Track: Fix ModuleNotFoundError for langchain.schema in Streamlit Chat Test**
   *Link: [./tracks/langchain_import_fix_20260411/](./tracks/langchain_import_fix_20260411/)*
+
+---
+
+- [ ] **Track: authentik OAuth integration**
+*Link: [./tracks/authentik_oauth_20260411/](./tracks/authentik_oauth_20260411/)*
