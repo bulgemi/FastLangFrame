@@ -1,0 +1,8 @@
+{
+  "track_id": "deepagents_module_fix_20260411",
+  "type": "bug",
+  "status": "new",
+  "created_at": "2026-04-11T12:00:00Z",
+  "updated_at": "2026-04-11T12:00:00Z",
+  "description": "deep agent 생성후 fastapi실행 오류 수정, ModuleNotFoundError: No moudle named 'deepagents' 발생"
+}

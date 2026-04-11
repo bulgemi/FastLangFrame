@@ -24,6 +24,10 @@ sys.path.append(PACKAGE_ROOT)
 
 from langchain_core.messages import HumanMessage
 from src.utils.multimodal import create_multimodal_message
+from src.utils.auth_streamlit import check_auth
+
+# Check authentication
+check_auth()
 
 try:
     from <%project_name%>.graph.builder import builder
@@ -135,6 +139,13 @@ with st.sidebar:
     st.info(f"**Project**: <%project_name%>")
     st.info("**Engine**: LangGraph")
     
+    if "user_info" in st.session_state:
+        st.info(f"**User**: {st.session_state.user_info.get('name', 'N/A')}")
+        if st.button("Log out"):
+            del st.session_state.auth_token
+            del st.session_state.user_info
+            st.rerun()
+
     st.markdown("---")
     st.header("Actions")
     

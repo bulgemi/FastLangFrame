@@ -1,0 +1,8 @@
+{
+  "track_id": "authentik_oauth_20260411",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-04-11T00:00:00Z",
+  "updated_at": "2026-04-11T00:00:00Z",
+  "description": "authentik(https://github.com/goauthentik/authentik)을 이용하여, OAuth 기능 추가, docker compose로 authentik docker container(ID: admin, Password: FastLangFrame1!) 기동 후 FastAPI와 streamlit ui에 OAuth 연동 .env.sample에 OAuth 연동 url 정보 추가"
+}

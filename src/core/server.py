@@ -1,10 +1,11 @@
 import json
 import asyncio
 from typing import Any
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Depends
 from fastapi.responses import StreamingResponse
 
 from .api_models import AgentInvokeRequest, AgentBatchRequest, AgentInvokeResponse, AgentBatchResponse
+from src.common.middleware.auth import verify_token
 
 def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> FastAPI:
     """
@@ -18,7 +19,7 @@ def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> Fas
         return {"status": "ok", "message": f"Welcome to {title}"}
 
     @app.post("/invoke", summary="Agent 실행", response_model=AgentInvokeResponse)
-    async def invoke(req: AgentInvokeRequest):
+    async def invoke(req: AgentInvokeRequest, auth: dict = Depends(verify_token)):
         """단일 Agent 입력을 받아 전체 처리가 끝난 뒤 결과 반환"""
         try:
             result = await graph.ainvoke(req.input, req.config)
@@ -28,7 +29,7 @@ def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> Fas
             return AgentInvokeResponse(error=str(e), status="error")
 
     @app.post("/stream", summary="Agent 스트리밍 실행")
-    async def stream(req: AgentInvokeRequest):
+    async def stream(req: AgentInvokeRequest, auth: dict = Depends(verify_token)):
         """단일 Agent 실행 중 이벤트를 SSE 스트림으로 반환"""
         async def event_generator():
             try:
@@ -41,7 +42,7 @@ def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> Fas
         return StreamingResponse(event_generator(), media_type="text/event-stream")
 
     @app.post("/invoke_batch", summary="Agent 배치 실행", response_model=AgentBatchResponse)
-    async def invoke_batch(req: AgentBatchRequest):
+    async def invoke_batch(req: AgentBatchRequest, auth: dict = Depends(verify_token)):
         """다수의 입력을 병렬로 처리 후 모든 결과가 완료되면 리스트 리턴"""
         try:
             results = await graph.abatch(req.inputs, req.config)
@@ -50,7 +51,7 @@ def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> Fas
             return AgentBatchResponse(error=str(e), status="error")
 
     @app.post("/invoke_stream_batch", summary="Agent 스트리밍 배치 실행")
-    async def invoke_stream_batch(req: AgentBatchRequest):
+    async def invoke_stream_batch(req: AgentBatchRequest, auth: dict = Depends(verify_token)):
         """
         다중 배치를 동시에 시작하여 각 입력별 스트림 이벤트를
         하나의 SSE 스트림으로 병합(Interleaved) 전송합니다.
