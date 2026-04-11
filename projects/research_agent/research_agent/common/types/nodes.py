@@ -348,3 +348,26 @@ class DataAnalysisToolNodeInput(BaseModel):
 
 class DataAnalysisToolNodeOutput(BaseModel):
     results: dict = Field(default_factory=dict, description="Analysis Tool 결과")
+
+## ResearchNode Input/Output Types
+class ResearchPlannerNodeInput(BaseModel):
+    query: str = Field(..., description="사용자 질의")
+    histories: list[dict] = Field(default_factory=list, description="대화 히스토리")
+
+class ResearchPlannerNodeOutput(BaseModel):
+    research_tasks: list[str] = Field(default_factory=list, description="분해된 연구 작업 목록")
+    overall_goal: str = Field(..., description="전체 연구 목표")
+
+class ResearchSearchNodeInput(BaseModel):
+    tasks: list[str] = Field(..., description="수행할 연구 작업 목록")
+
+class ResearchSearchNodeOutput(BaseModel):
+    search_results: list[dict] = Field(default_factory=list, description="검색 결과 목록")
+
+class ResearchSynthesisNodeInput(BaseModel):
+    query: str = Field(..., description="원래 질의")
+    search_results: list[dict] = Field(..., description="수집된 검색 결과")
+    overall_goal: str = Field(..., description="연구 목표")
+
+class ResearchSynthesisNodeOutput(BaseModel):
+    final_report: str = Field(..., description="최종 Markdown 리포트")

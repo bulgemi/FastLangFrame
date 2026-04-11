@@ -26,13 +26,15 @@ from langchain_core.messages import HumanMessage
 from src.utils.multimodal import create_multimodal_message
 
 try:
-    from research_agent import builder
+    from research_agent.graph.builder import builder
 except ImportError:
-    from research_agent import builder
+    import sys
+    sys.path.append(PROJECT_ROOT)
+    from research_agent.graph.builder import builder
 
-st.set_page_config(page_title="Multi-Agent", page_icon="🤝", layout="wide")
-st.title("🤝 Multi-Agent")
-st.caption("멀티 에이전트 협업 테스트 UI입니다.")
+st.set_page_config(page_title="Research Agent", page_icon="🔍", layout="wide")
+st.title("🔍 Research Agent")
+st.caption("리서치 에이전트 연구 및 보고서 생성 테스트 UI입니다.")
 st.markdown("---")
 
 if "messages" not in st.session_state:

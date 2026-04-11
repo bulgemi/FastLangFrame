@@ -1,33 +1,55 @@
-from langgraph.prebuilt import create_react_agent
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.tools import tool
-from src.utils.connectors.llm.llm_client import get_langchain_chat_model
+from langgraph.graph import END, StateGraph
 
-@tool
-def researcher_tool(query: str) -> str:
-    """Useful for researching a topic."""
-    return f"Research results for {query}"
+from research_agent.graph.nodes import (
+    ResearchPlannerNode,
+    ResearchSearchNode,
+    ResearchSynthesisNode,
+)
+from research_agent.graph.state import ResearchGraphState
 
-@tool
-def writer_tool(topic: str) -> str:
-    """Useful for writing content about a topic."""
-    return f"Written content about {topic}"
 
-class MultiAgentBuilder:
+class ResearchAgentBuilder:
     def __init__(self):
-        self.llm = get_langchain_chat_model()
-        self.tools = [researcher_tool, writer_tool]
-        # system_prompt is passed to create_react_agent
-        system_prompt = "You are a multi-agent supervisor. Use the provided tools (researcher, writer) to fulfill the request."
-        
-        self.agent_executor = create_react_agent(self.llm, self.tools, prompt=system_prompt)
+        # Initialize nodes
+        self.planner = ResearchPlannerNode()
+        self.search = ResearchSearchNode()
+        self.synthesis = ResearchSynthesisNode()
+
+        # Build Graph
+        workflow = StateGraph(ResearchGraphState)
+
+        # Add Nodes
+        workflow.add_node(self.planner.name, self.planner)
+        workflow.add_node(self.search.name, self.search)
+        workflow.add_node(self.synthesis.name, self.synthesis)
+
+        # Set Entry Point and Edges
+        workflow.set_entry_point(self.planner.name)
+        workflow.add_edge(self.planner.name, self.search.name)
+        workflow.add_edge(self.search.name, self.synthesis.name)
+        workflow.add_edge(self.synthesis.name, END)
+
+        self.graph = workflow.compile()
 
     async def ainvoke(self, input: dict, config=None):
         """
-        Execute the agent graph.
-        create_react_agent expects a dict with 'messages' or similar state.
+        Invoke the research agent graph.
+        Expects input with 'req_input' or will wrap it.
         """
-        return await self.agent_executor.ainvoke(input, config=config)
+        # If input is a raw dict with 'query', wrap it into ResearchGraphState structure
+        if "req_input" not in input and "query" in input:
+            state = {
+                "req_input": {
+                    "query": input["query"],
+                    "company_code": input.get("company_code", "default"),
+                    "user_num": input.get("user_num", 0),
+                }
+            }
+        else:
+            state = input
 
-builder = MultiAgentBuilder()
-agent_graph = builder.agent_executor
+        return await self.graph.ainvoke(state, config=config)
+
+
+builder = ResearchAgentBuilder()
+agent_graph = builder.graph

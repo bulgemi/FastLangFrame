@@ -2,7 +2,7 @@ import json
 import logging
 from typing import Dict, Optional
 
-from pydantic import Field, field_validator, model_validator
+from pydantic import Field, AliasChoices, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 logger = logging.getLogger(__name__)
@@ -28,24 +28,29 @@ class MariAgentConfig(BaseSettings):
     )
 
     # LLM 관련 설정
+    llm_provider: str = Field( 
+        default="openai", 
+        alias="LLM_PROVIDER", 
+        description="LLM Provider (openai, gemini, azure, etc.)", 
+    )
     llm_api_key: str = Field(
         default="sk-2e9622c660cf089567e7967a5a7d481b",
-        alias="LLM_API_KEY",
+        validation_alias=AliasChoices("LLM_API_KEY", "GOOGLE_API_KEY", "GEMINI_API_KEY", "OPENAI_API_KEY"),
         description="LLM API Key",
     )
     llm_endpoint: str = Field(
         default="https://aip.sktai.io/api/v1/gateway",
-        alias="LLM_ENDPOINT",
+        validation_alias=AliasChoices("LLM_ENDPOINT", "OPENAI_BASE_URL", "GOOGLE_BASE_URL"),
         description="LLM API Endpoint",
     )
     llm_model_gpt_4o: str = Field(
         default="openai_skmidev-azure-openai-gpt-4o-20241120",
-        alias="LLM_MODEL_GPT_4o",
+        validation_alias=AliasChoices("LLM_MODEL_GPT_4o", "MODEL_NAME", "OPENAI_MODEL_NAME"),
         description="GPT-4o Model Name",
     )
     llm_model_gpt_4_1: str = Field(
         default="skmidev-gpt-4-1-20250414",
-        alias="LLM_MODEL_GPT_4_1",
+        validation_alias=AliasChoices("LLM_MODEL_GPT_4_1", "MODEL_NAME", "OPENAI_MODEL_NAME"),
         description="GPT-4.1 Model Name",
     )
 

@@ -1,8 +1,0 @@
-{
-  "track_id": "test_run_bugfix_20260410",
-  "type": "bugfix",
-  "status": "new",
-  "created_at": "2026-04-10T00:00:00Z",
-  "updated_at": "2026-04-10T00:00:00Z",
-  "description": "실행 위치에 따라 test_run.py 실행시 ModuleNotFoundError Bugfix"
-}
