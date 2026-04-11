@@ -6,8 +6,8 @@
     - [x] Write failing test in `test_settings.py` to ensure OAuth settings are loaded correctly.
     - [x] Update `src/common/configs/settings.py` to parse and validate OAuth configuration.
     - [x] Ensure `test_settings.py` passes.
-- [ ] Task: Configure Authentik in Docker Compose
-    - [ ] Add Authentik services (server, worker, redis, postgres) to main project's `docker-compose.yml` with default credentials (`admin`/`FastLangFrame1!`).
+- [x] Task: Configure Authentik in Docker Compose [5c37e68]
+    - [x] Add Authentik services (server, worker, redis, postgres) to main project's `docker-compose.yml` with default credentials (`admin`/`FastLangFrame1!`).
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: Environment & Infrastructure Setup' (Protocol in workflow.md)
 
 ## Phase 2: FastAPI Backend Security
