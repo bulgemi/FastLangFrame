@@ -2,8 +2,8 @@ FROM python:3.12-slim
 WORKDIR /app
 RUN apt-get update && apt-get install -y build-essential curl && rm -rf /var/lib/apt/lists/*
 # 1. Install dependencies (using the project's pyproject.toml from the root context)
-COPY projects/<%project_name%>/<%project_name%>/pyproject.toml /app/projects/<%project_name%>/<%project_name%>/pyproject.toml
-WORKDIR /app/projects/<%project_name%>/<%project_name%>
+COPY projects/<%project_name%>/pyproject.toml /app/projects/<%project_name%>/pyproject.toml
+WORKDIR /app/projects/<%project_name%>
 RUN pip install poetry && poetry config virtualenvs.create false && poetry install --no-root
 
 # 2. Copy framework 'src' and project files
