@@ -19,5 +19,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [~] **Track: deep agent 생성후 fastapi실행 오류 수정, ModuleNotFoundError: No moudle named 'deepagents' 발생**
+- [x] **Track: deep agent 생성후 fastapi실행 오류 수정, ModuleNotFoundError: No moudle named 'deepagents' 발생**
 *Link: [./tracks/deepagents_module_fix_20260411/](./tracks/deepagents_module_fix_20260411/)*
