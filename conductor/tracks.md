@@ -14,5 +14,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: authentik OAuth integration**
+- [x] **Track: authentik OAuth integration**
 *Link: [./tracks/authentik_oauth_20260411/](./tracks/authentik_oauth_20260411/)*
