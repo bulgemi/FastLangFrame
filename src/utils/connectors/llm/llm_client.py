@@ -63,9 +63,12 @@ def get_langchain_chat_model(model_name: Optional[str] = None) -> BaseChatModel:
         (settings.llm_provider.lower() in ["gemini", "google"])
     )
     if is_gemini:
+        api_key = settings.google_api_key or settings.llm_api_key
+        if not api_key or api_key == "default_key":
+            raise ValueError("Gemini API Key is not set or invalid. Please set GOOGLE_API_KEY in your .env file.")
         return ChatGoogleGenerativeAI(
             model=model_name or settings.model_name,
-            google_api_key=SecretStr(settings.google_api_key or settings.llm_api_key),
+            google_api_key=SecretStr(api_key),
         )
     
     # Standard OpenAI logic
@@ -111,9 +114,12 @@ def get_llm_by_role(role: str) -> BaseChatModel:
         )
         
     if provider in ["gemini", "google"]:
+        api_key = config.get("api_key") or settings.google_api_key or settings.llm_api_key
+        if not api_key or api_key == "default_key":
+            raise ValueError("Gemini API Key is not set or invalid. Please set GOOGLE_API_KEY in your .env file.")
         return ChatGoogleGenerativeAI(
             model=config.get("model") or config.get("deployment") or settings.model_name,
-            google_api_key=SecretStr(config.get("api_key") or settings.google_api_key or settings.llm_api_key),
+            google_api_key=SecretStr(api_key),
         )
     
     # Default to OpenAI logic for other providers (can be extended)
