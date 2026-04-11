@@ -4,7 +4,13 @@ import streamlit as st
 import asyncio
 import base64
 from dotenv import load_dotenv
-from st_chat_input_multimodal import multimodal_chat_input
+HAS_MULTIMODAL = True
+try:
+    from st_chat_input_multimodal import multimodal_chat_input
+except ImportError:
+    HAS_MULTIMODAL = False
+    # st.error("Missing dependency: 'st-chat-input-multimodal'. Please run 'pip install st-chat-input-multimodal' or 'poetry install'.")
+    # st.stop()
 
 # 1. 경로 설정 (패키지 구조와 프로젝트 루트 고려)
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -34,11 +40,11 @@ from src.utils.auth_streamlit import check_auth
 check_auth()
 
 try:
-    from <%project_name%>.graph.builder import builder
+    from graph.builder import builder
 except ImportError:
     import sys
-    sys.path.append(PROJECT_ROOT)
-    from <%project_name%>.graph.builder import builder
+    sys.path.append(PACKAGE_ROOT)
+    from graph.builder import builder
 
 st.set_page_config(page_title="Deep Chat", page_icon="🧠", layout="wide")
 st.title("🧠 Deep Chat")
@@ -67,12 +73,17 @@ def run_async(coro):
     return loop.run_until_complete(coro)
 
 # 사용자 입력
-chat_result = multimodal_chat_input(
-    placeholder="에이전트에게 복합적인 요청을 해보세요...",
-    enable_voice_input=True,
-    voice_language="ko-KR",
-    key="chat_input"
-)
+if HAS_MULTIMODAL:
+    chat_result = multimodal_chat_input(
+        placeholder="에이전트에게 복합적인 요청을 해보세요...",
+        enable_voice_input=True,
+        voice_language="ko-KR",
+        key="chat_input"
+    )
+else:
+    st.warning("Missing 'st-chat-input-multimodal'. Multimodal features disabled. Run `pip install st-chat-input-multimodal` to enable.")
+    prompt = st.chat_input("에이전트에게 요청을 해보세요...")
+    chat_result = {"text": prompt} if prompt else None
 
 if chat_result:
     prompt = chat_result.get("text")

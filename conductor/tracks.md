@@ -24,5 +24,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: deep agent chat test streamlit 기동시 오류발생, ModuleNotFoundError: No module named 'st_chat_input_multimodal'**
+- [x] **Track: deep agent chat test streamlit 기동시 오류발생, ModuleNotFoundError: No module named 'st_chat_input_multimodal'**
 *Link: [./tracks/streamlit_multimodal_fix_20260411/](./tracks/streamlit_multimodal_fix_20260411/)*

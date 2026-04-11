@@ -1,4 +1,10 @@
-from deepagents import create_deep_agent
+try:
+    from deepagents import create_deep_agent
+except ImportError:
+    # This might happen if poetry install was not run
+    print("❌ Error: 'deepagents' library not found. Please run 'poetry install' in the project root.")
+    raise
+
 from src.utils.connectors.llm.llm_client import get_langchain_chat_model
 from .tools import tools
 

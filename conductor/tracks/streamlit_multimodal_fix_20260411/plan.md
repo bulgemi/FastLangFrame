@@ -10,6 +10,6 @@
 - [x] Task: Ensure that running the Streamlit app with `poetry run streamlit run chat_test/app.py` within the generated project's virtual environment resolves the issue.
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Implementation (Green Phase)' (Protocol in workflow.md)
 
-## Phase 3: Refactoring and Documentation
+## Phase 3: Refactoring and Documentation [checkpoint: 8a93612]
 - [x] Task: Review the core `README.md` and any relevant guides to ensure that the instruction for starting the Streamlit app explicitly uses `poetry run streamlit run chat_test/app.py`.
-- [ ] Task: Conductor - User Manual Verification 'Phase 3: Refactoring and Documentation' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 3: Refactoring and Documentation' (Protocol in workflow.md)
