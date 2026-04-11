@@ -1,11 +1,11 @@
 # Implementation Plan: Authentik OAuth Integration
 
 ## Phase 1: Environment & Infrastructure Setup
-- [ ] Task: Update Configuration Models
-    - [ ] Update `.env.sample` with Authentik OAuth connection variables (Client ID, Secret, URLs).
-    - [ ] Write failing test in `test_settings.py` to ensure OAuth settings are loaded correctly.
-    - [ ] Update `src/common/configs/settings.py` to parse and validate OAuth configuration.
-    - [ ] Ensure `test_settings.py` passes.
+- [x] Task: Update Configuration Models [63f9a10]
+    - [x] Update `.env.sample` with Authentik OAuth connection variables (Client ID, Secret, URLs).
+    - [x] Write failing test in `test_settings.py` to ensure OAuth settings are loaded correctly.
+    - [x] Update `src/common/configs/settings.py` to parse and validate OAuth configuration.
+    - [x] Ensure `test_settings.py` passes.
 - [ ] Task: Configure Authentik in Docker Compose
     - [ ] Add Authentik services (server, worker, redis, postgres) to main project's `docker-compose.yml` with default credentials (`admin`/`FastLangFrame1!`).
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: Environment & Infrastructure Setup' (Protocol in workflow.md)
