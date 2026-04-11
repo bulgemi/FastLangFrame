@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "research_agent"
+version = "0.1.0"
+description = ""
+authors = ["Kim Donghun <donghun_kim@skcc.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+langchain = { version = "^1.2.11", extras = ["openai"] }
+langgraph = "^1.1.1"
+langgraph-prebuilt = "^1.0.8"
+langgraph-checkpoint = "^4.0.1"
+deepagents = "^0.4.12"
+gunicorn = "^25.1.0"
+copier = "^9.11.0"
+openai = "^1.50.0"
+pydantic = "^2.7.4"
+pydantic-settings = "^2.5.0"
+sqlalchemy = "^2.0.35"
+httpx = "^0.28.1"
+python-dotenv = "^1.0.1"
+streamlit = "^1.32.0"
+st-chat-input-multimodal = "^1.0.6"
+fastapi = "^0.135.1"
+uvicorn = "^0.42.0"
+pytest = "^9.0.2"
+pytest-asyncio = "^1.3.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

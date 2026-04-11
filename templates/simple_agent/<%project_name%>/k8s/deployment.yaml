@@ -13,10 +13,10 @@ spec:
         app: <%k8s_name%>
     spec:
       containers:
-      - name: <%k8s_name%>
-        image: <%k8s_name%>:latest
-        ports:
-        - containerPort: 8888
+        - name: <%k8s_name%>
+          image: <%k8s_name%>:latest
+          ports:
+            - containerPort: 8888
 ---
 apiVersion: v1
 kind: Service
@@ -27,6 +27,6 @@ spec:
     app: <%k8s_name%>
   ports:
     - protocol: TCP
-      port: 9888
+      port: 8888
       targetPort: 8888
   type: LoadBalancer

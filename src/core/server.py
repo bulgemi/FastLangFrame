@@ -4,7 +4,7 @@ from typing import Any
 from fastapi import FastAPI, Request
 from fastapi.responses import StreamingResponse
 
-from .api_models import AgentInvokeRequest, AgentBatchRequest
+from .api_models import AgentInvokeRequest, AgentBatchRequest, AgentInvokeResponse, AgentBatchResponse
 
 def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> FastAPI:
     """
@@ -17,15 +17,15 @@ def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> Fas
     async def root():
         return {"status": "ok", "message": f"Welcome to {title}"}
 
-    @app.post("/invoke", summary="Agent 실행")
+    @app.post("/invoke", summary="Agent 실행", response_model=AgentInvokeResponse)
     async def invoke(req: AgentInvokeRequest):
         """단일 Agent 입력을 받아 전체 처리가 끝난 뒤 결과 반환"""
         try:
             result = await graph.ainvoke(req.input, req.config)
             # BaseMessage 등 직렬화 불가능한 객체 처리 (필요시)
-            return {"result": result}
+            return AgentInvokeResponse(result=result)
         except Exception as e:
-            return {"error": str(e), "status": "error"}
+            return AgentInvokeResponse(error=str(e), status="error")
 
     @app.post("/stream", summary="Agent 스트리밍 실행")
     async def stream(req: AgentInvokeRequest):
@@ -40,14 +40,14 @@ def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> Fas
         
         return StreamingResponse(event_generator(), media_type="text/event-stream")
 
-    @app.post("/invoke_batch", summary="Agent 배치 실행")
+    @app.post("/invoke_batch", summary="Agent 배치 실행", response_model=AgentBatchResponse)
     async def invoke_batch(req: AgentBatchRequest):
         """다수의 입력을 병렬로 처리 후 모든 결과가 완료되면 리스트 리턴"""
         try:
             results = await graph.abatch(req.inputs, req.config)
-            return {"results": results}
+            return AgentBatchResponse(results=results)
         except Exception as e:
-            return {"error": str(e), "status": "error"}
+            return AgentBatchResponse(error=str(e), status="error")
 
     @app.post("/invoke_stream_batch", summary="Agent 스트리밍 배치 실행")
     async def invoke_stream_batch(req: AgentBatchRequest):

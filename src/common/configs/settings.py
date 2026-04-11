@@ -1,4 +1,5 @@
-from typing import Optional, List
+import json
+from typing import Optional, List, Dict, Any
 from pydantic import Field, AliasChoices
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -8,19 +9,23 @@ class FastLangFrameSettings(BaseSettings):
         env_file=".env", 
         env_file_encoding="utf-8",
         extra="ignore",
-        case_sensitive=False
+        case_sensitive=False,
+        protected_namespaces=('settings_',)
     )
 
     # LLM Settings
+    llm_provider: str = Field(default="openai", alias="LLM_PROVIDER")
     llm_api_key: str = Field(
         default="default_key",
         validation_alias=AliasChoices(
             "llm_api_key",
             "OPENAI_API_KEY",
             "AZURE_OPENAI_API_KEY",
-            "DEEPSEEK_API_KEY",
-            "GEMINI_API_KEY",
+            "ANTHROPIC_API_KEY",
             "CLAUDE_API_KEY",
+            "GOOGLE_API_KEY",
+            "GEMINI_API_KEY",
+            "DEEPSEEK_API_KEY",
             "LLM_API_KEY"
         )
     )
@@ -53,6 +58,13 @@ class FastLangFrameSettings(BaseSettings):
     azure_openai_api_version: str = Field(default="2024-02-15-preview", alias="AZURE_OPENAI_API_VERSION")
     azure_deployment_name: Optional[str] = Field(default=None, alias="AZURE_DEPLOYMENT_NAME")
 
+    # Anthropic (Claude) Specific
+    anthropic_api_key: Optional[str] = Field(default=None, alias="ANTHROPIC_API_KEY")
+    anthropic_api_url: Optional[str] = Field(default=None, alias="ANTHROPIC_API_URL")
+
+    # Google (Gemini) Specific
+    google_api_key: Optional[str] = Field(default=None, alias="GOOGLE_API_KEY")
+
     deep_thinking_model_name: Optional[str] = None
     light_thinking_model_name: Optional[str] = None
     llm_timeout_sec: int = 60
@@ -71,6 +83,20 @@ class FastLangFrameSettings(BaseSettings):
     phoenix_enabled: bool = False
     phoenix_endpoint: Optional[str] = None
     project_name: str = "fastlangframe-agent"
+
+    # Multi-Model Configuration (JSON string)
+    llm_models_json: Optional[str] = Field(default=None, alias="LLM_MODELS_JSON")
+
+    @property
+    def llm_models(self) -> Dict[str, Dict[str, Any]]:
+        """Parses the JSON model configuration into a dictionary"""
+        if not self.llm_models_json:
+            return {}
+        try:
+            return json.loads(self.llm_models_json)
+        except json.JSONDecodeError:
+            # Fallback or log error
+            return {}
 
 _settings_instance: Optional[FastLangFrameSettings] = None
 
