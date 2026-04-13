@@ -29,5 +29,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: Fastapi 인증 방식 OAuth2PasswordBearer (OAuth2, password)로 변경**
+- [x] **Track: Fastapi 인증 방식 OAuth2PasswordBearer (OAuth2, password)로 변경**
 *Link: [./tracks/oauth2password_20260413/](./tracks/oauth2password_20260413/)*

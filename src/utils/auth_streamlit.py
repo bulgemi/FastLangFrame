@@ -1,83 +1,62 @@
 import streamlit as st
 import httpx
 from typing import Optional, Dict, Any
-from urllib.parse import urlencode
 from src.common.configs.settings import get_settings
 
 settings = get_settings()
 
-def get_login_url() -> str:
-    """Generates the Authentik login URL"""
-    params = {
-        "client_id": settings.authentik_client_id,
-        "redirect_uri": settings.authentik_callback_url,
-        "response_type": "code",
-        "scope": "openid profile email",
-        # State should be used in production for security
-        "state": "random_state_string" 
-    }
-    return f"{settings.authentik_auth_url}?{urlencode(params)}"
-
-def exchange_code_for_token(code: str) -> Optional[Dict[str, Any]]:
-    """Exchanges the authorization code for an access token"""
+def login_with_password(username: str, password: str) -> Optional[Dict[str, Any]]:
+    """Authenticates with the backend using username and password"""
+    # Use relative or configured URL for the backend token endpoint
+    # In production, this should be the full URL. For now, we'll use a relative path if possible, 
+    # but Streamlit runs on a different port, so we need the backend URL.
+    # We can assume the backend is at AUTHENTIK_URL but on the FastAPI port (usually 8000)
+    # or just use a new setting if needed. For now, let's use a common pattern.
+    backend_url = settings.authentik_url.replace(":9000", ":8000") if settings.authentik_url else "http://localhost:8000"
+    token_url = f"{backend_url}/token"
+    
     data = {
-        "grant_type": "authorization_code",
-        "code": code,
-        "client_id": settings.authentik_client_id,
-        "client_secret": settings.authentik_client_secret,
-        "redirect_uri": settings.authentik_callback_url,
+        "username": username,
+        "password": password,
     }
     
-    with httpx.Client() as client:
-        response = client.post(settings.authentik_token_url, data=data)
-        if response.status_code == 200:
-            return response.json()
-        else:
-            st.error(f"Failed to exchange token: {response.text}")
-            return None
-
-def get_user_info(access_token: str) -> Optional[Dict[str, Any]]:
-    """Fetches user info from Authentik using the access token"""
-    headers = {"Authorization": f"Bearer {access_token}"}
-    with httpx.Client() as client:
-        response = client.get(settings.authentik_userinfo_url, headers=headers)
-        if response.status_code == 200:
-            return response.json()
-        else:
-            return None
+    try:
+        with httpx.Client() as client:
+            response = client.post(token_url, data=data)
+            if response.status_code == 200:
+                return response.json()
+            else:
+                st.error(f"Login failed: {response.json().get('detail', 'Unknown error')}")
+                return None
+    except Exception as e:
+        st.error(f"Could not connect to auth server: {str(e)}")
+        return None
 
 def check_auth():
     """ Main entry point to check authentication state in Streamlit """
-    if not settings.authentik_auth_url:
-        # OAuth not configured, skip
+    # If no secret key is set, we might be in a dev mode without auth
+    if settings.jwt_secret_key == "your_jwt_secret_key" and not settings.authentik_url:
         return True
 
     if "auth_token" not in st.session_state:
-        # Check if we are returning from Authentik with a code
-        query_params = st.query_params
-        if "code" in query_params:
-            code = query_params["code"]
-            token_data = exchange_code_for_token(code)
-            if token_data:
-                st.session_state.auth_token = token_data.get("access_token")
-                st.session_state.id_token = token_data.get("id_token")
-                # Clear query params
-                st.query_params.clear()
-                st.rerun()
-        
-        # Still no token, show login button
-        st.warning("Please log in to continue.")
-        st.link_button("Login with Authentik", get_login_url())
+        st.title("Login")
+        with st.form("login_form"):
+            username = st.text_input("Username")
+            password = st.text_input("Password", type="password")
+            submit = st.form_submit_state = st.form_submit_button("Login")
+            
+            if submit:
+                if not username or not password:
+                    st.error("Please enter both username and password")
+                else:
+                    token_data = login_with_password(username, password)
+                    if token_data:
+                        st.session_state.auth_token = token_data.get("access_token")
+                        # We could also decode the token here for user_info if needed
+                        import jwt
+                        payload = jwt.decode(st.session_state.auth_token, options={"verify_signature": False})
+                        st.session_state.user_info = payload
+                        st.rerun()
         st.stop()
-    
-    # Optional: Verify token and get user info
-    if "user_info" not in st.session_state:
-        user_info = get_user_info(st.session_state.auth_token)
-        if user_info:
-            st.session_state.user_info = user_info
-        else:
-            # Token might be expired
-            del st.session_state.auth_token
-            st.rerun()
 
     return True

@@ -6,20 +6,11 @@ from src.common.middleware.auth import verify_token, RoleChecker
 from src.common.configs.settings import get_settings
 
 @pytest.mark.asyncio
-async def test_verify_token_no_jwks_url():
-    # Mock settings to have no jwks_url
-    with patch("src.common.middleware.auth.settings") as mock_settings:
-        mock_settings.authentik_jwks_url = None
-        with pytest.raises(HTTPException) as excinfo:
-            await verify_token("some_token")
-        assert excinfo.value.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
-        assert "Authentik JWKS URL not configured" in excinfo.value.detail
-
-@pytest.mark.asyncio
 async def test_verify_token_invalid_jwt():
     # Test with an invalid JWT string
     with patch("src.common.middleware.auth.settings") as mock_settings:
-        mock_settings.authentik_jwks_url = "http://example.com/jwks"
+        mock_settings.jwt_secret_key = "secret"
+        mock_settings.jwt_algorithm = "HS256"
         with pytest.raises(HTTPException) as excinfo:
             await verify_token("not-a-valid-jwt")
         assert excinfo.value.status_code == status.HTTP_401_UNAUTHORIZED
@@ -27,12 +18,14 @@ async def test_verify_token_invalid_jwt():
 
 @pytest.mark.asyncio
 async def test_verify_token_success_mocked():
-    # Create a dummy JWT for testing (with verify_signature=False in implementation for now)
+    # Create a dummy JWT for testing
+    secret = "secret_key_at_least_32_chars_long_for_validation"
     payload = {"sub": "user123", "name": "Test User", "groups": ["admins"]}
-    token = jwt.encode(payload, "secret", algorithm="HS256")
+    token = jwt.encode(payload, secret, algorithm="HS256")
     
     with patch("src.common.middleware.auth.settings") as mock_settings:
-        mock_settings.authentik_jwks_url = "http://example.com/jwks"
+        mock_settings.jwt_secret_key = secret
+        mock_settings.jwt_algorithm = "HS256"
         result = await verify_token(token)
         assert result["sub"] == "user123"
         assert "admins" in result["groups"]
