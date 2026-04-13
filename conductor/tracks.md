@@ -26,3 +26,8 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [x] **Track: deep agent chat test streamlit 기동시 오류발생, ModuleNotFoundError: No module named 'st_chat_input_multimodal'**
 *Link: [./tracks/streamlit_multimodal_fix_20260411/](./tracks/streamlit_multimodal_fix_20260411/)*
+
+---
+
+- [ ] **Track: Fastapi 인증 방식 OAuth2PasswordBearer (OAuth2, password)로 변경**
+*Link: [./tracks/oauth2password_20260413/](./tracks/oauth2password_20260413/)*

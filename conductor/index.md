@@ -1,4 +1,4 @@
-# Conductor Project Context
+# Conductor Project Index
 
 - [Product Definition](./product.md)
 - [Tech Stack](./tech-stack.md)
