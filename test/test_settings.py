@@ -11,6 +11,7 @@ def test_settings_initialization():
 def test_oauth_settings():
     settings = get_settings()
     assert hasattr(settings, "jwt_secret_key")
+    assert len(settings.jwt_secret_key) >= 32
     assert hasattr(settings, "jwt_algorithm")
     assert hasattr(settings, "authentik_url")
     assert hasattr(settings, "authentik_token_url")
