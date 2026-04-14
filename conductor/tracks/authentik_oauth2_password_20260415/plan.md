@@ -24,3 +24,9 @@
     - [x] Review the implementation for code style, security best practices, and appropriate error handling.
     - [x] Ensure all code has appropriate test coverage (>80%).
 - [x] Task: Conductor - User Manual Verification 'Phase 2: FastAPI Backend Implementation (Red/Green/Refactor)' (Protocol in workflow.md) (8fc1c21)
+
+## Phase 3: Template Synchronization [checkpoint: 84b84c2]
+- [x] Task: Update .env templates with new security settings (84b84c2)
+    - [x] Update `templates/*/` projects' `.env` files with `JWT_SECRET_KEY` and Authentik variables.
+    - [x] Force commit the hidden `.env` files to the repository.
+- [x] Task: Conductor - User Manual Verification 'Phase 3: Template Synchronization' (Protocol in workflow.md) (84b84c2)
