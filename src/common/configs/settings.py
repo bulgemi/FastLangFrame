@@ -88,7 +88,7 @@ class FastLangFrameSettings(BaseSettings):
     llm_models_json: Optional[str] = Field(default=None, alias="LLM_MODELS_JSON")
 
     # Native JWT Configuration
-    jwt_secret_key: str = Field(default="your_jwt_secret_key", alias="JWT_SECRET_KEY")
+    jwt_secret_key: str = Field(default="your_jwt_secret_key_at_least_32_chars_long", alias="JWT_SECRET_KEY")
     jwt_algorithm: str = Field(default="HS256", alias="JWT_ALGORITHM")
     jwt_access_token_expire_minutes: int = Field(default=60, alias="JWT_ACCESS_TOKEN_EXPIRE_MINUTES")
 

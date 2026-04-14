@@ -5,8 +5,10 @@ from typing import Optional, Dict, Any
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from src.common.configs.settings import get_settings
+from src.common.logging.logger_config import setup_logger
 
 settings = get_settings()
+logger = setup_logger(__name__)
 
 # OAuth2PasswordBearer flow
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -52,8 +54,11 @@ async def verify_credentials_with_authentik(username: str, password: str) -> Opt
                 # For now, we'll just decode without verification (trusting Authentik's response)
                 payload = jwt.decode(access_token, options={"verify_signature": False})
                 return payload
+            else:
+                logger.warning(f"Authentik credential verification failed for user '{username}': {response.status_code} - {response.text}")
             return None
-    except Exception:
+    except Exception as e:
+        logger.error(f"Error verifying credentials with Authentik: {str(e)}")
         return None
 
 async def verify_token(token: str = Depends(oauth2_scheme)) -> Dict[str, Any]:
