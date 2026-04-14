@@ -19,6 +19,7 @@
     - [x] Implement token validation logic (using the obtained token or validating its signature using Authentik's JWKS) in `src/common/middleware/auth.py`.
     - [x] Update dependency injection to use `OAuth2PasswordBearer` to protect relevant API routes.
     - [x] Run tests and ensure they pass.
+    - [x] **Implementation Note:** When running `auth_test`, use the `FastLangFrame` conda environment.
 - [x] Task: Refactoring and Code Quality (a7a5e05)
     - [x] Review the implementation for code style, security best practices, and appropriate error handling.
     - [x] Ensure all code has appropriate test coverage (>80%).
