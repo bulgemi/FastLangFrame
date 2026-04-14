@@ -1,7 +1,5 @@
-# Conductor Project Index
+# Track authentik_oauth2_password_20260415 Context
 
-- [Product Definition](./product.md)
-- [Tech Stack](./tech-stack.md)
-- [Workflow](./workflow.md)
-- [Product Guidelines](./product-guidelines.md)
-- [Tracks Registry](./tracks.md)
+- [Specification](./spec.md)
+- [Implementation Plan](./plan.md)
+- [Metadata](./metadata.json)
