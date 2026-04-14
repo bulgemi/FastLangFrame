@@ -8,10 +8,10 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Authentik Configuration and Setup' (Protocol in workflow.md) (7d4e256)
 
 ## Phase 2: FastAPI Backend Implementation (Red/Green/Refactor)
-- [ ] Task: Write Failing Tests (Red Phase)
-    - [ ] Create tests for the new `/token` endpoint expecting username and password, asserting it returns an access token on success.
-    - [ ] Create tests for a protected endpoint that requires a valid token from Authentik.
-    - [ ] Run tests to ensure they fail.
+- [x] Task: Write Failing Tests (Red Phase) (5fa8e21)
+    - [x] Create tests for the new `/token` endpoint expecting username and password, asserting it returns an access token on success.
+    - [x] Create tests for a protected endpoint that requires a valid token from Authentik.
+    - [x] Run tests to ensure they fail.
 - [ ] Task: Implement Authentication Flow (Green Phase)
     - [ ] Update `src/common/configs/settings.py` to include any new Authentik configuration variables (e.g., Client ID, Client Secret, Token URL).
     - [ ] Implement the `/token` endpoint using `fastapi.security.OAuth2PasswordRequestForm` in `src/core/server.py`.
