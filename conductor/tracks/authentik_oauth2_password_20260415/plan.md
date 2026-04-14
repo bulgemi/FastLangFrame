@@ -7,7 +7,7 @@
     - [x] Save these instructions in a new documentation file or the project README.
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Authentik Configuration and Setup' (Protocol in workflow.md) (7d4e256)
 
-## Phase 2: FastAPI Backend Implementation (Red/Green/Refactor)
+## Phase 2: FastAPI Backend Implementation (Red/Green/Refactor) [checkpoint: 8fc1c21]
 - [x] Task: Write Failing Tests (Red Phase) (5fa8e21)
     - [x] Create tests for the new `/token` endpoint expecting username and password, asserting it returns an access token on success.
     - [x] Create tests for a protected endpoint that requires a valid token from Authentik.
@@ -22,4 +22,4 @@
 - [x] Task: Refactoring and Code Quality (a7a5e05)
     - [x] Review the implementation for code style, security best practices, and appropriate error handling.
     - [x] Ensure all code has appropriate test coverage (>80%).
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: FastAPI Backend Implementation (Red/Green/Refactor)' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 2: FastAPI Backend Implementation (Red/Green/Refactor)' (Protocol in workflow.md) (8fc1c21)
