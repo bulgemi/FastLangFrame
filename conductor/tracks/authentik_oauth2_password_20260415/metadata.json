@@ -1,0 +1,8 @@
+{
+  "track_id": "authentik_oauth2_password_20260415",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-04-15T00:00:00Z",
+  "updated_at": "2026-04-15T00:00:00Z",
+  "description": "fastapi OAuth2 인증 방식으로 local에 설치된 authentik(http://localhost:9000/)을 통해 신규 사용자(ID: user01, Password: user01)로 인증 기능 추가"
+}
