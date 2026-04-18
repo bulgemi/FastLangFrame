@@ -78,7 +78,7 @@ async def verify_token(token: str = Depends(oauth2_scheme)) -> Dict[str, Any]:
 class RoleChecker:
     """
     A dependency that checks if the authenticated user has any of the allowed roles.
-    Authentik typically maps groups to the 'groups' claim in the JWT.
+    Authelia typically maps groups to the 'groups' claim in the JWT.
     """
     def __init__(self, allowed_roles: list[str]):
         self.allowed_roles = allowed_roles
