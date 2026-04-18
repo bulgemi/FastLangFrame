@@ -12,8 +12,8 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Infrastructure and Setup' (Protocol in workflow.md) (4c0ca97)
 
 ## Phase 2: FastAPI Backend Implementation (Red/Green/Refactor)
-- [ ] Task: Write Failing Tests (Red Phase)
-    - [ ] Update `test/test_authentik_auth.py` (rename it to `test_authelia_auth.py`) to test the `/token` endpoint expecting it to fail with Authelia.
+- [x] Task: Write Failing Tests (Red Phase) (8dcae2b)
+    - [x] Update `test/test_authentik_auth.py` (rename it to `test_authelia_auth.py`) to test the `/token` endpoint expecting it to fail with Authelia.
 - [ ] Task: Implement Authentication Flow (Green Phase)
     - [ ] Update `src/common/configs/settings.py` to remove `AUTHENTIK_*` variables and add `AUTHELIA_*` variables (e.g., `AUTHELIA_TOKEN_URL`, `AUTHELIA_CLIENT_ID`, `AUTHELIA_CLIENT_SECRET`).
     - [ ] Update `src/common/middleware/auth.py` to replace `verify_credentials_with_authentik` with `verify_credentials_with_authelia`.
