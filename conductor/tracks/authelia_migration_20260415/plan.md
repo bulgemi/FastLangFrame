@@ -11,7 +11,7 @@
     - [x] Delete `docs/authentik_setup.md`.
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Infrastructure and Setup' (Protocol in workflow.md) (4c0ca97)
 
-## Phase 2: FastAPI Backend Implementation (Red/Green/Refactor)
+## Phase 2: FastAPI Backend Implementation (Red/Green/Refactor) [checkpoint: 3b685d6]
 - [x] Task: Write Failing Tests (Red Phase) (8dcae2b)
     - [x] Update `test/test_authentik_auth.py` (rename it to `test_authelia_auth.py`) to test the `/token` endpoint expecting it to fail with Authelia.
 - [x] Task: Implement Authentication Flow (Green Phase) (d00f972)
@@ -22,7 +22,7 @@
 - [x] Task: Refactoring and Code Quality (26c88f2)
     - [x] Ensure no traces of Authentik remain in the core python files.
     - [x] Run the test suite and ensure all tests pass (>80% coverage).
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: FastAPI Backend Implementation (Red/Green/Refactor)' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 2: FastAPI Backend Implementation (Red/Green/Refactor)' (Protocol in workflow.md) (3b685d6)
 
 ## Phase 3: Template and Project Cleanup
 - [ ] Task: Synchronize Templates
