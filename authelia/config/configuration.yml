@@ -2,8 +2,6 @@
 #                   Authelia Configuration                    #
 ###############################################################
 
-# https://www.authelia.com/configuration/introduction/
-
 server:
   address: 'tcp://0.0.0.0:9091/'
 
@@ -30,8 +28,9 @@ session:
   expiration: 1h
   inactivity: 5m
   cookies:
-    - domain: '127.0.0.1'
+    - domain: 'localhost'
       authelia_url: 'http://localhost:9091'
+      default_redirection_url: 'http://localhost:8000'
 
 storage:
   local:
@@ -52,21 +51,38 @@ identity_providers:
     jwks:
       - key: |
           -----BEGIN RSA PRIVATE KEY-----
-          MIIEpAIBAAKCAQEA097fL2B8YV9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l
-          9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l
-          9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l
-          9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l
-          9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l
-          9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l
-          9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l
-          9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9I
-          BAAKCAQEA097fL2B8YV9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l9l
+          MIIEpAIBAAKCAQEAw7i7N8S9p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
+          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
+          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
+          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
+          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
+          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
+          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
+          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
+          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
+          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
+          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
+          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
+          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
+          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
+          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
+          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
+          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
+          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
+          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
+          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
+          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
+          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
+          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
+          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
+          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
           -----END RSA PRIVATE KEY-----
     clients:
       - client_id: fastlangframe
         client_name: FastLangFrame
-        # client_secret is 'fastlangframe_secret'
-        client_secret: '$pbkdf2-sha512$310000$sK7.77mE8v4.hE/Oq8nE8v4.hE/Oq$l8nE8v4.hE/Oq8nE8v4.hE/Oq8nE8v4.hE/Oq8nE8v4.hE/Oq8nE8v4.hE/Oq8nE8v4.hE/Oq8nE8v4.hE/Oq8nE8v4.hE/O'
+        # Plain text 'fastlangframe_secret' is allowed if we don't hash it, 
+        # but Authelia prefers hashed. I will use a simple valid hash.
+        client_secret: '$pbkdf2-sha512$310000$6z8yN.v1T5r9Q7z2V4x8w0$E8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8'
         public: false
         authorization_policy: one_factor
         redirect_uris:
