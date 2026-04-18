@@ -1,0 +1,31 @@
+# Implementation Plan: Migrate from Authentik to Authelia
+
+## Phase 1: Infrastructure and Setup
+- [ ] Task: Update Docker Compose
+    - [ ] Remove all Authentik-related services (server, worker, redis, postgres) from `docker-compose.yml`.
+    - [ ] Add Authelia service to `docker-compose.yml`, including volume mounts for configuration.
+- [ ] Task: Configure Authelia
+    - [ ] Create initial `configuration.yml` for Authelia, configuring an OIDC provider.
+    - [ ] Create `users_database.yml` with a test user (`user01`/`user01`).
+    - [ ] Document the Authelia setup and testing process in a new file (e.g., `docs/authelia_setup.md`).
+    - [ ] Delete `docs/authentik_setup.md`.
+- [ ] Task: Conductor - User Manual Verification 'Phase 1: Infrastructure and Setup' (Protocol in workflow.md)
+
+## Phase 2: FastAPI Backend Implementation (Red/Green/Refactor)
+- [ ] Task: Write Failing Tests (Red Phase)
+    - [ ] Update `test/test_authentik_auth.py` (rename it to `test_authelia_auth.py`) to test the `/token` endpoint expecting it to fail with Authelia.
+- [ ] Task: Implement Authentication Flow (Green Phase)
+    - [ ] Update `src/common/configs/settings.py` to remove `AUTHENTIK_*` variables and add `AUTHELIA_*` variables (e.g., `AUTHELIA_TOKEN_URL`, `AUTHELIA_CLIENT_ID`, `AUTHELIA_CLIENT_SECRET`).
+    - [ ] Update `src/common/middleware/auth.py` to replace `verify_credentials_with_authentik` with `verify_credentials_with_authelia`.
+    - [ ] Update `src/core/server.py`'s `/token` endpoint to use the new Authelia verification function.
+    - [ ] Update tests to mock Authelia responses and ensure they pass.
+- [ ] Task: Refactoring and Code Quality
+    - [ ] Ensure no traces of Authentik remain in the core python files.
+    - [ ] Run the test suite and ensure all tests pass (>80% coverage).
+- [ ] Task: Conductor - User Manual Verification 'Phase 2: FastAPI Backend Implementation (Red/Green/Refactor)' (Protocol in workflow.md)
+
+## Phase 3: Template and Project Cleanup
+- [ ] Task: Synchronize Templates
+    - [ ] Update `.env.sample` in the project root to replace Authentik configuration with Authelia.
+    - [ ] Update `.env` files in all templates (`templates/*/`) to use the new Authelia variables.
+- [ ] Task: Conductor - User Manual Verification 'Phase 3: Template and Project Cleanup' (Protocol in workflow.md)
