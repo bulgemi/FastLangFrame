@@ -1,0 +1,12 @@
+###############################################################
+#                 Authelia Users Database                     #
+###############################################################
+
+users:
+  user01:
+    displayname: "Test User 01"
+    password: "$6$rounds=500000$j9nE8v4.hE/Oq8nE$Oq8nE8v4.hE/Oq8nE8v4.hE/Oq8nE8v4.hE/Oq8nE8v4.hE/Oq8nE8v4.hE/Oq8nE8v4.hE/Oq8nE8v4.hE/O" # user01
+    email: user01@example.com
+    groups:
+      - users
+      - admins

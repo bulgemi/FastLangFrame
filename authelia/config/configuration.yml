@@ -1,0 +1,74 @@
+###############################################################
+#                   Authelia Configuration                    #
+###############################################################
+
+# https://www.authelia.com/configuration/introduction/
+
+server:
+  host: 0.0.0.0
+  port: 9091
+
+log:
+  level: info
+
+totp:
+  issuer: Authelia
+
+authentication_backend:
+  file:
+    path: /config/users_database.yml
+
+access_control:
+  default_policy: deny
+  rules:
+    - domain: "*"
+      policy: bypass
+
+session:
+  name: authelia_session
+  same_site: lax
+  secret: unsecure_session_secret_change_me
+  expiration: 1h
+  inactivity: 5m
+  domain: localhost
+
+storage:
+  local:
+    path: /config/db.sqlite3
+
+notifier:
+  filesystem:
+    filename: /config/notification.txt
+
+identity_providers:
+  oidc:
+    hmac_secret: unsecure_hmac_secret_change_me
+    issuer_private_key: |
+      -----BEGIN RSA PRIVATE KEY-----
+      MIIEpAIBAAKCAQEA71o6+xN1N1vL8v9iL6U9v6o/P7t8P6Z7V4U6y5n9U5Z6y5n9
+      U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9
+      U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9
+      U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9
+      U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9
+      U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9
+      U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9
+      U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9U5Z6y5n9
+      -----END RSA PRIVATE KEY-----
+    clients:
+      - id: fastlangframe
+        description: FastLangFrame
+        secret: '$pbkdf2-sha512$310000$n8nE8v4.hE/Oq8nE8v4.hE/Oq8nE8v4.hE/Oq8nE8v4.hE/Oq8nE8v4.hE/Oq8nE8v4.hE/Oq8nE8v4.hE/Oq8nE8v4.hE/Oq$Oq8nE8v4.hE/Oq8nE8v4.hE/Oq8nE8v4.hE/Oq8nE8v4.hE/Oq8nE8v4.hE/Oq8nE8v4.hE/Oq8nE8v4.hE/O'
+        public: false
+        authorization_policy: one_factor
+        redirect_uris:
+          - http://localhost:8000/docs/oauth2-redirect
+        scopes:
+          - openid
+          - profile
+          - email
+          - groups
+        grant_types:
+          - authorization_code
+          - refresh_token
+          - password
+        userinfo_signed_response_alg: none
