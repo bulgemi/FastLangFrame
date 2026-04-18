@@ -37,3 +37,9 @@ This file tracks all major tracks for the project. Each track has its own detail
 - [x] **Track: fastapi OAuth2 인증 방식으로 local에 설치된 authentik(http://localhost:9000/)을 통해 신규 사용자(ID: user01, Password: user01)로 인증 기능 추가**
 *Link: [./tracks/authentik_oauth2_password_20260415/](./tracks/authentik_oauth2_password_20260415/)*
 
+---
+
+- [ ] **Track: Authelia를 Zitadel(https://zitadel.com/docs/self-hosting/deploy/compose)로 전환**
+*Link: [./tracks/zitadel_migration_20260415/](./tracks/zitadel_migration_20260415/)*
+
+

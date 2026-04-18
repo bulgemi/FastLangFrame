@@ -1,0 +1,8 @@
+{
+  "track_id": "zitadel_migration_20260415",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-04-15T00:00:00Z",
+  "updated_at": "2026-04-15T00:00:00Z",
+  "description": "Authelia를 Zitadel(https://zitadel.com/docs/self-hosting/deploy/compose)로 전환"
+}
