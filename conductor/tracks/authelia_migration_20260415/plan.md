@@ -24,8 +24,8 @@
     - [x] Run the test suite and ensure all tests pass (>80% coverage).
 - [x] Task: Conductor - User Manual Verification 'Phase 2: FastAPI Backend Implementation (Red/Green/Refactor)' (Protocol in workflow.md) (3b685d6)
 
-## Phase 3: Template and Project Cleanup
+## Phase 3: Template and Project Cleanup [checkpoint: 7dd77ad]
 - [x] Task: Synchronize Templates (a5ebb36)
     - [x] Update `.env.sample` in the project root to replace Authentik configuration with Authelia.
     - [x] Update `.env` files in all templates (`templates/*/`) to use the new Authelia variables.
-- [ ] Task: Conductor - User Manual Verification 'Phase 3: Template and Project Cleanup' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 3: Template and Project Cleanup' (Protocol in workflow.md) (7dd77ad)
