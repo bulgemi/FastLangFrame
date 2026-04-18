@@ -1,9 +1,9 @@
 # Implementation Plan: Migrate from Authentik to Authelia
 
 ## Phase 1: Infrastructure and Setup
-- [ ] Task: Update Docker Compose
-    - [ ] Remove all Authentik-related services (server, worker, redis, postgres) from `docker-compose.yml`.
-    - [ ] Add Authelia service to `docker-compose.yml`, including volume mounts for configuration.
+- [x] Task: Update Docker Compose (71b6570)
+    - [x] Remove all Authentik-related services (server, worker, redis, postgres) from `docker-compose.yml`.
+    - [x] Add Authelia service to `docker-compose.yml`, including volume mounts for configuration.
 - [ ] Task: Configure Authelia
     - [ ] Create initial `configuration.yml` for Authelia, configuring an OIDC provider.
     - [ ] Create `users_database.yml` with a test user (`user01`/`user01`).
