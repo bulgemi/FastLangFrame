@@ -19,9 +19,9 @@
     - [x] Update `src/common/middleware/auth.py` to replace `verify_credentials_with_authentik` with `verify_credentials_with_authelia`.
     - [x] Update `src/core/server.py`'s `/token` endpoint to use the new Authelia verification function.
     - [x] Update tests to mock Authelia responses and ensure they pass.
-- [ ] Task: Refactoring and Code Quality
-    - [ ] Ensure no traces of Authentik remain in the core python files.
-    - [ ] Run the test suite and ensure all tests pass (>80% coverage).
+- [x] Task: Refactoring and Code Quality (26c88f2)
+    - [x] Ensure no traces of Authentik remain in the core python files.
+    - [x] Run the test suite and ensure all tests pass (>80% coverage).
 - [ ] Task: Conductor - User Manual Verification 'Phase 2: FastAPI Backend Implementation (Red/Green/Refactor)' (Protocol in workflow.md)
 
 ## Phase 3: Template and Project Cleanup
