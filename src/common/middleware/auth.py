@@ -25,13 +25,13 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     encoded_jwt = jwt.encode(to_encode, settings.jwt_secret_key, algorithm=settings.jwt_algorithm)
     return encoded_jwt
 
-async def verify_credentials_with_authelia(username: str, password: str) -> Optional[Dict[str, Any]]:
+async def verify_credentials_with_zitadel(username: str, password: str) -> Optional[Dict[str, Any]]:
     """
-    Verifies credentials against Authelia using the password grant flow (back-channel).
+    Verifies credentials against Zitadel using the password grant flow (back-channel).
     Returns the user info (token payload) if successful, None otherwise.
     """
-    if not settings.authelia_token_url:
-        # If Authelia is not configured, we might want a fallback or just fail
+    if not settings.zitadel_token_url:
+        # If Zitadel is not configured, we might want a fallback or just fail
         return None
 
     try:
@@ -40,25 +40,25 @@ async def verify_credentials_with_authelia(username: str, password: str) -> Opti
                 "grant_type": "password",
                 "username": username,
                 "password": password,
-                "client_id": settings.authelia_client_id,
-                "client_secret": settings.authelia_client_secret,
+                "client_id": settings.zitadel_client_id,
+                "client_secret": settings.zitadel_client_secret,
                 "scope": "openid profile email groups" # Adjust scope as needed
             }
-            response = await client.post(settings.authelia_token_url, data=data)
+            response = await client.post(settings.zitadel_token_url, data=data)
             
             if response.status_code == 200:
                 token_data = response.json()
                 access_token = token_data.get("access_token")
-                # We can decode the Authelia token to get user info/groups
+                # We can decode the Zitadel token to get user info/groups
                 # and then map them to our native token.
-                # For now, we'll just decode without verification (trusting Authelia's response)
+                # For now, we'll just decode without verification (trusting Zitadel's response)
                 payload = jwt.decode(access_token, options={"verify_signature": False})
                 return payload
             else:
-                logger.warning(f"Authelia credential verification failed for user '{username}': {response.status_code} - {response.text}")
+                logger.warning(f"Zitadel credential verification failed for user '{username}': {response.status_code} - {response.text}")
             return None
     except Exception as e:
-        logger.error(f"Error verifying credentials with Authelia: {str(e)}")
+        logger.error(f"Error verifying credentials with Zitadel: {str(e)}")
         return None
 
 async def verify_token(token: str = Depends(oauth2_scheme)) -> Dict[str, Any]:
@@ -78,7 +78,7 @@ async def verify_token(token: str = Depends(oauth2_scheme)) -> Dict[str, Any]:
 class RoleChecker:
     """
     A dependency that checks if the authenticated user has any of the allowed roles.
-    Authelia typically maps groups to the 'groups' claim in the JWT.
+    Zitadel typically maps groups to the 'groups' claim in the JWT.
     """
     def __init__(self, allowed_roles: list[str]):
         self.allowed_roles = allowed_roles

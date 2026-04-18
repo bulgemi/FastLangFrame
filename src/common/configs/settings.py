@@ -92,11 +92,11 @@ class FastLangFrameSettings(BaseSettings):
     jwt_algorithm: str = Field(default="HS256", alias="JWT_ALGORITHM")
     jwt_access_token_expire_minutes: int = Field(default=60, alias="JWT_ACCESS_TOKEN_EXPIRE_MINUTES")
 
-    # Authelia Configuration (Back-channel only)
-    authelia_url: Optional[str] = Field(default=None, alias="AUTHELIA_URL")
-    authelia_token_url: Optional[str] = Field(default=None, alias="AUTHELIA_TOKEN_URL")
-    authelia_client_id: Optional[str] = Field(default=None, alias="AUTHELIA_CLIENT_ID")
-    authelia_client_secret: Optional[str] = Field(default=None, alias="AUTHELIA_CLIENT_SECRET")
+    # Zitadel Configuration (Back-channel only)
+    zitadel_url: Optional[str] = Field(default=None, alias="ZITADEL_URL")
+    zitadel_token_url: Optional[str] = Field(default=None, alias="ZITADEL_TOKEN_URL")
+    zitadel_client_id: Optional[str] = Field(default=None, alias="ZITADEL_CLIENT_ID")
+    zitadel_client_secret: Optional[str] = Field(default=None, alias="ZITADEL_CLIENT_SECRET")
 
     @property
     def llm_models(self) -> Dict[str, Dict[str, Any]]:
