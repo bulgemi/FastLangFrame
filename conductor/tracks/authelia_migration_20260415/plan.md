@@ -14,11 +14,11 @@
 ## Phase 2: FastAPI Backend Implementation (Red/Green/Refactor)
 - [x] Task: Write Failing Tests (Red Phase) (8dcae2b)
     - [x] Update `test/test_authentik_auth.py` (rename it to `test_authelia_auth.py`) to test the `/token` endpoint expecting it to fail with Authelia.
-- [ ] Task: Implement Authentication Flow (Green Phase)
-    - [ ] Update `src/common/configs/settings.py` to remove `AUTHENTIK_*` variables and add `AUTHELIA_*` variables (e.g., `AUTHELIA_TOKEN_URL`, `AUTHELIA_CLIENT_ID`, `AUTHELIA_CLIENT_SECRET`).
-    - [ ] Update `src/common/middleware/auth.py` to replace `verify_credentials_with_authentik` with `verify_credentials_with_authelia`.
-    - [ ] Update `src/core/server.py`'s `/token` endpoint to use the new Authelia verification function.
-    - [ ] Update tests to mock Authelia responses and ensure they pass.
+- [x] Task: Implement Authentication Flow (Green Phase) (d00f972)
+    - [x] Update `src/common/configs/settings.py` to remove `AUTHENTIK_*` variables and add `AUTHELIA_*` variables (e.g., `AUTHELIA_TOKEN_URL`, `AUTHELIA_CLIENT_ID`, `AUTHELIA_CLIENT_SECRET`).
+    - [x] Update `src/common/middleware/auth.py` to replace `verify_credentials_with_authentik` with `verify_credentials_with_authelia`.
+    - [x] Update `src/core/server.py`'s `/token` endpoint to use the new Authelia verification function.
+    - [x] Update tests to mock Authelia responses and ensure they pass.
 - [ ] Task: Refactoring and Code Quality
     - [ ] Ensure no traces of Authentik remain in the core python files.
     - [ ] Run the test suite and ensure all tests pass (>80% coverage).
