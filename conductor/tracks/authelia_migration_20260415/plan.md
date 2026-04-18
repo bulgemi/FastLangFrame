@@ -4,11 +4,11 @@
 - [x] Task: Update Docker Compose (71b6570)
     - [x] Remove all Authentik-related services (server, worker, redis, postgres) from `docker-compose.yml`.
     - [x] Add Authelia service to `docker-compose.yml`, including volume mounts for configuration.
-- [ ] Task: Configure Authelia
-    - [ ] Create initial `configuration.yml` for Authelia, configuring an OIDC provider.
-    - [ ] Create `users_database.yml` with a test user (`user01`/`user01`).
-    - [ ] Document the Authelia setup and testing process in a new file (e.g., `docs/authelia_setup.md`).
-    - [ ] Delete `docs/authentik_setup.md`.
+- [x] Task: Configure Authelia (6d9b1df)
+    - [x] Create initial `configuration.yml` for Authelia, configuring an OIDC provider.
+    - [x] Create `users_database.yml` with a test user (`user01`/`user01`).
+    - [x] Document the Authelia setup and testing process in a new file (e.g., `docs/authelia_setup.md`).
+    - [x] Delete `docs/authentik_setup.md`.
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: Infrastructure and Setup' (Protocol in workflow.md)
 
 ## Phase 2: FastAPI Backend Implementation (Red/Green/Refactor)
