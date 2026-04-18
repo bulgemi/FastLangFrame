@@ -1,6 +1,6 @@
 # Implementation Plan: Migrate from Authentik to Authelia
 
-## Phase 1: Infrastructure and Setup
+## Phase 1: Infrastructure and Setup [checkpoint: 4c0ca97]
 - [x] Task: Update Docker Compose (71b6570)
     - [x] Remove all Authentik-related services (server, worker, redis, postgres) from `docker-compose.yml`.
     - [x] Add Authelia service to `docker-compose.yml`, including volume mounts for configuration.
@@ -9,7 +9,7 @@
     - [x] Create `users_database.yml` with a test user (`user01`/`user01`).
     - [x] Document the Authelia setup and testing process in a new file (e.g., `docs/authelia_setup.md`).
     - [x] Delete `docs/authentik_setup.md`.
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Infrastructure and Setup' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 1: Infrastructure and Setup' (Protocol in workflow.md) (4c0ca97)
 
 ## Phase 2: FastAPI Backend Implementation (Red/Green/Refactor)
 - [ ] Task: Write Failing Tests (Red Phase)
