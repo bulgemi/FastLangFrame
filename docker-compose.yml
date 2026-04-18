@@ -1,16 +1,60 @@
 services:
-  authelia:
-    image: authelia/authelia:latest
-    container_name: authelia
-    volumes:
-      - ./authelia/config:/config
-    ports:
-      - "9091:9091"
+  zitadel-db:
+    image: postgres:16-alpine
+    container_name: zitadel-db
     environment:
-      - TZ=Asia/Seoul
-    restart: unless-stopped
+      - POSTGRES_USER=zitadel
+      - POSTGRES_PASSWORD=zitadel
+      - POSTGRES_DB=zitadel
+    volumes:
+      - zitadel-db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "authelia", "healthcheck"]
-      interval: 30s
-      timeout: 3s
-      retries: 3
+      test: ["CMD-SHELL", "pg_isready -d zitadel -U zitadel"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  zitadel-init:
+    image: ghcr.io/zitadel/zitadel:latest
+    container_name: zitadel-init
+    command: 'setup --masterkey "MasterkeyMustBeAtLeast32CharsLong!"'
+    environment:
+      - ZITADEL_DATABASE_POSTGRES_HOST=zitadel-db
+      - ZITADEL_DATABASE_POSTGRES_PORT=5432
+      - ZITADEL_DATABASE_POSTGRES_USER_SSL_MODE=disable
+      - ZITADEL_DATABASE_POSTGRES_USER_USER=zitadel
+      - ZITADEL_DATABASE_POSTGRES_USER_PASSWORD=zitadel
+      - ZITADEL_DATABASE_POSTGRES_ADMIN_SSL_MODE=disable
+      - ZITADEL_DATABASE_POSTGRES_ADMIN_USER=zitadel
+      - ZITADEL_DATABASE_POSTGRES_ADMIN_PASSWORD=zitadel
+    depends_on:
+      zitadel-db:
+        condition: service_healthy
+
+  zitadel:
+    image: ghcr.io/zitadel/zitadel:latest
+    container_name: zitadel
+    command: 'start-from-setup --masterkey "MasterkeyMustBeAtLeast32CharsLong!"'
+    environment:
+      - ZITADEL_DATABASE_POSTGRES_HOST=zitadel-db
+      - ZITADEL_DATABASE_POSTGRES_PORT=5432
+      - ZITADEL_DATABASE_POSTGRES_USER_SSL_MODE=disable
+      - ZITADEL_DATABASE_POSTGRES_USER_USER=zitadel
+      - ZITADEL_DATABASE_POSTGRES_USER_PASSWORD=zitadel
+      - ZITADEL_DATABASE_POSTGRES_ADMIN_SSL_MODE=disable
+      - ZITADEL_DATABASE_POSTGRES_ADMIN_USER=zitadel
+      - ZITADEL_DATABASE_POSTGRES_ADMIN_PASSWORD=zitadel
+      - ZITADEL_EXTERNALDMAIN=localhost
+      - ZITADEL_EXTERNALPORT=8080
+      - ZITADEL_EXTERNALSECURE=false
+    ports:
+      - "8080:8080"
+    depends_on:
+      zitadel-db:
+        condition: service_healthy
+      zitadel-init:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+volumes:
+  zitadel-db-data:
