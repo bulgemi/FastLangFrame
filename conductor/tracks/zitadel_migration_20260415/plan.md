@@ -26,7 +26,7 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 2: FastAPI Backend Implementation (Red/Green/Refactor)' (Protocol in workflow.md) (fb91738)
 
 ## Phase 3: Template and Project Cleanup
-- [ ] Task: Synchronize Templates
-    - [ ] Update `.env.sample` in the project root to replace Authelia configuration with Zitadel.
-    - [ ] Update `.env` files in all templates (`templates/*/`) to use the new Zitadel variables.
+- [x] Task: Synchronize Templates (4fa58d3)
+    - [x] Update `.env.sample` in the project root to replace Authelia configuration with Zitadel.
+    - [x] Update `.env` files in all templates (`templates/*/`) to use the new Zitadel variables.
 - [ ] Task: Conductor - User Manual Verification 'Phase 3: Template and Project Cleanup' (Protocol in workflow.md)
