@@ -6,7 +6,7 @@ from fastapi.responses import StreamingResponse
 from fastapi.security import OAuth2PasswordRequestForm
 
 from .api_models import AgentInvokeRequest, AgentBatchRequest, AgentInvokeResponse, AgentBatchResponse
-from src.common.middleware.auth import verify_token, verify_credentials_with_authentik, create_access_token
+from src.common.middleware.auth import verify_token, verify_credentials_with_authelia, create_access_token
 
 def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> FastAPI:
     """
@@ -18,10 +18,10 @@ def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> Fas
     @app.post("/token", summary="Token 발행")
     async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
         """사용자 이름과 비밀번호를 받아 JWT를 발급합니다."""
-        # 1. Authentik back-channel 검증
-        user_info = await verify_credentials_with_authentik(form_data.username, form_data.password)
+        # 1. Identity Provider back-channel 검증 (Authelia)
+        user_info = await verify_credentials_with_authelia(form_data.username, form_data.password)
         
-        # 2. Fallback (개발/테스트용): Authentik 미설정 시 간단한 검증
+        # 2. Fallback (개발/테스트용): IDP 미설정 시 간단한 검증
         if not user_info:
             if form_data.username == "testuser" and form_data.password == "testpassword":
                 user_info = {"sub": "testuser", "name": "Test User", "groups": ["admins"]}
