@@ -39,6 +39,6 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: Authentik을 Authelia로 전환**
+- [x] **Track: Authentik을 Authelia로 전환**
 *Link: [./tracks/authelia_migration_20260415/](./tracks/authelia_migration_20260415/)*
 
