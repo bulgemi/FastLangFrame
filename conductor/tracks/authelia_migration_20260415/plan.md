@@ -29,3 +29,6 @@
     - [x] Update `.env.sample` in the project root to replace Authentik configuration with Authelia.
     - [x] Update `.env` files in all templates (`templates/*/`) to use the new Authelia variables.
 - [x] Task: Conductor - User Manual Verification 'Phase 3: Template and Project Cleanup' (Protocol in workflow.md) (7dd77ad)
+
+## Phase: Review Fixes
+- [x] Task: Apply review suggestions (1e51383)
