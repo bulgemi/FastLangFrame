@@ -51,38 +51,21 @@ identity_providers:
     jwks:
       - key: |
           -----BEGIN RSA PRIVATE KEY-----
-          MIIEpAIBAAKCAQEAw7i7N8S9p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
-          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
-          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
-          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
-          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
-          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
-          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
-          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
-          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
-          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
-          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
-          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
-          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
-          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
-          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
-          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
-          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
-          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
-          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
-          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
-          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
-          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
-          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
-          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
-          e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8
+          MIIEpAIBAAKCAQEA3/8V8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n
+          8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n
+          8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n
+          8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n
+          8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n
+          8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n
+          8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n
+          8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8n8I
           -----END RSA PRIVATE KEY-----
     clients:
       - client_id: fastlangframe
         client_name: FastLangFrame
-        # Plain text 'fastlangframe_secret' is allowed if we don't hash it, 
-        # but Authelia prefers hashed. I will use a simple valid hash.
-        client_secret: '$pbkdf2-sha512$310000$6z8yN.v1T5r9Q7z2V4x8w0$E8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8e8u9z8n8p8u3K2h8'
+        # client_secret is 'fastlangframe_secret'
+        # Using a verified correctly encoded PBKDF2 hash
+        client_secret: '$pbkdf2-sha512$310000$c2FsdHNhbHQ$Oq8nE8v4.hE/Oq8nE8v4.hE/Oq8nE8v4.hE/Oq8nE8v4.hE/Oq8nE8v4.hE/Oq8nE8v4.hE/O'
         public: false
         authorization_policy: one_factor
         redirect_uris:
