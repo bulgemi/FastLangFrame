@@ -44,5 +44,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: docker compose에 nginx를 추가하여 https 지원하고, 인증 후 리다이렉트 url(https://127.0.0.1:8000/) 인입시 backend(http://127.0.0.1:8888/) 연동**
+- [x] **Track: docker compose에 nginx를 추가하여 https 지원하고, 인증 후 리다이렉트 url(https://127.0.0.1:8000/) 인입시 backend(http://127.0.0.1:8888/) 연동**
 *Link: [./tracks/nginx_https_proxy_20260419/](./tracks/nginx_https_proxy_20260419/)*
