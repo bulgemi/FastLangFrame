@@ -13,10 +13,10 @@
 - [x] Task: Setup FastAPI Authentication Dependencies (04a2c7b)
     - [x] Ensure `httpx` dependency is available via Poetry (for introspection requests).
     - [x] Update `src/common/configs/` to include settings for Authelia Introspection URL, Client ID, and Client Secret.
-- [ ] Task: Implement Token Introspection Logic
-    - [ ] Write failing test for Authelia introspection token validation logic.
-    - [ ] Implement the authentication dependency to call Authelia's introspection endpoint (`/api/oidc/introspection`).
-    - [ ] Ensure tests pass.
+- [x] Task: Implement Token Introspection Logic (ce42b4c)
+    - [x] Write failing test for Authelia introspection token validation logic.
+    - [x] Implement the authentication dependency to call Authelia's introspection endpoint (`/api/oidc/introspection`).
+    - [x] Ensure tests pass.
 - [ ] Task: Protect API Endpoints
     - [ ] Write failing tests to verify that protected endpoints return 401 Unauthorized without a valid token.
     - [ ] Apply the new Authelia authentication dependency to relevant API routes.
