@@ -1,6 +1,6 @@
 # Implementation Plan
 
-## Phase 1: Setup Nginx and SSL Certificates
+## Phase 1: Setup Nginx and SSL Certificates [checkpoint: 1cf688f]
 - [x] Task: Create Nginx folder structure and SSL Certificates (bb01ddb)
     - [x] Create `./nginx/certs` directory.
     - [x] Create a shell script (or run directly) to generate a self-signed OpenSSL certificate for `127.0.0.1`.
