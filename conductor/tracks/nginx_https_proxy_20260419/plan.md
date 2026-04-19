@@ -15,10 +15,10 @@
 - [ ] Task: Conductor - User Manual Verification 'Setup Nginx and SSL Certificates' (Protocol in workflow.md)
 
 ## Phase 2: Docker Compose Integration and Refinement
-- [ ] Task: Update `docker-compose.yml`
-    - [ ] Add `nginx` service using the official `nginx:alpine` image.
-    - [ ] Map `./nginx` local directory to container configuration paths.
-    - [ ] Map port `8000:8000`.
+- [x] Task: Update `docker-compose.yml` (6e571ae)
+    - [x] Add `nginx` service using the official `nginx:alpine` image.
+    - [x] Map `./nginx` local directory to container configuration paths.
+    - [x] Map port `8000:8000`.
 - [ ] Task: Verify functionality
     - [ ] Bring up the docker-compose stack.
     - [ ] Verify `https://127.0.0.1:8000/` properly connects to the backend and other routes work.
