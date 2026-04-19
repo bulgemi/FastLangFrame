@@ -25,42 +25,6 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     encoded_jwt = jwt.encode(to_encode, settings.jwt_secret_key, algorithm=settings.jwt_algorithm)
     return encoded_jwt
 
-async def verify_credentials_with_zitadel(username: str, password: str) -> Optional[Dict[str, Any]]:
-    """
-    Verifies credentials against Zitadel using the password grant flow (back-channel).
-    Returns the user info (token payload) if successful, None otherwise.
-    """
-    if not settings.zitadel_token_url:
-        # If Zitadel is not configured, we might want a fallback or just fail
-        return None
-
-    try:
-        async with httpx.AsyncClient() as client:
-            data = {
-                "grant_type": "password",
-                "username": username,
-                "password": password,
-                "client_id": settings.zitadel_client_id,
-                "client_secret": settings.zitadel_client_secret,
-                "scope": "openid profile email groups" # Adjust scope as needed
-            }
-            response = await client.post(settings.zitadel_token_url, data=data)
-            
-            if response.status_code == 200:
-                token_data = response.json()
-                access_token = token_data.get("access_token")
-                # We can decode the Zitadel token to get user info/groups
-                # and then map them to our native token.
-                # For now, we'll just decode without verification (trusting Zitadel's response)
-                payload = jwt.decode(access_token, options={"verify_signature": False})
-                return payload
-            else:
-                logger.warning(f"Zitadel credential verification failed for user '{username}': {response.status_code} - {response.text}")
-            return None
-    except Exception as e:
-        logger.error(f"Error verifying credentials with Zitadel: {str(e)}")
-        return None
-
 async def verify_token(token: str = Depends(oauth2_scheme)) -> Dict[str, Any]:
     """
     Validates a native JWT token issued by this FastAPI server.
@@ -124,6 +88,46 @@ async def verify_token_with_authelia(token: str = Depends(oauth2_scheme)) -> Dic
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token verification error",
             headers={"WWW-Authenticate": "Bearer"},
+        )
+
+async def exchange_code_for_authelia_token(code: str) -> Dict[str, Any]:
+    """
+    Exchanges an OIDC authorization code for an access token from Authelia.
+    """
+    if not settings.authelia_token_url:
+        logger.error("AUTHELIA_TOKEN_URL is not configured.")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Authentication server configuration error."
+        )
+
+    try:
+        async with httpx.AsyncClient() as client:
+            data = {
+                "grant_type": "authorization_code",
+                "code": code,
+                "client_id": settings.authelia_client_id,
+                "client_secret": settings.authelia_client_secret,
+                "redirect_uri": settings.authelia_redirect_uri
+            }
+            
+            response = await client.post(settings.authelia_token_url, data=data)
+            
+            if response.status_code == 200:
+                return response.json()
+            else:
+                logger.error(f"Authelia token exchange failed: {response.status_code} - {response.text}")
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Failed to exchange authorization code for token"
+                )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error during Authelia token exchange: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token exchange error"
         )
 
 class RoleChecker:

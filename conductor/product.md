@@ -10,7 +10,7 @@ FastLangFrame is a flexible and lightweight framework designed for the rapid cre
 ## Key Features
 - **Project Generation**: CLI tool (`lapm`) to generate boilerplate projects from predefined templates.
 - **Built-in API Server**: Standard FastAPI server with Swagger UI for every agent project.
-- **Integrated Security**: Standard OAuth2 Password flow authentication and RBAC, with back-channel verification via Zitadel.
+- **Integrated Security**: Standard OAuth2 Password flow authentication and RBAC, with back-channel verification via Authelia.
 - **Interactive UI**: Streamlit-based chat interface for real-time node trace and testing.
 - **Extensibility**: Support for MCP, Skills, and integrations with databases (PostgreSQL, MySQL, Redis, OpenSearch).
 - **Deployment Ready**: Included Dockerfiles and Kubernetes deployment manifests.

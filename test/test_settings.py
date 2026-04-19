@@ -13,5 +13,3 @@ def test_oauth_settings():
     assert hasattr(settings, "jwt_secret_key")
     assert len(settings.jwt_secret_key) >= 32
     assert hasattr(settings, "jwt_algorithm")
-    assert hasattr(settings, "zitadel_url")
-    assert hasattr(settings, "zitadel_token_url")

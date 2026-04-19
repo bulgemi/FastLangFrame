@@ -30,7 +30,7 @@ session:
   cookies:
     - domain: '127.0.0.1'
       authelia_url: 'https://127.0.0.1:9091'
-      default_redirection_url: 'https://127.0.0.1:8000'
+      default_redirection_url: 'https://127.0.0.1:8888'
 
 notifier:
   filesystem:
@@ -74,7 +74,7 @@ identity_providers:
         public: false
         authorization_policy: one_factor
         redirect_uris:
-          - http://127.0.0.1:8000/api/v1/auth/callback
+          - http://127.0.0.1:8888/api/v1/auth/callback
         scopes:
           - openid
           - profile
