@@ -41,5 +41,3 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [x] **Track: Authelia를 Zitadel(https://zitadel.com/docs/self-hosting/deploy/compose)로 전환**
 *Link: [./tracks/zitadel_migration_20260415/](./tracks/zitadel_migration_20260415/)*
-
-
