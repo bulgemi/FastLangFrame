@@ -41,3 +41,8 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [x] **Track: Authelia를 Zitadel(https://zitadel.com/docs/self-hosting/deploy/compose)로 전환**
 *Link: [./tracks/zitadel_migration_20260415/](./tracks/zitadel_migration_20260415/)*
+
+---
+
+- [ ] **Track: docker compose에 nginx를 추가하여 https 지원하고, 인증 후 리다이렉트 url(https://127.0.0.1:8000/) 인입시 backend(http://127.0.0.1:8888/) 연동**
+*Link: [./tracks/nginx_https_proxy_20260419/](./tracks/nginx_https_proxy_20260419/)*
