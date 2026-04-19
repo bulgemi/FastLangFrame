@@ -15,9 +15,10 @@
 - **Pytest**: Primary testing framework.
 
 ## Security & Identity
-- **Zitadel**: Open-source identity provider for OAuth2/OIDC.
+- **Authelia**: Open-source identity provider for OAuth2/OIDC (Primary).
+- **Zitadel**: Supported alternative identity provider.
 - **PyJWT**: For JWT token validation and RBAC.
-- **FastAPI Security**: OAuth2PasswordBearer flow for direct authentication and native JWT issuance.
+- **FastAPI Security**: OAuth2PasswordBearer flow with Token Introspection support for Authelia.
 
 ## Infrastructure & Deployment
 - **Docker**: For containerizing agent projects.
