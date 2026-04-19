@@ -7,7 +7,7 @@
 - [ ] Task: Conductor - User Manual Verification 'Configure Nginx & Authelia' (Protocol in workflow.md)
 
 ## Phase 2: Update Environment & Verify
-- [ ] Task: Update environment and restart services
-    - [ ] `.env` 파일의 외부 접근 OIDC URL들(`AUTHELIA_AUTHORIZATION_URL`, `AUTHELIA_TOKEN_URL`, `AUTHELIA_USERINFO_URL`)을 모두 Nginx의 HTTPS 주소(`https://127.0.0.1:8000/...`)로 업데이트합니다. (서버 내부 검증용인 `AUTHELIA_INTROSPECTION_URL`은 유지)
-    - [ ] `docker compose restart nginx authelia` 명령어로 컨테이너를 재시작하여 변경된 설정을 반영합니다.
+- [x] Task: Update environment and restart services (54c42c5)
+    - [x] `.env` 파일의 외부 접근 OIDC URL들(`AUTHELIA_AUTHORIZATION_URL`, `AUTHELIA_TOKEN_URL`, `AUTHELIA_USERINFO_URL`)을 모두 Nginx의 HTTPS 주소(`https://127.0.0.1:8000/...`)로 업데이트합니다. (서버 내부 검증용인 `AUTHELIA_INTROSPECTION_URL`은 유지)
+    - [x] `docker compose restart nginx authelia` 명령어로 컨테이너를 재시작하여 변경된 설정을 반영합니다.
 - [ ] Task: Conductor - User Manual Verification 'Update Environment & Verify' (Protocol in workflow.md)
