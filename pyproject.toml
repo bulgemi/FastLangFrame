@@ -30,6 +30,9 @@ langchain-mcp-adapters = "^0.2.2"
 pyjwt = {extras = ["crypto"], version = "^2.12.1"}
 authlib = "^1.7.0"
 
+[tool.pytest.ini_options]
+pythonpath = ["."]
+asyncio_mode = "auto"
 
 [build-system]
 requires = ["poetry-core"]

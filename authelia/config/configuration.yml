@@ -1,0 +1,81 @@
+server:
+  address: 'tcp://0.0.0.0:9091/'
+
+log:
+  level: debug
+
+authentication_backend:
+  password_reset:
+    disable: true
+  file:
+    path: /config/users_database.yml
+
+access_control:
+  default_policy: 'one_factor'
+  rules:
+    - domain: '127.0.0.1'
+      policy: 'one_factor'
+
+storage:
+  encryption_key: '{{ env "AUTHELIA_STORAGE_ENCRYPTION_KEY" }}'
+  local:
+    path: /config/db.sqlite3
+
+session:
+  name: authelia_session
+  secret: '{{ env "AUTHELIA_SESSION_SECRET" }}'
+  expiration: 1h
+  inactivity: 5m
+  remember_me: 1M
+  cookies:
+    - domain: '127.0.0.1'
+      authelia_url: 'https://127.0.0.1:9091'
+      default_redirection_url: 'https://127.0.0.1:8000'
+
+notifier:
+  filesystem:
+    filename: /config/notification.txt
+
+identity_providers:
+  oidc:
+    hmac_secret: '{{ env "AUTHELIA_IDENTITY_PROVIDERS_OIDC_HMAC_SECRET" }}'
+    issuer_private_key: |
+      -----BEGIN RSA PRIVATE KEY-----
+      MIIEpAIBAAKCAQEAzEBphAN9iAyYfWMpw9OT/Zo82JTIN5lr1c9XIqDsR4euE/jy
+      Eyemyb7sAs54pKe73LMAshXfrJuQyDnzrYR5Eumviqdg4PI4WQkjuzh+Qsg5aqMm
+      jK9Mk2N/xbNI9OKcodIEmTIyoxG0eQIU0EHpXnnm3imA1vfTclLNy84Skoe7CT1L
+      80PAUr199i7WixSsb6tqWlW3u35Z1DBUg0cn99Mx/GKDTodgcT0VmEOcAf3oCHai
+      oHWqxRlDY2jIto5OPb5nOyCHQ6KSthBGDHAKtJhl8zAYKgHIQJhabmz8nKWT4xe1
+      cG+uuz7td7zfNW/qBpkiAprj1k2G9IcCmdhUkwIDAQABAoIBAD2aN7i/LL85vUwj
+      +la7m2jjefKAfRp3xVRJIqipDFpOi6wuayRn0yAJ2zjFeRGAHWLlAhK0EjAHA1XA
+      VMRCrhmMLYuOC+QMaf5AiWxQD5South0uI252Uiiu8iu2BQzvLX5l7V0tF0GW/4b
+      KJffKTl7XqwmrFsph7Z1TuhnEKbsiwbZ5NrEiEYL0E72iD5f9hL+dXr7ALd71Qig
+      ZUvejI+BwMxe9ba4fDM0/uuOsloprcVRIJvAq6MPmVSbU2Tr69OwIOoqAsNAnYTs
+      pWife9BMDcWmHR5w2OoooTOOqp7E5h3QO8jlfcxTO1wy7AXvMBw8KYGtsdSaUuHS
+      jpA1ndECgYEA5h/lvalG5YqwQFygspXAv1Xbq3poEe3KFsfoZBcA6gFqExJMsuED
+      chDzt0vQp/u5jDSqt3/l94Mk2kHpyMTB47uH+18h3x0VE6XK+B6l3dkD0PDLjKVa
+      Dikd1avugeqoPRbXel9JUbqmY9JYYBwxNN6HTPJHNb1k5coeDYSMo/UCgYEA4zfD
+      uxe+Y4rKMuruiTpA1G3Bpe/0v8CJzNIIS9t6bl/o5YmZc9QWw4KyP4tmALtUPPbB
+      Ckb1gdaLa6QJ/uEZklOjstR4i28C+49FdJySc7s6q+/6JrI+uWe7cKFxhoOuYAKX
+      S8/HpxZklIhgolDRNv17QtfRFUqQGXvHXnkLyWcCgYEAlGsmJTiz/P+BxUD4c7WZ
+      5s1dLC96R3XxzNeJzmP3tvTKkRpQVV5CdqLwTNuc63qypPai1E6s5wGyFwJD4bTk
+      yBf/D+S/V8LOASoAyh4aJAb/KxbicQeEGXXzRAfrf+b0MtI0jzw9cXTMM71KOlJ0
+      egC7iqkHvGU2We4Ni/JdMrECgYBLZa7Cf5+CwoRUHxcmXDk1BHK00IpDsu1HFQ8B
+      tQPManEK8f0ErYUcPVtOsMAZUBAk5rCp61/+RKYhAt76P9HPd4ejiNOzWRQBS8p9
+      ZpNGagOPGGPGwXEE7wII3tmgDEQpwdJYqssSi+C2VQbT9cNm3vgu9xR/Xy2v9x3y
+      IHKj0wKBgQDThhcOxQ2shZVPnpCGK9dCqMjNGHB9dOAviJb4cTdBfO5Hgz/6fR11
+      CzsLKDlvSb5OFEBCFEas/seEzsL7VAw3gcA+DeC3cQIIP7V02aLm1nJAWX+lfdJz
+      /57vARLx6yBO4t/cki61lZL3Er71yAeqNjpTp6pcCsaJm0hLrK/OoA==
+      -----END RSA PRIVATE KEY-----
+    clients:
+      - client_id: fastapi
+        client_name: FastAPI Backend
+        client_secret: '$argon2id$v=19$m=65536,t=3,p=4$MTIzNDU2Nzg5MDEyMzQ1Ng$v9V9V9V9V9V9V9V9V9V9V9V9V9V9V9V9V9V9V9V9V9V'
+        public: false
+        authorization_policy: one_factor
+        redirect_uris:
+          - http://127.0.0.1:8000/api/v1/auth/callback
+        scopes:
+          - openid
+          - profile
+          - email

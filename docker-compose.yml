@@ -1,60 +1,27 @@
 services:
-  zitadel-db:
-    image: postgres:16-alpine
-    container_name: zitadel-db
-    environment:
-      - POSTGRES_USER=zitadel
-      - POSTGRES_PASSWORD=zitadel
-      - POSTGRES_DB=zitadel
+  redis:
+    image: redis:7-alpine
+    container_name: redis
     volumes:
-      - zitadel-db-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d zitadel -U zitadel"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  zitadel-init:
-    image: ghcr.io/zitadel/zitadel:latest
-    container_name: zitadel-init
-    command: 'setup --masterkey "MasterkeyMustBeAtLeast32CharsLong!"'
-    environment:
-      - ZITADEL_DATABASE_POSTGRES_HOST=zitadel-db
-      - ZITADEL_DATABASE_POSTGRES_PORT=5432
-      - ZITADEL_DATABASE_POSTGRES_USER_SSL_MODE=disable
-      - ZITADEL_DATABASE_POSTGRES_USER_USER=zitadel
-      - ZITADEL_DATABASE_POSTGRES_USER_PASSWORD=zitadel
-      - ZITADEL_DATABASE_POSTGRES_ADMIN_SSL_MODE=disable
-      - ZITADEL_DATABASE_POSTGRES_ADMIN_USER=zitadel
-      - ZITADEL_DATABASE_POSTGRES_ADMIN_PASSWORD=zitadel
-    depends_on:
-      zitadel-db:
-        condition: service_healthy
-
-  zitadel:
-    image: ghcr.io/zitadel/zitadel:latest
-    container_name: zitadel
-    command: 'start-from-setup --masterkey "MasterkeyMustBeAtLeast32CharsLong!"'
-    environment:
-      - ZITADEL_DATABASE_POSTGRES_HOST=zitadel-db
-      - ZITADEL_DATABASE_POSTGRES_PORT=5432
-      - ZITADEL_DATABASE_POSTGRES_USER_SSL_MODE=disable
-      - ZITADEL_DATABASE_POSTGRES_USER_USER=zitadel
-      - ZITADEL_DATABASE_POSTGRES_USER_PASSWORD=zitadel
-      - ZITADEL_DATABASE_POSTGRES_ADMIN_SSL_MODE=disable
-      - ZITADEL_DATABASE_POSTGRES_ADMIN_USER=zitadel
-      - ZITADEL_DATABASE_POSTGRES_ADMIN_PASSWORD=zitadel
-      - ZITADEL_EXTERNALDMAIN=localhost
-      - ZITADEL_EXTERNALPORT=8080
-      - ZITADEL_EXTERNALSECURE=false
-    ports:
-      - "8080:8080"
-    depends_on:
-      zitadel-db:
-        condition: service_healthy
-      zitadel-init:
-        condition: service_completed_successfully
+      - redis-data:/data
     restart: unless-stopped
 
+  authelia:
+    image: authelia/authelia:4.38.10
+    container_name: authelia
+    volumes:
+      - ./authelia/config:/config
+    ports:
+      - "9091:9091"
+    depends_on:
+      - redis
+    # Secrets can be generated using: openssl rand -hex 32
+    environment:
+      - AUTHELIA_STORAGE_ENCRYPTION_KEY=0aa061727320ad5522922606b34beadd5be6de5db23ce0cb778d1d82325cf2c9
+      - AUTHELIA_SESSION_SECRET=afd4f9bc0a4cfcc2bc896315b55fe6efc82a31689b009a539c593518a1a107b6
+      - AUTHELIA_IDENTITY_PROVIDERS_OIDC_HMAC_SECRET=c4a7b98248dbf5f6b5366993fe53bd5020fc1c8e4411dc24becfa88934f7abd8
+    restart: unless-stopped
+
+
 volumes:
-  zitadel-db-data:
+  redis-data:

@@ -98,6 +98,11 @@ class FastLangFrameSettings(BaseSettings):
     zitadel_client_id: Optional[str] = Field(default=None, alias="ZITADEL_CLIENT_ID")
     zitadel_client_secret: Optional[str] = Field(default=None, alias="ZITADEL_CLIENT_SECRET")
 
+    # Authelia Configuration
+    authelia_introspection_url: Optional[str] = Field(default=None, alias="AUTHELIA_INTROSPECTION_URL")
+    authelia_client_id: Optional[str] = Field(default=None, alias="AUTHELIA_CLIENT_ID")
+    authelia_client_secret: Optional[str] = Field(default=None, alias="AUTHELIA_CLIENT_SECRET")
+
     @property
     def llm_models(self) -> Dict[str, Dict[str, Any]]:
         """Parses the JSON model configuration into a dictionary"""
