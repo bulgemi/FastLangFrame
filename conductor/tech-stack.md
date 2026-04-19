@@ -15,9 +15,9 @@
 - **Pytest**: Primary testing framework.
 
 ## Security & Identity
-- **Authentik**: Open-source identity provider for OAuth2/OIDC.
+- **Zitadel**: Open-source identity provider for OAuth2/OIDC.
 - **PyJWT**: For JWT token validation and RBAC.
-- **FastAPI Security**: Built-in modules for OAuth2 flow management.
+- **FastAPI Security**: OAuth2PasswordBearer flow for direct authentication and native JWT issuance.
 
 ## Infrastructure & Deployment
 - **Docker**: For containerizing agent projects.

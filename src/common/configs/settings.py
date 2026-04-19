@@ -87,15 +87,16 @@ class FastLangFrameSettings(BaseSettings):
     # Multi-Model Configuration (JSON string)
     llm_models_json: Optional[str] = Field(default=None, alias="LLM_MODELS_JSON")
 
-    # Authentik OAuth Configuration
-    authentik_url: Optional[str] = Field(default=None, alias="AUTHENTIK_URL")
-    authentik_client_id: Optional[str] = Field(default=None, alias="AUTHENTIK_CLIENT_ID")
-    authentik_client_secret: Optional[str] = Field(default=None, alias="AUTHENTIK_CLIENT_SECRET")
-    authentik_jwks_url: Optional[str] = Field(default=None, alias="AUTHENTIK_JWKS_URL")
-    authentik_auth_url: Optional[str] = Field(default=None, alias="AUTHENTIK_AUTH_URL")
-    authentik_token_url: Optional[str] = Field(default=None, alias="AUTHENTIK_TOKEN_URL")
-    authentik_userinfo_url: Optional[str] = Field(default=None, alias="AUTHENTIK_USERINFO_URL")
-    authentik_callback_url: Optional[str] = Field(default=None, alias="AUTHENTIK_CALLBACK_URL")
+    # Native JWT Configuration
+    jwt_secret_key: str = Field(default="your_jwt_secret_key_at_least_32_chars_long", alias="JWT_SECRET_KEY")
+    jwt_algorithm: str = Field(default="HS256", alias="JWT_ALGORITHM")
+    jwt_access_token_expire_minutes: int = Field(default=60, alias="JWT_ACCESS_TOKEN_EXPIRE_MINUTES")
+
+    # Zitadel Configuration (Back-channel only)
+    zitadel_url: Optional[str] = Field(default=None, alias="ZITADEL_URL")
+    zitadel_token_url: Optional[str] = Field(default=None, alias="ZITADEL_TOKEN_URL")
+    zitadel_client_id: Optional[str] = Field(default=None, alias="ZITADEL_CLIENT_ID")
+    zitadel_client_secret: Optional[str] = Field(default=None, alias="ZITADEL_CLIENT_SECRET")
 
     @property
     def llm_models(self) -> Dict[str, Dict[str, Any]]:
