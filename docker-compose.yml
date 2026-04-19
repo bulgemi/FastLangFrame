@@ -7,7 +7,7 @@ services:
     restart: unless-stopped
 
   authelia:
-    image: authelia/authelia:4.37.5
+    image: authelia/authelia:4.38.10
     container_name: authelia
     volumes:
       - ./authelia/config:/config
@@ -15,7 +15,12 @@ services:
       - "9091:9091"
     depends_on:
       - redis
+    environment:
+      - AUTHELIA_STORAGE_ENCRYPTION_KEY=unsecure_storage_encryption_key_at_least_32_chars
+      - AUTHELIA_SESSION_SECRET=unsecure_session_secret_at_least_32_chars_long
+      - AUTHELIA_IDENTITY_PROVIDERS_OIDC_HMAC_SECRET=unsecure_hmac_secret_at_least_32_chars_long
     restart: unless-stopped
+
 
 volumes:
   redis-data:
