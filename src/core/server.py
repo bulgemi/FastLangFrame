@@ -1,11 +1,12 @@
 import json
 import asyncio
 from typing import Any
-from fastapi import FastAPI, Request, Depends
+from fastapi import FastAPI, Request, Depends, HTTPException, status
 from fastapi.responses import StreamingResponse
+from fastapi.security import OAuth2PasswordRequestForm
 
 from .api_models import AgentInvokeRequest, AgentBatchRequest, AgentInvokeResponse, AgentBatchResponse
-from src.common.middleware.auth import verify_token
+from src.common.middleware.auth import verify_token, verify_credentials_with_zitadel, create_access_token
 
 def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> FastAPI:
     """
@@ -13,6 +14,27 @@ def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> Fas
     엔드포인트가 장착된 FastAPI 앱을 생성하여 반환합니다.
     """
     app = FastAPI(title=title)
+    
+    @app.post("/token", summary="Token 발행")
+    async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+        """사용자 이름과 비밀번호를 받아 JWT를 발급합니다."""
+        # 1. Identity Provider back-channel 검증 (Zitadel)
+        user_info = await verify_credentials_with_zitadel(form_data.username, form_data.password)
+        
+        # 2. Fallback (개발/테스트용): IDP 미설정 시 간단한 검증
+        if not user_info:
+            if form_data.username == "testuser" and form_data.password == "testpassword":
+                user_info = {"sub": "testuser", "name": "Test User", "groups": ["admins"]}
+            else:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Incorrect username or password",
+                    headers={"WWW-Authenticate": "Bearer"},
+                )
+
+        # 3. Native JWT 생성
+        access_token = create_access_token(data=user_info)
+        return {"access_token": access_token, "token_type": "bearer"}
     
     @app.get("/", summary="Health Check")
     async def root():
