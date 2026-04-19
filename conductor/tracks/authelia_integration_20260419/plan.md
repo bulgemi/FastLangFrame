@@ -4,9 +4,9 @@
 - [x] Task: Setup Authelia Directory and Configuration Files (422e9f5)
     - [x] Create `authelia/config/configuration.yml` for Authelia settings (SQLite, local YAML backend, OIDC client for FastAPI).
     - [x] Create `authelia/config/users_database.yml` for local user definitions.
-- [ ] Task: Update `docker-compose.yml`
-    - [ ] Add `redis` service (required for Authelia session state).
-    - [ ] Add `authelia` service mapping to `authelia/config` and exposing necessary ports.
+- [x] Task: Update `docker-compose.yml` (08d00a6)
+    - [x] Add `redis` service (required for Authelia session state).
+    - [x] Add `authelia` service mapping to `authelia/config` and exposing necessary ports.
 - [ ] Task: Conductor - User Manual Verification 'Docker & Authelia Infrastructure Setup' (Protocol in workflow.md)
 
 ## Phase 2: FastAPI Authentication Integration (Test-Driven)
