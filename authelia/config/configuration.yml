@@ -1,6 +1,5 @@
 server:
-  host: 0.0.0.0
-  port: 9091
+  address: 'tcp://0.0.0.0:9091/'
 
 log:
   level: debug
@@ -11,20 +10,27 @@ authentication_backend:
   file:
     path: /config/users_database.yml
 
+access_control:
+  default_policy: 'one_factor'
+  rules:
+    - domain: '127.0.0.1'
+      policy: 'one_factor'
+
 storage:
+  encryption_key: 'unsecure_storage_encryption_key_at_least_32_chars'
   local:
     path: /config/db.sqlite3
 
 session:
   name: authelia_session
-  same_site: lax
-  secret: 'unsecure_session_secret'
+  secret: 'unsecure_session_secret_at_least_32_chars_long'
   expiration: 1h
   inactivity: 5m
-  remember_me_duration: 1M
-  redis:
-    host: redis
-    port: 6379
+  remember_me: 1M
+  cookies:
+    - domain: '127.0.0.1'
+      authelia_url: 'https://127.0.0.1:9091'
+      default_redirection_url: 'https://127.0.0.1:8000'
 
 notifier:
   filesystem:
@@ -32,7 +38,7 @@ notifier:
 
 identity_providers:
   oidc:
-    hmac_secret: 'unsecure_hmac_secret'
+    hmac_secret: 'unsecure_hmac_secret_at_least_32_chars_long'
     issuer_private_key: |
       -----BEGIN RSA PRIVATE KEY-----
       MIIEpAIBAAKCAQEAzEBphAN9iAyYfWMpw9OT/Zo82JTIN5lr1c9XIqDsR4euE/jy
@@ -62,15 +68,14 @@ identity_providers:
       /57vARLx6yBO4t/cki61lZL3Er71yAeqNjpTp6pcCsaJm0hLrK/OoA==
       -----END RSA PRIVATE KEY-----
     clients:
-      - id: fastapi
-        description: FastAPI Backend
-        secret: '$argon2id$v=19$m=65536,t=3,p=4$q6Z3m9z3V9V9V9V9V9V9V9$v9V9V9V9V9V9V9V9V9V9V9V9V9V9V9V9V9V9V9V9V9V' # secret: fastapi_secret
+      - client_id: fastapi
+        client_name: FastAPI Backend
+        client_secret: '$argon2id$v=19$m=65536,t=3,p=4$MTIzNDU2Nzg5MDEyMzQ1Ng$v9V9V9V9V9V9V9V9V9V9V9V9V9V9V9V9V9V9V9V9V9V'
         public: false
         authorization_policy: one_factor
         redirect_uris:
-          - http://localhost:8000/api/v1/auth/callback
+          - http://127.0.0.1:8000/api/v1/auth/callback
         scopes:
           - openid
           - profile
           - email
-        userinfo_signed_response_alg: none
