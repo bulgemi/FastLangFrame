@@ -12,14 +12,14 @@
     - [x] Add `location /` to `proxy_pass http://host.docker.internal:8888` (or the backend service name).
     - [x] Add `location /api` proxy settings.
     - [x] Add Authelia routing proxy settings.
-- [ ] Task: Conductor - User Manual Verification 'Setup Nginx and SSL Certificates' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Setup Nginx and SSL Certificates' (Protocol in workflow.md) (1cf688f)
 
-## Phase 2: Docker Compose Integration and Refinement
+## Phase 2: Docker Compose Integration and Refinement [checkpoint: 41742b3]
 - [x] Task: Update `docker-compose.yml` (6e571ae)
     - [x] Add `nginx` service using the official `nginx:alpine` image.
     - [x] Map `./nginx` local directory to container configuration paths.
     - [x] Map port `8000:8000`.
-- [ ] Task: Verify functionality
-    - [ ] Bring up the docker-compose stack.
-    - [ ] Verify `https://127.0.0.1:8000/` properly connects to the backend and other routes work.
-- [ ] Task: Conductor - User Manual Verification 'Docker Compose Integration and Refinement' (Protocol in workflow.md)
+- [x] Task: Verify functionality (41742b3)
+    - [x] Bring up the docker-compose stack.
+    - [x] Verify `https://127.0.0.1:8000/` properly connects to the backend and other routes work.
+- [x] Task: Conductor - User Manual Verification 'Docker Compose Integration and Refinement' (Protocol in workflow.md) (41742b3)
