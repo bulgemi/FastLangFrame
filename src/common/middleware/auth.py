@@ -75,6 +75,57 @@ async def verify_token(token: str = Depends(oauth2_scheme)) -> Dict[str, Any]:
             headers={"WWW-Authenticate": "Bearer"},
         )
 
+async def verify_token_with_authelia(token: str = Depends(oauth2_scheme)) -> Dict[str, Any]:
+    """
+    Validates a token by calling Authelia's OIDC introspection endpoint.
+    """
+    if not settings.authelia_introspection_url:
+        logger.error("AUTHELIA_INTROSPECTION_URL is not configured.")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Authentication server configuration error."
+        )
+
+    try:
+        async with httpx.AsyncClient() as client:
+            # Introspection typically requires client credentials via Basic Auth or POST body
+            auth = (settings.authelia_client_id, settings.authelia_client_secret)
+            data = {"token": token}
+            
+            response = await client.post(
+                settings.authelia_introspection_url,
+                auth=auth,
+                data=data
+            )
+            
+            if response.status_code == 200:
+                payload = response.json()
+                if payload.get("active") is True:
+                    return payload
+                else:
+                    logger.warning("Token verification failed: Token is not active.")
+                    raise HTTPException(
+                        status_code=status.HTTP_401_UNAUTHORIZED,
+                        detail="Invalid or inactive token",
+                        headers={"WWW-Authenticate": "Bearer"},
+                    )
+            else:
+                logger.error(f"Authelia introspection failed: {response.status_code} - {response.text}")
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Failed to verify token with identity provider",
+                    headers={"WWW-Authenticate": "Bearer"},
+                )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error during Authelia token introspection: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token verification error",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
 class RoleChecker:
     """
     A dependency that checks if the authenticated user has any of the allowed roles.
