@@ -42,4 +42,7 @@ This file tracks all major tracks for the project. Each track has its own detail
 - [x] **Track: Authelia를 Zitadel(https://zitadel.com/docs/self-hosting/deploy/compose)로 전환**
 *Link: [./tracks/zitadel_migration_20260415/](./tracks/zitadel_migration_20260415/)*
 
+---
 
+- [ ] **Track: oauth, oidc 인증 서비스 Authelia 적용, docker compose로 제공, Fastapi OAuth 2.0 Bearer Token으로 연동**
+*Link: [./tracks/authelia_integration_20260419/](./tracks/authelia_integration_20260419/)*
