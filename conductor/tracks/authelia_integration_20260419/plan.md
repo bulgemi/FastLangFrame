@@ -17,8 +17,8 @@
     - [x] Write failing test for Authelia introspection token validation logic.
     - [x] Implement the authentication dependency to call Authelia's introspection endpoint (`/api/oidc/introspection`).
     - [x] Ensure tests pass.
-- [ ] Task: Protect API Endpoints
-    - [ ] Write failing tests to verify that protected endpoints return 401 Unauthorized without a valid token.
-    - [ ] Apply the new Authelia authentication dependency to relevant API routes.
-    - [ ] Ensure tests pass.
+- [x] Task: Protect API Endpoints (414ca78)
+    - [x] Write failing tests to verify that protected endpoints return 401 Unauthorized without a valid token.
+    - [x] Apply the new Authelia authentication dependency to relevant API routes.
+    - [x] Ensure tests pass.
 - [ ] Task: Conductor - User Manual Verification 'FastAPI Authentication Integration (Test-Driven)' (Protocol in workflow.md)
