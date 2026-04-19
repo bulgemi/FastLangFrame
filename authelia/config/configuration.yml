@@ -17,13 +17,13 @@ access_control:
       policy: 'one_factor'
 
 storage:
-  encryption_key: '{{ env "AUTHELIA_STORAGE_ENCRYPTION_KEY" }}'
+  encryption_key: '${AUTHELIA_STORAGE_ENCRYPTION_KEY}'
   local:
     path: /config/db.sqlite3
 
 session:
   name: authelia_session
-  secret: '{{ env "AUTHELIA_SESSION_SECRET" }}'
+  secret: '${AUTHELIA_SESSION_SECRET}'
   expiration: 1h
   inactivity: 5m
   remember_me: 1M
@@ -38,7 +38,7 @@ notifier:
 
 identity_providers:
   oidc:
-    hmac_secret: '{{ env "AUTHELIA_IDENTITY_PROVIDERS_OIDC_HMAC_SECRET" }}'
+    hmac_secret: '${AUTHELIA_IDENTITY_PROVIDERS_OIDC_HMAC_SECRET}'
     issuer_private_key: |
       -----BEGIN RSA PRIVATE KEY-----
       MIIEpAIBAAKCAQEAzEBphAN9iAyYfWMpw9OT/Zo82JTIN5lr1c9XIqDsR4euE/jy
