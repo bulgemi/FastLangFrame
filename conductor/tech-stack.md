@@ -22,6 +22,7 @@
 
 ## Infrastructure & Deployment
 - **Docker**: For containerizing agent projects.
+- **Nginx**: Reverse proxy for HTTPS support and request routing.
 - **Kubernetes (K8s)**: Target deployment platform.
 - **Copier**: Template generation tool for bootstrapping new projects.
 
