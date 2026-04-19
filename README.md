@@ -51,15 +51,6 @@ FastLangFrame은 LangChain 및 LangGraph를 기반으로 한 경량급 LLM 에�
 * **Streamlit Chat UI**: 생성된 에이전트를 즉시 테스트할 수 있는 웹 인터페이스 (OAuth 연동 완료)
 * **Node Trace**: 실행 중인 에이전트의 각 단계(Node)를 시각적으로 추적
 
-## 템플릿 종류
-
-* **Simple Agent**: 기본적인 LangChain 기반 단일 에이전트
-* **RAG Agent**: 지식 기반 검색 및 답변이 가능한 RAG 최적화 구조
-* **Multi-Agent**: 다수의 에이전트가 협업하는 분산 워크플로우
-* **MCP Agent**: Model Context Protocol을 활용한 강력한 확장성 제공
-* **Deep Agent**: `deepagents` 라이브러리를 활용한 고도화된 추론 에이전트
-* **Research Agent**: 리서치 계획 수립, 정보 검색 및 결과 종합을 수행하는 전문 리서치 워크플로우
-
 ## 기술 스택 (S/W Stack)
 
 * **Runtime**: Python 3.12+
@@ -99,9 +90,6 @@ FastLangFrame은 LangChain 및 LangGraph를 기반으로 한 경량급 LLM 에�
 ./bin/lapm my_agent create 1 1
 ```
 
-* **LLM Provider**: 1:OpenAI, 2:Azure, 3:DeepSeek, 4:Gemini, 5:Claude, 6:Local
-* **Template**: 1:Simple, 2:RAG, 3:Multi, 4:MCP, 5:Deep, 6:Research
-
 ### 2. 인프라 및 환경 설정
 
 1. **인프라(Nginx, Authelia, Redis) 기동**:
@@ -111,28 +99,57 @@ FastLangFrame은 LangChain 및 LangGraph를 기반으로 한 경량급 LLM 에�
    ```
 
 2. **환경 변수 설정**:
-   생성된 프로젝트 폴더 (`projects/my_agent/my_agent`) 내의 `.env` 파일을 수정하여 API Key 및 Authelia 설정을 완료합니다. (템플릿의 `.env.example` 참조)
+   `.env` 파일을 생성하고 LLM API Key 및 Authelia 설정을 입력합니다.
 
 ### 3. 서버 실행
 
 ```bash
-cd projects/my_agent
-poetry install
-# Nginx 프록시를 통해 접근하기 위해 기본 포트 8888로 실행
-PYTHONPATH=../.. poetry run python my_agent/main.py --port 8888
+# 기본 포트 8888로 실행 (Nginx가 8000 -> 8888로 프록시)
+PYTHONPATH=. poetry run python -m src.core.server --port 8888
 ```
 
-* **HTTPS 접속**: `https://localhost:8000/docs` 접속하여 Swagger UI 테스트
-* **HTTP 접속**: `http://localhost:80` 접속 시 HTTPS로 자동 리다이렉트됩니다.
+---
 
-### 4. UI 테스트 실행
+## 설정 및 인증 가이드 (Configuration & Auth)
+
+### ⚙️ 환경 변수 설정 (`.env`)
+
+Authelia와 Nginx 환경에서 정상적인 인증을 위해 다음 변수들이 필요합니다.
 
 ```bash
-cd projects/my_agent
-PYTHONPATH=../.. poetry run streamlit run my_agent/chat_test/app.py
+# --- Authelia OIDC Configuration ---
+AUTHELIA_URL=http://localhost:9091
+AUTHELIA_INTROSPECTION_URL=http://localhost:9091/api/oidc/introspection
+AUTHELIA_TOKEN_URL=http://localhost:9091/api/oidc/token
+AUTHELIA_AUTHORIZATION_URL=http://localhost:9091/api/oidc/authorization
+AUTHELIA_CLIENT_ID=fastapi
+AUTHELIA_CLIENT_SECRET=fastapi_secret
+AUTHELIA_REDIRECT_URI=http://localhost:8888/api/v1/auth/callback
 ```
 
-* 최초 접속 시 Authelia 로그인 페이지로 리다이렉트됩니다.
+### 🔐 인증 및 API 테스트 방법
+
+#### 1. Swagger UI를 통한 OIDC 인증 (추천)
+실 운영 환경과 동일한 브라우저 기반 인증 흐름을 테스트합니다.
+
+1.  **Swagger 접속**: `https://localhost:8000/docs` (Nginx HTTPS 포트)
+2.  **보안 경고 우회**: 브라우저에서 '고급' 클릭 후 이동하거나, 화면에 `thisisunsafe`를 입력하여 자체 서명 인증서를 통과합니다.
+3.  **Authorize 클릭**: 우측 상단의 **Authorize** 버튼 클릭.
+4.  **OIDC Flow 선택**: `oidc_scheme` 섹션에서 모든 스코프를 체크하고 **Authorize** 클릭.
+5.  **Authelia 로그인**: 리다이렉트된 Authelia 페이지에서 로그인 (`user` / `password`).
+6.  **인증 완료**: Swagger로 돌아오면 이제 모든 API를 인증된 상태로 호출할 수 있습니다.
+
+#### 2. 로컬 개발용 간이 인증 (Password Flow)
+Authelia 없이 백엔드 로직만 빠르게 테스트할 때 사용합니다.
+
+1.  **Authorize 클릭**: `password_scheme` 섹션 선택.
+2.  **정보 입력**:
+    *   **Username**: `testuser`
+    *   **Password**: `testpassword`
+3.  **로그인**: 내부 `/token` 엔드포인트를 통해 발급된 임시 토큰으로 인증됩니다.
+
+#### 3. Authelia 직접 접속 및 세션 확인
+인증 서버 상태를 직접 확인하려면 `http://localhost:9091`에 접속하세요.
 
 ## Chat Test UI 가이드
 
