@@ -5,13 +5,13 @@
     - [x] Create `./nginx/certs` directory.
     - [x] Create a shell script (or run directly) to generate a self-signed OpenSSL certificate for `127.0.0.1`.
     - [x] Execute script and verify `server.crt` and `server.key` are created.
-- [ ] Task: Create Nginx configuration
-    - [ ] Create `./nginx/nginx.conf`.
-    - [ ] Configure `server` block to listen on 8000 `ssl`.
-    - [ ] Configure SSL certificate paths.
-    - [ ] Add `location /` to `proxy_pass http://host.docker.internal:8888` (or the backend service name).
-    - [ ] Add `location /api` proxy settings.
-    - [ ] Add Authelia routing proxy settings.
+- [x] Task: Create Nginx configuration (d8ddba4)
+    - [x] Create `./nginx/nginx.conf`.
+    - [x] Configure `server` block to listen on 8000 `ssl`.
+    - [x] Configure SSL certificate paths.
+    - [x] Add `location /` to `proxy_pass http://host.docker.internal:8888` (or the backend service name).
+    - [x] Add `location /api` proxy settings.
+    - [x] Add Authelia routing proxy settings.
 - [ ] Task: Conductor - User Manual Verification 'Setup Nginx and SSL Certificates' (Protocol in workflow.md)
 
 ## Phase 2: Docker Compose Integration and Refinement
