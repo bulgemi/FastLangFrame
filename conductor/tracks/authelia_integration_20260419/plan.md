@@ -24,3 +24,6 @@
     - [x] Apply the new Authelia authentication dependency to relevant API routes.
     - [x] Ensure tests pass.
 - [ ] Task: Conductor - User Manual Verification 'FastAPI Authentication Integration (Test-Driven)' (Protocol in workflow.md)
+
+## Phase: Review Fixes
+- [x] Task: Apply review suggestions (dfb4ef4)
