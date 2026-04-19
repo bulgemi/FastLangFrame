@@ -1,9 +1,9 @@
 # Implementation Plan
 
 ## Phase 1: Docker & Authelia Infrastructure Setup
-- [ ] Task: Setup Authelia Directory and Configuration Files
-    - [ ] Create `authelia/config/configuration.yml` for Authelia settings (SQLite, local YAML backend, OIDC client for FastAPI).
-    - [ ] Create `authelia/config/users_database.yml` for local user definitions.
+- [x] Task: Setup Authelia Directory and Configuration Files (422e9f5)
+    - [x] Create `authelia/config/configuration.yml` for Authelia settings (SQLite, local YAML backend, OIDC client for FastAPI).
+    - [x] Create `authelia/config/users_database.yml` for local user definitions.
 - [ ] Task: Update `docker-compose.yml`
     - [ ] Add `redis` service (required for Authelia session state).
     - [ ] Add `authelia` service mapping to `authelia/config` and exposing necessary ports.
