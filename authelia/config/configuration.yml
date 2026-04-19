@@ -67,6 +67,15 @@ identity_providers:
       CzsLKDlvSb5OFEBCFEas/seEzsL7VAw3gcA+DeC3cQIIP7V02aLm1nJAWX+lfdJz
       /57vARLx6yBO4t/cki61lZL3Er71yAeqNjpTp6pcCsaJm0hLrK/OoA==
       -----END RSA PRIVATE KEY-----
+    cors:
+      endpoints:
+        - authorization
+        - token
+        - userinfo
+        - introspection
+      allowed_origins:
+        - https://127.0.0.1:8000
+        - https://localhost:8000
     clients:
       - client_id: fastapi
         client_name: FastAPI Backend
@@ -75,6 +84,8 @@ identity_providers:
         authorization_policy: one_factor
         redirect_uris:
           - http://127.0.0.1:8888/api/v1/auth/callback
+          - https://127.0.0.1:8000/docs/oauth2-redirect
+          - https://localhost:8000/docs/oauth2-redirect
         scopes:
           - openid
           - profile
