@@ -1,9 +1,9 @@
 # Implementation Plan
 
 ## Phase 1: Configure Nginx & Authelia
-- [ ] Task: Update Nginx and Authelia configurations
-    - [ ] `nginx/nginx.conf` 파일에 `/api/oidc` 경로에 대한 리버스 프록시 설정을 추가하여 Authelia로 연결합니다.
-    - [ ] `authelia/config/configuration.yml` 파일의 `identity_providers.oidc` 섹션에 `cors` 정책을 추가하여 `https://127.0.0.1:8000` 로부터의 요청을 허용합니다.
+- [x] Task: Update Nginx and Authelia configurations (5f829c5)
+    - [x] `nginx/nginx.conf` 파일에 `/api/oidc` 경로에 대한 리버스 프록시 설정을 추가하여 Authelia로 연결합니다.
+    - [x] `authelia/config/configuration.yml` 파일의 `identity_providers.oidc` 섹션에 `cors` 정책을 추가하여 `https://127.0.0.1:8000` 로부터의 요청을 허용합니다.
 - [ ] Task: Conductor - User Manual Verification 'Configure Nginx & Authelia' (Protocol in workflow.md)
 
 ## Phase 2: Update Environment & Verify
