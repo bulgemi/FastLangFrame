@@ -1,8 +1,0 @@
-{
-  "track_id": "authelia_integration_20260419",
-  "type": "feature",
-  "status": "new",
-  "created_at": "2026-04-19T00:00:00Z",
-  "updated_at": "2026-04-19T00:00:00Z",
-  "description": "oauth, oidc 인증 서비스 Authelia 적용, docker compose로 제공, Fastapi OAuth 2.0 Bearer Token으로 연동"
-}
