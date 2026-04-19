@@ -1,10 +1,10 @@
 # Implementation Plan
 
 ## Phase 1: Setup Nginx and SSL Certificates
-- [ ] Task: Create Nginx folder structure and SSL Certificates
-    - [ ] Create `./nginx/certs` directory.
-    - [ ] Create a shell script (or run directly) to generate a self-signed OpenSSL certificate for `127.0.0.1`.
-    - [ ] Execute script and verify `server.crt` and `server.key` are created.
+- [x] Task: Create Nginx folder structure and SSL Certificates (bb01ddb)
+    - [x] Create `./nginx/certs` directory.
+    - [x] Create a shell script (or run directly) to generate a self-signed OpenSSL certificate for `127.0.0.1`.
+    - [x] Execute script and verify `server.crt` and `server.key` are created.
 - [ ] Task: Create Nginx configuration
     - [ ] Create `./nginx/nginx.conf`.
     - [ ] Configure `server` block to listen on 8000 `ssl`.
