@@ -10,9 +10,9 @@
 - [ ] Task: Conductor - User Manual Verification 'Docker & Authelia Infrastructure Setup' (Protocol in workflow.md)
 
 ## Phase 2: FastAPI Authentication Integration (Test-Driven)
-- [ ] Task: Setup FastAPI Authentication Dependencies
-    - [ ] Ensure `httpx` dependency is available via Poetry (for introspection requests).
-    - [ ] Update `src/common/configs/` to include settings for Authelia Introspection URL, Client ID, and Client Secret.
+- [x] Task: Setup FastAPI Authentication Dependencies (04a2c7b)
+    - [x] Ensure `httpx` dependency is available via Poetry (for introspection requests).
+    - [x] Update `src/common/configs/` to include settings for Authelia Introspection URL, Client ID, and Client Secret.
 - [ ] Task: Implement Token Introspection Logic
     - [ ] Write failing test for Authelia introspection token validation logic.
     - [ ] Implement the authentication dependency to call Authelia's introspection endpoint (`/api/oidc/introspection`).
