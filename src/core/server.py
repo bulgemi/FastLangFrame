@@ -20,11 +20,32 @@ async def get_current_verify_token():
         return verify_token_with_authelia
     return verify_token
 
-# Unified authentication dependency
+# Global schemes to be used as dependencies
+# We use a factory function to ensure they are created with current settings but reused by FastAPI
+_password_scheme = None
+_oidc_scheme = None
+
+def get_password_scheme():
+    global _password_scheme
+    if _password_scheme is None:
+        _password_scheme = OAuth2PasswordBearer(tokenUrl="token", auto_error=False)
+    return _password_scheme
+
+def get_oidc_scheme():
+    global _oidc_scheme
+    if _oidc_scheme is None:
+        s = get_settings()
+        _oidc_scheme = OAuth2AuthorizationCodeBearer(
+            authorizationUrl=s.authelia_authorization_url or "",
+            tokenUrl=s.authelia_token_url or "",
+            scopes={"openid": "OpenID Connect", "profile": "User Profile", "email": "User Email"},
+            auto_error=False
+        )
+    return _oidc_scheme
+
 async def authenticated_user(
-    request: Request,
-    token_password: Optional[str] = None,
-    token_oidc: Optional[str] = None
+    token_password: Optional[str] = Depends(get_password_scheme()),
+    token_oidc: Optional[str] = Depends(get_oidc_scheme())
 ):
     """
     Unified authentication dependency that handles both Password flow 
@@ -49,23 +70,6 @@ def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> Fas
     엔드포인트가 장착된 FastAPI 앱을 생성하여 반환합니다.
     """
     app = FastAPI(title=title)
-    s = get_settings()
-
-    # Define schemes inside the factory function to ensure they use latest settings
-    password_scheme = OAuth2PasswordBearer(tokenUrl="token", auto_error=False)
-    oidc_scheme = OAuth2AuthorizationCodeBearer(
-        authorizationUrl=s.authelia_authorization_url or "",
-        tokenUrl=s.authelia_token_url or "",
-        scopes={"openid": "OpenID Connect", "profile": "User Profile", "email": "User Email"},
-        auto_error=False
-    )
-
-    # Override the authenticated_user dependency to use the schemes defined in this scope
-    async def get_authenticated_user(
-        token_password: Optional[str] = Depends(password_scheme),
-        token_oidc: Optional[str] = Depends(oidc_scheme)
-    ):
-        return await authenticated_user(None, token_password, token_oidc)
     
     @app.post("/token", summary="Token 발행")
     async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
@@ -100,7 +104,7 @@ def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> Fas
         return {"status": "ok", "message": f"Welcome to {title}"}
 
     @app.post("/invoke", summary="Agent 실행", response_model=AgentInvokeResponse)
-    async def invoke(req: AgentInvokeRequest, auth: dict = Depends(get_authenticated_user)):
+    async def invoke(req: AgentInvokeRequest, auth: dict = Depends(authenticated_user)):
         """단일 Agent 입력을 받아 전체 처리가 끝난 뒤 결과 반환"""
         try:
             result = await graph.ainvoke(req.input, req.config)
@@ -110,7 +114,7 @@ def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> Fas
             return AgentInvokeResponse(error=str(e), status="error")
 
     @app.post("/stream", summary="Agent 스트리밍 실행")
-    async def stream(req: AgentInvokeRequest, auth: dict = Depends(get_authenticated_user)):
+    async def stream(req: AgentInvokeRequest, auth: dict = Depends(authenticated_user)):
         """단일 Agent 실행 중 이벤트를 SSE 스트림으로 반환"""
         async def event_generator():
             try:
@@ -123,7 +127,7 @@ def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> Fas
         return StreamingResponse(event_generator(), media_type="text/event-stream")
 
     @app.post("/invoke_batch", summary="Agent 배치 실행", response_model=AgentBatchResponse)
-    async def invoke_batch(req: AgentBatchRequest, auth: dict = Depends(get_authenticated_user)):
+    async def invoke_batch(req: AgentBatchRequest, auth: dict = Depends(authenticated_user)):
         """다수의 입력을 병렬로 처리 후 모든 결과가 완료되면 리스트 리턴"""
         try:
             results = await graph.abatch(req.inputs, req.config)
@@ -132,7 +136,7 @@ def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> Fas
             return AgentBatchResponse(error=str(e), status="error")
 
     @app.post("/invoke_stream_batch", summary="Agent 스트리밍 배치 실행")
-    async def invoke_stream_batch(req: AgentBatchRequest, auth: dict = Depends(get_authenticated_user)):
+    async def invoke_stream_batch(req: AgentBatchRequest, auth: dict = Depends(authenticated_user)):
         """
         다중 배치를 동시에 시작하여 각 입력별 스트림 이벤트를
         하나의 SSE 스트림으로 병합(Interleaved) 전송합니다.
