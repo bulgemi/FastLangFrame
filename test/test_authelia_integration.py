@@ -60,22 +60,3 @@ async def test_protected_endpoint_valid_token(test_app):
             assert response.status_code == 200
     finally:
         server_module.settings.authelia_introspection_url = original_url_server
-
-@pytest.mark.asyncio
-async def test_authelia_callback(test_app):
-    """Callback endpoint should exchange code for token"""
-    mock_token_data = {"access_token": "authelia_access_token", "token_type": "Bearer"}
-    
-    # Temporarily inject Authelia settings
-    original_url_server = server_module.settings.authelia_token_url
-    server_module.settings.authelia_token_url = "http://authelia:9091/api/oidc/token"
-    
-    try:
-        with patch("src.core.server.exchange_code_for_authelia_token", return_value=mock_token_data):
-            async with AsyncClient(transport=ASGITransport(app=test_app), base_url="http://test") as ac:
-                response = await ac.get("/api/v1/auth/callback?code=test_code")
-            
-            assert response.status_code == 200
-            assert response.json() == mock_token_data
-    finally:
-        server_module.settings.authelia_token_url = original_url_server

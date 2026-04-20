@@ -9,10 +9,11 @@ from .api_models import AgentInvokeRequest, AgentBatchRequest, AgentInvokeRespon
 from src.common.middleware.auth import (
     verify_token, 
     verify_token_with_authelia, 
-    create_access_token,
-    exchange_code_for_authelia_token
+    create_access_token
 )
 from src.common.configs.settings import get_settings
+
+settings = get_settings()
 
 async def get_current_verify_token():
     """Dynamic dependency to select the verification method based on settings."""
@@ -23,7 +24,6 @@ async def get_current_verify_token():
 # Global schemes to be used as dependencies
 # We use a factory function to ensure they are created with current settings but reused by FastAPI
 _password_scheme = None
-_oidc_scheme = None
 
 def get_password_scheme():
     global _password_scheme
@@ -31,29 +31,12 @@ def get_password_scheme():
         _password_scheme = OAuth2PasswordBearer(tokenUrl="token", auto_error=False)
     return _password_scheme
 
-def get_oidc_scheme():
-    global _oidc_scheme
-    if _oidc_scheme is None:
-        s = get_settings()
-        _oidc_scheme = OAuth2AuthorizationCodeBearer(
-            authorizationUrl=s.authelia_authorization_url or "",
-            tokenUrl=s.authelia_token_url or "",
-            scopes={"openid": "OpenID Connect", "profile": "User Profile", "email": "User Email"},
-            auto_error=False
-        )
-    return _oidc_scheme
-
 async def authenticated_user(
-    token_password: Optional[str] = Depends(get_password_scheme()),
-    token_oidc: Optional[str] = Depends(get_oidc_scheme())
+    token: Optional[str] = Depends(get_password_scheme())
 ):
     """
-    Unified authentication dependency that handles both Password flow 
-    and OIDC Authorization Code flow.
+    Unified authentication dependency.
     """
-    # Use OIDC token if present, otherwise fallback to password flow token
-    token = token_oidc or token_password
-    
     if not token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -88,20 +71,10 @@ def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> Fas
         access_token = create_access_token(data=user_info)
         return {"access_token": access_token, "token_type": "bearer"}
     
-    @app.get("/api/v1/auth/callback", summary="Authelia Callback")
-    async def authelia_callback(code: str):
-        """
-        OIDC callback endpoint that receives the authorization code 
-        and exchanges it for a token from Authelia.
-        """
-        token_data = await exchange_code_for_authelia_token(code)
-        # For simplicity, we just return the token data from Authelia.
-        # In a real app, you might want to issue a native JWT or set a session cookie.
-        return token_data
-
     @app.get("/", summary="Health Check")
     async def root():
         return {"status": "ok", "message": f"Welcome to {title}"}
+
 
     @app.post("/invoke", summary="Agent 실행", response_model=AgentInvokeResponse)
     async def invoke(req: AgentInvokeRequest, auth: dict = Depends(authenticated_user)):

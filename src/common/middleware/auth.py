@@ -90,46 +90,6 @@ async def verify_token_with_authelia(token: str = Depends(oauth2_scheme)) -> Dic
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-async def exchange_code_for_authelia_token(code: str) -> Dict[str, Any]:
-    """
-    Exchanges an OIDC authorization code for an access token from Authelia.
-    """
-    if not settings.authelia_token_url:
-        logger.error("AUTHELIA_TOKEN_URL is not configured.")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Authentication server configuration error."
-        )
-
-    try:
-        async with httpx.AsyncClient() as client:
-            data = {
-                "grant_type": "authorization_code",
-                "code": code,
-                "client_id": settings.authelia_client_id,
-                "client_secret": settings.authelia_client_secret,
-                "redirect_uri": settings.authelia_redirect_uri
-            }
-            
-            response = await client.post(settings.authelia_token_url, data=data)
-            
-            if response.status_code == 200:
-                return response.json()
-            else:
-                logger.error(f"Authelia token exchange failed: {response.status_code} - {response.text}")
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Failed to exchange authorization code for token"
-                )
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error during Authelia token exchange: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token exchange error"
-        )
-
 class RoleChecker:
     """
     A dependency that checks if the authenticated user has any of the allowed roles.
