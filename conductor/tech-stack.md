@@ -17,7 +17,7 @@
 ## Security & Identity
 - **Authelia**: Open-source identity provider for OAuth2/OIDC (Primary).
 - **PyJWT**: For JWT token validation and RBAC.
-- **FastAPI Security**: OAuth2PasswordBearer flow with Token Introspection support for Authelia.
+- **FastAPI Security**: OAuth2 Password and Bearer Token flows with local JWT validation support for Authelia.
 
 ## Infrastructure & Deployment
 - **Docker**: For containerizing agent projects.
