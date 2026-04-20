@@ -8,7 +8,7 @@
 
 ## Phase 2: Implement OAuth2 Bearer Token Validation
 - [x] Task: Write failing unit tests in `test/test_auth.py` for decoding and validating JWT tokens using Authelia's public key (Red Phase). (90276a7)
-- [ ] Task: Implement `verify_token` utility in `src/utils/auth.py` to perform local JWT validation using `PyJWT` (Green Phase).
+- [x] Task: Implement `verify_token` utility in `src/common/middleware/auth.py` (consistent with existing) to perform local JWT validation using `PyJWT` (Green Phase). (c4f67a1)
 - [ ] Task: Write failing tests in `test/test_server.py` for API endpoints requiring Bearer tokens (Red Phase).
 - [ ] Task: Update the `get_current_user` dependency in `src/core/server.py` (or equivalent) to use `fastapi.security.OAuth2AuthorizationCodeBearer` and the `verify_token` utility (Green Phase).
 - [ ] Task: Conductor - User Manual Verification 'Phase 2: Implement OAuth2 Bearer Token Validation' (Protocol in workflow.md)
