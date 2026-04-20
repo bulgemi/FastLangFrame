@@ -3,7 +3,7 @@ import asyncio
 from typing import Any, Optional
 from fastapi import FastAPI, Request, Depends, HTTPException, status
 from fastapi.responses import StreamingResponse
-from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer, OAuth2AuthorizationCodeBearer
+from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 
 from .api_models import AgentInvokeRequest, AgentBatchRequest, AgentInvokeResponse, AgentBatchResponse
 from src.common.middleware.auth import (
