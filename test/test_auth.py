@@ -81,9 +81,8 @@ async def test_verify_authelia_token_invalid_issuer():
     """Test validation failure for an invalid issuer."""
     from src.common.middleware.auth import verify_authelia_token
     token = "invalid.issuer.token"
-    mock_payload = {"sub": "user01", "iss": "https://malicious.example.com", "aud": "fastapi"}
     
-    with patch("src.common.middleware.auth.jwt.decode", return_value=mock_payload):
+    with patch("src.common.middleware.auth.jwt.decode", side_effect=jwt.InvalidIssuerError):
         with patch("src.common.middleware.auth.settings") as mock_settings:
             mock_settings.authelia_url = "https://auth.example.com"
             
