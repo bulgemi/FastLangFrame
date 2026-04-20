@@ -8,7 +8,7 @@ from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from .api_models import AgentInvokeRequest, AgentBatchRequest, AgentInvokeResponse, AgentBatchResponse
 from src.common.middleware.auth import (
     verify_token, 
-    verify_token_with_authelia, 
+    verify_authelia_token, 
     create_access_token
 )
 from src.common.configs.settings import get_settings
@@ -17,8 +17,9 @@ settings = get_settings()
 
 async def get_current_verify_token():
     """Dynamic dependency to select the verification method based on settings."""
-    if get_settings().authelia_introspection_url:
-        return verify_token_with_authelia
+    # Preference: Local Authelia Validation > Introspection > Native Token
+    if settings.authelia_url:
+        return verify_authelia_token
     return verify_token
 
 # Global schemes to be used as dependencies

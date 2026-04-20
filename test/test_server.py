@@ -31,16 +31,20 @@ async def test_invoke_no_auth(test_app):
 async def test_invoke_with_valid_bearer(test_app):
     """
     /invoke should return 200 with a valid bearer token.
-    This will fail in the Red phase until we implement local JWT validation
-    and update the dependency.
     """
-    # For now, we'll try to use verify_authelia_token which we just implemented
-    # but the server doesn't use it yet.
-    async with AsyncClient(transport=ASGITransport(app=test_app), base_url="http://test") as ac:
-        response = await ac.post(
-            "/invoke", 
-            json={"input": {"text": "hello"}},
-            headers={"Authorization": "Bearer some_valid_token"}
-        )
-    # In the Red phase, this might return 401 or 500 depending on current implementation
-    assert response.status_code == 200
+    mock_payload = {"sub": "user01", "name": "Test User", "iss": "https://auth.example.com", "aud": "fastapi"}
+    
+    with patch("src.common.middleware.auth.jwt.decode", return_value=mock_payload):
+        with patch("src.core.server.settings") as mock_settings:
+            mock_settings.authelia_url = "https://auth.example.com"
+            mock_settings.authelia_client_id = "fastapi"
+            mock_settings.authelia_public_key_path = "authelia/config/oidc_pub.pem"
+            
+            async with AsyncClient(transport=ASGITransport(app=test_app), base_url="http://test") as ac:
+                response = await ac.post(
+                    "/invoke", 
+                    json={"input": {"text": "hello"}},
+                    headers={"Authorization": "Bearer some_valid_token"}
+                )
+            assert response.status_code == 200
+            assert response.json()["result"] == {"response": "Mock hello"}
