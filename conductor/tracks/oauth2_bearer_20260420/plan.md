@@ -7,7 +7,7 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Remove OIDC Flow and Update Auth Utilities' (Protocol in workflow.md) (e3fe70f)
 
 ## Phase 2: Implement OAuth2 Bearer Token Validation
-- [ ] Task: Write failing unit tests in `test/test_auth.py` for decoding and validating JWT tokens using Authelia's public key (Red Phase).
+- [x] Task: Write failing unit tests in `test/test_auth.py` for decoding and validating JWT tokens using Authelia's public key (Red Phase). (90276a7)
 - [ ] Task: Implement `verify_token` utility in `src/utils/auth.py` to perform local JWT validation using `PyJWT` (Green Phase).
 - [ ] Task: Write failing tests in `test/test_server.py` for API endpoints requiring Bearer tokens (Red Phase).
 - [ ] Task: Update the `get_current_user` dependency in `src/core/server.py` (or equivalent) to use `fastapi.security.OAuth2AuthorizationCodeBearer` and the `verify_token` utility (Green Phase).
