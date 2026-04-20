@@ -45,3 +45,21 @@ async def test_role_checker_fail():
         await checker(payload)
     assert excinfo.value.status_code == status.HTTP_403_FORBIDDEN
     assert "Permission denied" in excinfo.value.detail
+
+@pytest.mark.asyncio
+async def test_verify_authelia_token_success():
+    """Test successful validation of an Authelia-issued token using a public key."""
+    from src.common.middleware.auth import verify_authelia_token
+    
+    # This should be implemented to decode JWT using a public key
+    # For the test, we'll mock the public key and the decoded payload
+    token = "some.authelia.token"
+    mock_payload = {"sub": "user01", "iss": "https://auth.example.com", "aud": "fastapi"}
+    
+    with patch("src.common.middleware.auth.jwt.decode", return_value=mock_payload):
+        with patch("src.common.middleware.auth.settings") as mock_settings:
+            mock_settings.authelia_url = "https://auth.example.com"
+            mock_settings.authelia_client_id = "fastapi"
+            
+            result = await verify_authelia_token(token)
+            assert result["sub"] == "user01"
