@@ -63,3 +63,31 @@ async def test_verify_authelia_token_success():
             
             result = await verify_authelia_token(token)
             assert result["sub"] == "user01"
+
+@pytest.mark.asyncio
+async def test_verify_authelia_token_expired():
+    """Test validation failure for an expired Authelia token."""
+    from src.common.middleware.auth import verify_authelia_token
+    token = "expired.token"
+    
+    with patch("src.common.middleware.auth.jwt.decode", side_effect=jwt.ExpiredSignatureError):
+        with pytest.raises(HTTPException) as excinfo:
+            await verify_authelia_token(token)
+        assert excinfo.value.status_code == status.HTTP_401_UNAUTHORIZED
+        assert "Token has expired" in excinfo.value.detail
+
+@pytest.mark.asyncio
+async def test_verify_authelia_token_invalid_issuer():
+    """Test validation failure for an invalid issuer."""
+    from src.common.middleware.auth import verify_authelia_token
+    token = "invalid.issuer.token"
+    mock_payload = {"sub": "user01", "iss": "https://malicious.example.com", "aud": "fastapi"}
+    
+    with patch("src.common.middleware.auth.jwt.decode", return_value=mock_payload):
+        with patch("src.common.middleware.auth.settings") as mock_settings:
+            mock_settings.authelia_url = "https://auth.example.com"
+            
+            with pytest.raises(HTTPException) as excinfo:
+                await verify_authelia_token(token)
+            assert excinfo.value.status_code == status.HTTP_401_UNAUTHORIZED
+            assert "Invalid issuer" in excinfo.value.detail
