@@ -1,10 +1,10 @@
 # Implementation Plan: Replace OIDC with OAuth 2.0 Bearer Token Authentication
 
-## Phase 1: Remove OIDC Flow and Update Auth Utilities
+## Phase 1: Remove OIDC Flow and Update Auth Utilities [checkpoint: e3fe70f]
 - [x] Task: Remove OIDC client (Authlib) configuration and login/callback endpoints from `src/core/server.py` and relevant auth modules. (249bbfa)
 - [x] Task: Create/Update unit tests in `test/test_auth.py` to remove OIDC flow tests and prepare for JWT validation tests (Red Phase). (740e42a)
 - [x] Task: Remove any OIDC-specific session management dependencies from FastAPI routes. (76c6034)
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Remove OIDC Flow and Update Auth Utilities' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 1: Remove OIDC Flow and Update Auth Utilities' (Protocol in workflow.md) (e3fe70f)
 
 ## Phase 2: Implement OAuth2 Bearer Token Validation
 - [ ] Task: Write failing unit tests in `test/test_auth.py` for decoding and validating JWT tokens using Authelia's public key (Red Phase).
