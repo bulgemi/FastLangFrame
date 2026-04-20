@@ -15,6 +15,6 @@
 
 
 ## Phase 3: Configure Swagger UI OAuth2 Flow
-- [ ] Task: Write a failing test in `test/test_openapi_schema.py` to assert the presence of the correct OAuth2 security scheme in the OpenAPI schema (Red Phase).
+- [x] Task: Write a failing test in `test/test_openapi_schema.py` to assert the presence of the correct OAuth2 security scheme in the OpenAPI schema (Red Phase). (eac999b)
 - [ ] Task: Configure the FastAPI app in `src/core/server.py` with `swagger_ui_init_oauth` and set up the OAuth2 scheme pointing to Authelia's `/api/oidc/authorization` and `/api/oidc/token` endpoints (Green Phase).
 - [ ] Task: Conductor - User Manual Verification 'Phase 3: Configure Swagger UI OAuth2 Flow' (Protocol in workflow.md)
