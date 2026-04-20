@@ -6,12 +6,13 @@
 - [x] Task: Remove any OIDC-specific session management dependencies from FastAPI routes. (76c6034)
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Remove OIDC Flow and Update Auth Utilities' (Protocol in workflow.md) (e3fe70f)
 
-## Phase 2: Implement OAuth2 Bearer Token Validation
+## Phase 2: Implement OAuth2 Bearer Token Validation [checkpoint: 4981dfa]
 - [x] Task: Write failing unit tests in `test/test_auth.py` for decoding and validating JWT tokens using Authelia's public key (Red Phase). (90276a7)
 - [x] Task: Implement `verify_token` utility in `src/common/middleware/auth.py` (consistent with existing) to perform local JWT validation using `PyJWT` (Green Phase). (c4f67a1)
 - [x] Task: Write failing tests in `test/test_server.py` for API endpoints requiring Bearer tokens (Red Phase). (98fd110)
 - [x] Task: Update the `authenticated_user` dependency in `src/core/server.py` to use the `verify_authelia_token` utility for local validation (Green Phase). (89902ca)
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: Implement OAuth2 Bearer Token Validation' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 2: Implement OAuth2 Bearer Token Validation' (Protocol in workflow.md) (4981dfa)
+
 
 ## Phase 3: Configure Swagger UI OAuth2 Flow
 - [ ] Task: Write a failing test in `test/test_openapi_schema.py` to assert the presence of the correct OAuth2 security scheme in the OpenAPI schema (Red Phase).
