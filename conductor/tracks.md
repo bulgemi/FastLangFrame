@@ -54,5 +54,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: fastapi, authelia OIDC 인증 제거하고, OAuth 2.0 Bearer Token(https://www.authelia.com/integration/openid-connect/oauth-2.0-bearer-token-usage/) 인증 추가**
+- [x] **Track: fastapi, authelia OIDC 인증 제거하고, OAuth 2.0 Bearer Token(https://www.authelia.com/integration/openid-connect/oauth-2.0-bearer-token-usage/) 인증 추가**
 *Link: [./tracks/oauth2_bearer_20260420/](./tracks/oauth2_bearer_20260420/)*
