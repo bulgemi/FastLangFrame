@@ -26,10 +26,12 @@ FastLangFrame은 LangChain 및 LangGraph를 기반으로 한 경량급 LLM 에�
   * `/stream`: 실시간 SSE 스트리밍
   * `/invoke_batch`: 다중 입력 병렬 처리
   * `/invoke_stream_batch`: 다중 입력 개별 스트리밍 (Interleaved SSE)
+  * `/api/v1/auth/callback`: OIDC 인증 처리를 위한 콜백 엔드포인트
 
 ### 🔐 Security & Identity
 
-* **Authentik Integration**: 오픈소스 IDP인 Authentik을 활용한 표준 OAuth2/OIDC 인증 지원
+* **Authelia Integration**: 오픈소스 IDP인 Authelia를 활용한 표준 OAuth2/OIDC 인증 및 토큰 인트로스펙션(Introspection) 지원
+* **Nginx HTTPS Proxy**: Nginx를 통한 SSL(HTTPS) 지원 및 백엔드/인증 서버 통합 진입점 제공 (Port 8000)
 * **RBAC (Role-Based Access Control)**: JWT 토큰 기반의 세밀한 권한 제어 및 API 엔드포인트 보호
 
 ### 🧰 Utilities & Connectors (`src/utils`)
@@ -49,21 +51,12 @@ FastLangFrame은 LangChain 및 LangGraph를 기반으로 한 경량급 LLM 에�
 * **Streamlit Chat UI**: 생성된 에이전트를 즉시 테스트할 수 있는 웹 인터페이스 (OAuth 연동 완료)
 * **Node Trace**: 실행 중인 에이전트의 각 단계(Node)를 시각적으로 추적
 
-## 템플릿 종류
-
-* **Simple Agent**: 기본적인 LangChain 기반 단일 에이전트
-* **RAG Agent**: 지식 기반 검색 및 답변이 가능한 RAG 최적화 구조
-* **Multi-Agent**: 다수의 에이전트가 협업하는 분산 워크플로우
-* **MCP Agent**: Model Context Protocol을 활용한 강력한 확장성 제공
-* **Deep Agent**: `deepagents` 라이브러리를 활용한 고도화된 추론 에이전트
-* **Research Agent**: 리서치 계획 수립, 정보 검색 및 결과 종합을 수행하는 전문 리서치 워크플로우
-
 ## 기술 스택 (S/W Stack)
 
 * **Runtime**: Python 3.12+
 * **Framework**: LangChain, LangGraph, FastAPI, deepagents
-* **Security**: Authentik (OAuth2/OIDC), PyJWT
-* **DevOps**: Docker, Kubernetes, Poetry, Copier
+* **Security**: Authelia (OAuth2/OIDC), PyJWT
+* **DevOps**: Docker (Nginx, Redis, Authelia), Kubernetes, Poetry, Copier
 * **Storage/Middleware**: SQLAlchemy (PostgreSQL/MySQL), Alembic, Redis, OpenSearch
 * **UI/Test**: Streamlit, Pytest
 
@@ -73,6 +66,8 @@ FastLangFrame은 LangChain 및 LangGraph를 기반으로 한 경량급 LLM 에�
 .
 ├── bin/                    # lapm 등 실행 가능한 CLI 도구
 ├── conductor/              # 프로젝트 관리 및 워크플로우 가이드 (Product, Specs, Plans)
+├── nginx/                  # Nginx 설정 및 SSL 인증서 (HTTPS 프록시)
+├── authelia/               # Authelia 설정 및 사용자 데이터베이스
 ├── projects/               # 생성된 개별 에이전트 프로젝트 저장소
 ├── src/                    # FastLangFrame 핵심 프레임워크 소스
 │   ├── core/               # 그래프 빌더, 런타임, API 서버 로직
@@ -95,38 +90,66 @@ FastLangFrame은 LangChain 및 LangGraph를 기반으로 한 경량급 LLM 에�
 ./bin/lapm my_agent create 1 1
 ```
 
-* **LLM Provider**: 1:OpenAI, 2:Azure, 3:DeepSeek, 4:Gemini, 5:Claude, 6:Local
-* **Template**: 1:Simple, 2:RAG, 3:Multi, 4:MCP, 5:Deep, 6:Research
-
 ### 2. 인프라 및 환경 설정
 
-1. **Authentik & DB 기동**:
+1. **인프라(Nginx, Authelia, Redis) 기동**:
 
    ```bash
    docker compose up -d
    ```
 
 2. **환경 변수 설정**:
-   생성된 프로젝트 폴더 (`projects/my_agent/my_agent`) 내의 `.env` 파일을 수정하여 API Key 및 OAuth 설정을 완료합니다. (템플릿의 `.env.example` 참조)
+   `.env` 파일을 생성하고 LLM API Key 및 Authelia 설정을 입력합니다.
 
 ### 3. 서버 실행
 
 ```bash
-cd projects/my_agent
-poetry install
-poetry run python my_agent/main.py --port 8888
+# 기본 포트 8888로 실행 (Nginx가 8000 -> 8888로 프록시)
+PYTHONPATH=. poetry run python -m src.core.server --port 8888
 ```
 
-* 브라우저에서 `http://localhost:8888/docs` 접속하여 Swagger UI 테스트 (Authorize 버튼을 통해 OAuth 인증 가능)
+---
 
-### 4. UI 테스트 실행
+## 설정 및 인증 가이드 (Configuration & Auth)
+
+### ⚙️ 환경 변수 설정 (`.env`)
+
+Authelia와 Nginx 환경에서 정상적인 인증을 위해 다음 변수들이 필요합니다.
 
 ```bash
-cd projects/my_agent
-poetry run streamlit run my_agent/chat_test/app.py
+# --- Authelia OIDC Configuration ---
+AUTHELIA_URL=http://localhost:9091
+AUTHELIA_INTROSPECTION_URL=http://localhost:9091/api/oidc/introspection
+AUTHELIA_TOKEN_URL=http://localhost:9091/api/oidc/token
+AUTHELIA_AUTHORIZATION_URL=http://localhost:9091/api/oidc/authorization
+AUTHELIA_CLIENT_ID=fastapi
+AUTHELIA_CLIENT_SECRET=fastapi_secret
+AUTHELIA_REDIRECT_URI=http://localhost:8888/api/v1/auth/callback
 ```
 
-* 최초 접속 시 Authentik 로그인 페이지로 리다이렉트됩니다.
+### 🔐 인증 및 API 테스트 방법
+
+#### 1. Swagger UI를 통한 OIDC 인증 (추천)
+실 운영 환경과 동일한 브라우저 기반 인증 흐름을 테스트합니다.
+
+1.  **Swagger 접속**: `https://localhost:8000/docs` (Nginx HTTPS 포트)
+2.  **보안 경고 우회**: 브라우저에서 '고급' 클릭 후 이동하거나, 화면에 `thisisunsafe`를 입력하여 자체 서명 인증서를 통과합니다.
+3.  **Authorize 클릭**: 우측 상단의 **Authorize** 버튼 클릭.
+4.  **OIDC Flow 선택**: `oidc_scheme` 섹션에서 모든 스코프를 체크하고 **Authorize** 클릭.
+5.  **Authelia 로그인**: 리다이렉트된 Authelia 페이지에서 로그인 (`user` / `password`).
+6.  **인증 완료**: Swagger로 돌아오면 이제 모든 API를 인증된 상태로 호출할 수 있습니다.
+
+#### 2. 로컬 개발용 간이 인증 (Password Flow)
+Authelia 없이 백엔드 로직만 빠르게 테스트할 때 사용합니다.
+
+1.  **Authorize 클릭**: `password_scheme` 섹션 선택.
+2.  **정보 입력**:
+    *   **Username**: `testuser`
+    *   **Password**: `testpassword`
+3.  **로그인**: 내부 `/token` 엔드포인트를 통해 발급된 임시 토큰으로 인증됩니다.
+
+#### 3. Authelia 직접 접속 및 세션 확인
+인증 서버 상태를 직접 확인하려면 `http://localhost:9091`에 접속하세요.
 
 ## Chat Test UI 가이드
 
@@ -135,7 +158,7 @@ FastLangFrame은 에이전트의 추론 과정을 시각화하여 디버깅을 �
 * **실시간 추적**: LangGraph의 각 노드 실행 상태와 도구 호출 결과를 실시간 확인
 * **로그 뷰어**: 에이전트 내부에서 발생하는 상세 로그를 스트리밍 형태로 제공
 * **히스토리 관리**: 대화 초기화 및 세션별 테스트 데이터 관리
-* **사용자 인증**: Authentik 연동을 통한 안전한 대화 세션 보호
+* **사용자 인증**: Authelia 연동을 통한 안전한 대화 세션 보호
 
 ![Chat Test UI Screenshot](docs/images/chat_test_screenshot.png)
 

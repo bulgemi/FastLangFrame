@@ -16,12 +16,12 @@
 
 ## Security & Identity
 - **Authelia**: Open-source identity provider for OAuth2/OIDC (Primary).
-- **Zitadel**: Supported alternative identity provider.
 - **PyJWT**: For JWT token validation and RBAC.
 - **FastAPI Security**: OAuth2PasswordBearer flow with Token Introspection support for Authelia.
 
 ## Infrastructure & Deployment
 - **Docker**: For containerizing agent projects.
+- **Nginx**: Reverse proxy for HTTPS support and request routing.
 - **Kubernetes (K8s)**: Target deployment platform.
 - **Copier**: Template generation tool for bootstrapping new projects.
 

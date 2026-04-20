@@ -1,27 +1,66 @@
 import json
 import asyncio
-from typing import Any
+from typing import Any, Optional
 from fastapi import FastAPI, Request, Depends, HTTPException, status
 from fastapi.responses import StreamingResponse
-from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer, OAuth2AuthorizationCodeBearer
 
 from .api_models import AgentInvokeRequest, AgentBatchRequest, AgentInvokeResponse, AgentBatchResponse
-from src.common.middleware.auth import verify_token, verify_token_with_authelia, verify_credentials_with_zitadel, create_access_token
+from src.common.middleware.auth import (
+    verify_token, 
+    verify_token_with_authelia, 
+    create_access_token,
+    exchange_code_for_authelia_token
+)
 from src.common.configs.settings import get_settings
-
-settings = get_settings()
 
 async def get_current_verify_token():
     """Dynamic dependency to select the verification method based on settings."""
-    if settings.authelia_introspection_url:
+    if get_settings().authelia_introspection_url:
         return verify_token_with_authelia
     return verify_token
 
-async def authenticated_user(token: str = Depends(OAuth2PasswordBearer(tokenUrl="token"))):
+# Global schemes to be used as dependencies
+# We use a factory function to ensure they are created with current settings but reused by FastAPI
+_password_scheme = None
+_oidc_scheme = None
+
+def get_password_scheme():
+    global _password_scheme
+    if _password_scheme is None:
+        _password_scheme = OAuth2PasswordBearer(tokenUrl="token", auto_error=False)
+    return _password_scheme
+
+def get_oidc_scheme():
+    global _oidc_scheme
+    if _oidc_scheme is None:
+        s = get_settings()
+        _oidc_scheme = OAuth2AuthorizationCodeBearer(
+            authorizationUrl=s.authelia_authorization_url or "",
+            tokenUrl=s.authelia_token_url or "",
+            scopes={"openid": "OpenID Connect", "profile": "User Profile", "email": "User Email"},
+            auto_error=False
+        )
+    return _oidc_scheme
+
+async def authenticated_user(
+    token_password: Optional[str] = Depends(get_password_scheme()),
+    token_oidc: Optional[str] = Depends(get_oidc_scheme())
+):
     """
-    Unified authentication dependency that delegates to the appropriate 
-    verification function based on configuration.
+    Unified authentication dependency that handles both Password flow 
+    and OIDC Authorization Code flow.
     """
+    # Use OIDC token if present, otherwise fallback to password flow token
+    token = token_oidc or token_password
+    
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+        
     verify_func = await get_current_verify_token()
     return await verify_func(token)
 
@@ -35,24 +74,31 @@ def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> Fas
     @app.post("/token", summary="Token 발행")
     async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
         """사용자 이름과 비밀번호를 받아 JWT를 발급합니다."""
-        # 1. Identity Provider back-channel 검증 (Zitadel)
-        user_info = await verify_credentials_with_zitadel(form_data.username, form_data.password)
-        
-        # 2. Fallback (개발/테스트용): IDP 미설정 시 간단한 검증
-        if not user_info:
-            if form_data.username == "testuser" and form_data.password == "testpassword":
-                user_info = {"sub": "testuser", "name": "Test User", "groups": ["admins"]}
-            else:
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Incorrect username or password",
-                    headers={"WWW-Authenticate": "Bearer"},
-                )
+        # 1. Fallback (개발/테스트용): 간단한 검증
+        if form_data.username == "testuser" and form_data.password == "testpassword":
+            user_info = {"sub": "testuser", "name": "Test User", "groups": ["admins"]}
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Incorrect username or password",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
 
-        # 3. Native JWT 생성
+        # 2. Native JWT 생성
         access_token = create_access_token(data=user_info)
         return {"access_token": access_token, "token_type": "bearer"}
     
+    @app.get("/api/v1/auth/callback", summary="Authelia Callback")
+    async def authelia_callback(code: str):
+        """
+        OIDC callback endpoint that receives the authorization code 
+        and exchanges it for a token from Authelia.
+        """
+        token_data = await exchange_code_for_authelia_token(code)
+        # For simplicity, we just return the token data from Authelia.
+        # In a real app, you might want to issue a native JWT or set a session cookie.
+        return token_data
+
     @app.get("/", summary="Health Check")
     async def root():
         return {"status": "ok", "message": f"Welcome to {title}"}

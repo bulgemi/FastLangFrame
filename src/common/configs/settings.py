@@ -92,16 +92,15 @@ class FastLangFrameSettings(BaseSettings):
     jwt_algorithm: str = Field(default="HS256", alias="JWT_ALGORITHM")
     jwt_access_token_expire_minutes: int = Field(default=60, alias="JWT_ACCESS_TOKEN_EXPIRE_MINUTES")
 
-    # Zitadel Configuration (Back-channel only)
-    zitadel_url: Optional[str] = Field(default=None, alias="ZITADEL_URL")
-    zitadel_token_url: Optional[str] = Field(default=None, alias="ZITADEL_TOKEN_URL")
-    zitadel_client_id: Optional[str] = Field(default=None, alias="ZITADEL_CLIENT_ID")
-    zitadel_client_secret: Optional[str] = Field(default=None, alias="ZITADEL_CLIENT_SECRET")
-
     # Authelia Configuration
+    authelia_url: Optional[str] = Field(default=None, alias="AUTHELIA_URL")
     authelia_introspection_url: Optional[str] = Field(default=None, alias="AUTHELIA_INTROSPECTION_URL")
+    authelia_token_url: Optional[str] = Field(default=None, alias="AUTHELIA_TOKEN_URL")
+    authelia_userinfo_url: Optional[str] = Field(default=None, alias="AUTHELIA_USERINFO_URL")
+    authelia_authorization_url: Optional[str] = Field(default=None, alias="AUTHELIA_AUTHORIZATION_URL")
     authelia_client_id: Optional[str] = Field(default=None, alias="AUTHELIA_CLIENT_ID")
     authelia_client_secret: Optional[str] = Field(default=None, alias="AUTHELIA_CLIENT_SECRET")
+    authelia_redirect_uri: Optional[str] = Field(default=None, alias="AUTHELIA_REDIRECT_URI")
 
     @property
     def llm_models(self) -> Dict[str, Dict[str, Any]]:
