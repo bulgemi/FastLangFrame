@@ -112,6 +112,31 @@ PYTHONPATH=. poetry run python -m src.core.server --port 8888
 
 ## 설정 및 인증 가이드 (Configuration & Auth)
 
+### 🤖 LLM Provider 설정 (`.env`)
+
+FastLangFrame은 다양한 LLM Provider를 지원합니다. 사용하는 Provider에 맞춰 `.env` 파일을 설정하세요.
+
+#### 1. OpenAI
+```bash
+LLM_PROVIDER=openai
+OPENAI_API_KEY=your_openai_api_key_here
+MODEL_NAME=gpt-4o  # 또는 gpt-4-turbo, gpt-3.5-turbo
+```
+
+#### 2. Anthropic (Claude)
+```bash
+LLM_PROVIDER=anthropic
+ANTHROPIC_API_KEY=your_anthropic_api_key_here
+MODEL_NAME=claude-3-5-sonnet-20240620  # 또는 claude-3-opus-20240229
+```
+
+#### 3. Google Gemini
+```bash
+LLM_PROVIDER=google
+GOOGLE_API_KEY=your_google_api_key_here
+MODEL_NAME=gemini-1.5-pro  # 또는 gemini-1.5-flash
+```
+
 ### ⚙️ 환경 변수 설정 (`.env`)
 
 Authelia와 Nginx 환경에서 정상적인 인증을 위해 다음 변수들이 필요합니다.
