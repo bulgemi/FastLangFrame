@@ -54,5 +54,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: FastLangFrame에서 지원하는 LLM Provider별 .env 설정 정보 README.md에 내용 추가**
+- [x] **Track: FastLangFrame에서 지원하는 LLM Provider별 .env 설정 정보 README.md에 내용 추가**
 *Link: [./tracks/readme_llm_config_20260425/](./tracks/readme_llm_config_20260425/)*
