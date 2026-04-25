@@ -1,3 +1,4 @@
+import jwt
 import json
 import asyncio
 from typing import Any, Optional
@@ -12,8 +13,10 @@ from src.common.middleware.auth import (
     create_access_token
 )
 from src.common.configs.settings import get_settings
+from src.common.logging.logger_config import setup_logger
 
 settings = get_settings()
+logger = setup_logger(__name__)
 
 async def get_current_verify_token():
     """Dynamic dependency to select the verification method based on settings."""
@@ -61,8 +64,25 @@ async def authenticated_user(
             headers={"WWW-Authenticate": "Bearer"},
         )
         
-    verify_func = await get_current_verify_token()
-    return await verify_func(token)
+    try:
+        header = jwt.get_unverified_header(token)
+        alg = header.get("alg")
+        
+        if alg == "RS256":
+            # Authelia / OIDC token
+            return await verify_authelia_token(token)
+        elif alg == "HS256":
+            # Native JWT token
+            return await verify_token(token)
+        else:
+            # Fallback or unrecognized algorithm
+            verify_func = await get_current_verify_token()
+            return await verify_func(token)
+    except Exception as e:
+        logger.error(f"Token header analysis failed: {str(e)}")
+        # If header parsing fails, try the default configured method
+        verify_func = await get_current_verify_token()
+        return await verify_func(token)
 
 def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> FastAPI:
     """
