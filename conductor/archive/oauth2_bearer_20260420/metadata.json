@@ -1,0 +1,8 @@
+{
+  "track_id": "oauth2_bearer_20260420",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-04-20T00:00:00Z",
+  "updated_at": "2026-04-20T00:00:00Z",
+  "description": "fastapi, authelia OIDC 인증 제거하고, OAuth 2.0 Bearer Token(https://www.authelia.com/integration/openid-connect/oauth-2.0-bearer-token-usage/) 인증 추가"
+}

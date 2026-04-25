@@ -101,6 +101,7 @@ class FastLangFrameSettings(BaseSettings):
     authelia_client_id: Optional[str] = Field(default=None, alias="AUTHELIA_CLIENT_ID")
     authelia_client_secret: Optional[str] = Field(default=None, alias="AUTHELIA_CLIENT_SECRET")
     authelia_redirect_uri: Optional[str] = Field(default=None, alias="AUTHELIA_REDIRECT_URI")
+    authelia_public_key_path: str = Field(default="authelia/config/oidc_pub.pem", alias="AUTHELIA_PUBLIC_KEY_PATH")
 
     @property
     def llm_models(self) -> Dict[str, Dict[str, Any]]:

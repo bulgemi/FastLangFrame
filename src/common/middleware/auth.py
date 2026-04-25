@@ -90,44 +90,54 @@ async def verify_token_with_authelia(token: str = Depends(oauth2_scheme)) -> Dic
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-async def exchange_code_for_authelia_token(code: str) -> Dict[str, Any]:
+async def verify_authelia_token(token: str = Depends(oauth2_scheme)) -> Dict[str, Any]:
     """
-    Exchanges an OIDC authorization code for an access token from Authelia.
+    Validates an Authelia-issued token locally using a public key.
     """
-    if not settings.authelia_token_url:
-        logger.error("AUTHELIA_TOKEN_URL is not configured.")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Authentication server configuration error."
-        )
-
     try:
-        async with httpx.AsyncClient() as client:
-            data = {
-                "grant_type": "authorization_code",
-                "code": code,
-                "client_id": settings.authelia_client_id,
-                "client_secret": settings.authelia_client_secret,
-                "redirect_uri": settings.authelia_redirect_uri
-            }
-            
-            response = await client.post(settings.authelia_token_url, data=data)
-            
-            if response.status_code == 200:
-                return response.json()
-            else:
-                logger.error(f"Authelia token exchange failed: {response.status_code} - {response.text}")
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Failed to exchange authorization code for token"
-                )
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error during Authelia token exchange: {str(e)}")
+        # Load public key
+        with open(settings.authelia_public_key_path, "r") as f:
+            public_key = f.read()
+        
+        # Decode and validate
+        payload = jwt.decode(
+            token, 
+            public_key, 
+            algorithms=["RS256"],
+            audience=settings.authelia_client_id,
+            issuer=settings.authelia_url
+        )
+        return payload
+    except jwt.ExpiredSignatureError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token exchange error"
+            detail="Token has expired",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    except jwt.InvalidIssuerError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid issuer",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    except jwt.InvalidAudienceError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid audience",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    except jwt.PyJWTError as e:
+        logger.error(f"JWT validation error: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=f"Invalid token: {str(e)}",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    except FileNotFoundError:
+        logger.error(f"Authelia public key not found at {settings.authelia_public_key_path}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Authentication server configuration error: Public key missing."
         )
 
 class RoleChecker:

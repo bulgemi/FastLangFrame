@@ -51,8 +51,3 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [x] **Track: Swagger UI OIDC CORS & Mixed Content Fix**
 *Link: [./tracks/fix_swagger_oidc_cors_20260419/](./tracks/fix_swagger_oidc_cors_20260419/)*
-
----
-
-- [ ] **Track: fastapi, authelia OIDC 인증 제거하고, OAuth 2.0 Bearer Token(https://www.authelia.com/integration/openid-connect/oauth-2.0-bearer-token-usage/) 인증 추가**
-*Link: [./tracks/oauth2_bearer_20260420/](./tracks/oauth2_bearer_20260420/)*

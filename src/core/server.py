@@ -1,3 +1,4 @@
+import jwt
 import json
 import asyncio
 from typing import Any, Optional
@@ -8,22 +9,26 @@ from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer, OA
 from .api_models import AgentInvokeRequest, AgentBatchRequest, AgentInvokeResponse, AgentBatchResponse
 from src.common.middleware.auth import (
     verify_token, 
-    verify_token_with_authelia, 
-    create_access_token,
-    exchange_code_for_authelia_token
+    verify_authelia_token, 
+    create_access_token
 )
 from src.common.configs.settings import get_settings
+from src.common.logging.logger_config import setup_logger
+
+settings = get_settings()
+logger = setup_logger(__name__)
 
 async def get_current_verify_token():
     """Dynamic dependency to select the verification method based on settings."""
-    if get_settings().authelia_introspection_url:
-        return verify_token_with_authelia
+    # Preference: Local Authelia Validation > Introspection > Native Token
+    if settings.authelia_url:
+        return verify_authelia_token
     return verify_token
 
 # Global schemes to be used as dependencies
 # We use a factory function to ensure they are created with current settings but reused by FastAPI
 _password_scheme = None
-_oidc_scheme = None
+_oauth2_scheme = None
 
 def get_password_scheme():
     global _password_scheme
@@ -31,28 +36,26 @@ def get_password_scheme():
         _password_scheme = OAuth2PasswordBearer(tokenUrl="token", auto_error=False)
     return _password_scheme
 
-def get_oidc_scheme():
-    global _oidc_scheme
-    if _oidc_scheme is None:
-        s = get_settings()
-        _oidc_scheme = OAuth2AuthorizationCodeBearer(
-            authorizationUrl=s.authelia_authorization_url or "",
-            tokenUrl=s.authelia_token_url or "",
+def get_oauth2_scheme():
+    global _oauth2_scheme
+    if _oauth2_scheme is None:
+        _oauth2_scheme = OAuth2AuthorizationCodeBearer(
+            authorizationUrl=settings.authelia_authorization_url or "",
+            tokenUrl=settings.authelia_token_url or "",
             scopes={"openid": "OpenID Connect", "profile": "User Profile", "email": "User Email"},
-            auto_error=False
+            auto_error=False,
+            scheme_name="OAuth2"
         )
-    return _oidc_scheme
+    return _oauth2_scheme
 
 async def authenticated_user(
     token_password: Optional[str] = Depends(get_password_scheme()),
-    token_oidc: Optional[str] = Depends(get_oidc_scheme())
+    token_oauth2: Optional[str] = Depends(get_oauth2_scheme())
 ):
     """
-    Unified authentication dependency that handles both Password flow 
-    and OIDC Authorization Code flow.
+    Unified authentication dependency.
     """
-    # Use OIDC token if present, otherwise fallback to password flow token
-    token = token_oidc or token_password
+    token = token_oauth2 or token_password
     
     if not token:
         raise HTTPException(
@@ -61,15 +64,40 @@ async def authenticated_user(
             headers={"WWW-Authenticate": "Bearer"},
         )
         
-    verify_func = await get_current_verify_token()
-    return await verify_func(token)
+    try:
+        header = jwt.get_unverified_header(token)
+        alg = header.get("alg")
+        
+        if alg == "RS256":
+            # Authelia / OIDC token
+            return await verify_authelia_token(token)
+        elif alg == "HS256":
+            # Native JWT token
+            return await verify_token(token)
+        else:
+            # Fallback or unrecognized algorithm
+            verify_func = await get_current_verify_token()
+            return await verify_func(token)
+    except Exception as e:
+        logger.error(f"Token header analysis failed: {str(e)}")
+        # If header parsing fails, try the default configured method
+        verify_func = await get_current_verify_token()
+        return await verify_func(token)
 
 def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> FastAPI:
     """
     LangGraph 객체(또는 Runnable)를 받아 /invoke, /stream, /invoke_batch, /invoke_stream_batch
     엔드포인트가 장착된 FastAPI 앱을 생성하여 반환합니다.
     """
-    app = FastAPI(title=title)
+    app = FastAPI(
+        title=title,
+        swagger_ui_init_oauth={
+            "clientId": settings.authelia_client_id,
+            "appName": title,
+            "usePkceWithAuthorizationCodeGrant": True,
+            "scopes": "openid profile email"
+        }
+    )
     
     @app.post("/token", summary="Token 발행")
     async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
@@ -102,6 +130,7 @@ def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> Fas
     @app.get("/", summary="Health Check")
     async def root():
         return {"status": "ok", "message": f"Welcome to {title}"}
+
 
     @app.post("/invoke", summary="Agent 실행", response_model=AgentInvokeResponse)
     async def invoke(req: AgentInvokeRequest, auth: dict = Depends(authenticated_user)):

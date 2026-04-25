@@ -26,7 +26,7 @@ async def test_openapi_schema_contains_examples(test_app):
     
     # In Pydantic v2 + FastAPI, examples are typically here
     assert "examples" in input_prop
-    assert {"text": "hi"} in input_prop["examples"]
+    assert {"messages": "hi"} in input_prop["examples"]
     assert "description" in input_prop
     
     # Check AgentInvokeResponse
@@ -41,3 +41,26 @@ async def test_openapi_schema_contains_examples(test_app):
     assert "200" in invoke_post["responses"]
     content = invoke_post["responses"]["200"]["content"]["application/json"]
     assert "AgentInvokeResponse" in content["schema"]["$ref"]
+
+@pytest.mark.asyncio
+async def test_openapi_schema_oauth2_scheme(test_app):
+    """OpenAPI schema should contain the OAuth2 security scheme."""
+    async with AsyncClient(transport=ASGITransport(app=test_app), base_url="http://test") as ac:
+        response = await ac.get("/openapi.json")
+    
+    assert response.status_code == 200
+    schema = response.json()
+    
+    # Check for securitySchemes
+    security_schemes = schema["components"].get("securitySchemes", {})
+    assert "OAuth2" in security_schemes
+    
+    auth_scheme = security_schemes["OAuth2"]
+    assert auth_scheme["type"] == "oauth2"
+    assert "flows" in auth_scheme
+    assert "authorizationCode" in auth_scheme["flows"]
+    
+    flow = auth_scheme["flows"]["authorizationCode"]
+    # These URLs should match Authelia's endpoints
+    assert "authorizationUrl" in flow
+    assert "tokenUrl" in flow

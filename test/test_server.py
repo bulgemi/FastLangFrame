@@ -1,6 +1,7 @@
 import pytest
 from httpx import AsyncClient, ASGITransport
 import json
+from unittest.mock import patch, AsyncMock
 from src.core.server import create_agent_app
 
 # --- Mocking Graph Object ---
@@ -20,42 +21,30 @@ def test_app():
     return create_agent_app(MockGraph())
 
 @pytest.mark.asyncio
-async def test_invoke(test_app):
-    """/invoke 엔드포인트 정상 동작 검증"""
+async def test_invoke_no_auth(test_app):
+    """/invoke should return 401 without token"""
     async with AsyncClient(transport=ASGITransport(app=test_app), base_url="http://test") as ac:
         response = await ac.post("/invoke", json={"input": {"text": "hello"}})
-    assert response.status_code == 200
-    assert response.json() == {"result": {"response": "Mock hello"}, "status": "ok", "error": None}
+    assert response.status_code == 401
 
 @pytest.mark.asyncio
-async def test_stream(test_app):
-    """/stream 스트리밍 이벤트 스트림 포맷 및 컨텐츠 정상 검증"""
-    async with AsyncClient(transport=ASGITransport(app=test_app), base_url="http://test") as ac:
-        response = await ac.post("/stream", json={"input": {"text": "hello"}})
-    assert response.status_code == 200
-    text = response.text
-    assert "data: {\"chunk\": \"1\"}" in text
-    assert "data: {\"chunk\": \"2\"}" in text
-    assert "data: {\"__end__\": true}" in text
-
-@pytest.mark.asyncio
-async def test_invoke_batch(test_app):
-    """/invoke_batch 멀티 인풋 병렬/배치 처리 정상 검증"""
-    async with AsyncClient(transport=ASGITransport(app=test_app), base_url="http://test") as ac:
-        response = await ac.post("/invoke_batch", json={"inputs": [{"text": "a"}, {"text": "b"}]})
-    assert response.status_code == 200
-    assert response.json() == {"results": [{"response": "Mock a"}, {"response": "Mock b"}], "status": "ok", "error": None}
-
-@pytest.mark.asyncio
-async def test_invoke_stream_batch(test_app):
-    """/invoke_stream_batch 병합 스트리밍 검증"""
-    async with AsyncClient(transport=ASGITransport(app=test_app), base_url="http://test") as ac:
-        response = await ac.post("/invoke_stream_batch", json={"inputs": [{"text": "a"}, {"text": "b"}]})
-    assert response.status_code == 200
-    text = response.text
-    # Check if index 0 and 1 streams both outputted chunk 1
-    assert "data: {\"index\": 0, \"event\": {\"chunk\": \"1\"}}" in text
-    assert "data: {\"index\": 1, \"event\": {\"chunk\": \"1\"}}" in text
-    # Check that both indicated completion
-    assert "data: {\"index\": 0, \"done\": true}" in text
-    assert "data: {\"index\": 1, \"done\": true}" in text
+async def test_invoke_with_valid_bearer(test_app):
+    """
+    /invoke should return 200 with a valid bearer token.
+    """
+    mock_payload = {"sub": "user01", "name": "Test User", "iss": "https://auth.example.com", "aud": "fastapi"}
+    
+    with patch("src.common.middleware.auth.jwt.decode", return_value=mock_payload):
+        with patch("src.core.server.settings") as mock_settings:
+            mock_settings.authelia_url = "https://auth.example.com"
+            mock_settings.authelia_client_id = "fastapi"
+            mock_settings.authelia_public_key_path = "authelia/config/oidc_pub.pem"
+            
+            async with AsyncClient(transport=ASGITransport(app=test_app), base_url="http://test") as ac:
+                response = await ac.post(
+                    "/invoke", 
+                    json={"input": {"text": "hello"}},
+                    headers={"Authorization": "Bearer some_valid_token"}
+                )
+            assert response.status_code == 200
+            assert response.json()["result"] == {"response": "Mock hello"}

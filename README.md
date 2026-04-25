@@ -112,6 +112,34 @@ PYTHONPATH=. poetry run python -m src.core.server --port 8888
 
 ## 설정 및 인증 가이드 (Configuration & Auth)
 
+### 🤖 LLM Provider 설정 (`.env`)
+
+FastLangFrame은 다양한 LLM Provider를 지원합니다. 사용하는 Provider에 맞춰 `.env` 파일을 설정하세요.
+
+#### 1. OpenAI
+
+```bash
+LLM_PROVIDER=openai
+OPENAI_API_KEY=your_openai_api_key_here
+MODEL_NAME=gpt-4o  # 또는 gpt-4-turbo, gpt-3.5-turbo
+```
+
+#### 2. Anthropic (Claude)
+
+```bash
+LLM_PROVIDER=anthropic
+ANTHROPIC_API_KEY=your_anthropic_api_key_here
+MODEL_NAME=claude-3-5-sonnet-20240620  # 또는 claude-3-opus-20240229
+```
+
+#### 3. Google Gemini
+
+```bash
+LLM_PROVIDER=google
+GOOGLE_API_KEY=your_google_api_key_here
+MODEL_NAME=gemini-1.5-pro  # 또는 gemini-1.5-flash
+```
+
 ### ⚙️ 환경 변수 설정 (`.env`)
 
 Authelia와 Nginx 환경에서 정상적인 인증을 위해 다음 변수들이 필요합니다.
@@ -130,25 +158,28 @@ AUTHELIA_REDIRECT_URI=http://localhost:8888/api/v1/auth/callback
 ### 🔐 인증 및 API 테스트 방법
 
 #### 1. Swagger UI를 통한 OIDC 인증 (추천)
+
 실 운영 환경과 동일한 브라우저 기반 인증 흐름을 테스트합니다.
 
-1.  **Swagger 접속**: `https://localhost:8000/docs` (Nginx HTTPS 포트)
-2.  **보안 경고 우회**: 브라우저에서 '고급' 클릭 후 이동하거나, 화면에 `thisisunsafe`를 입력하여 자체 서명 인증서를 통과합니다.
-3.  **Authorize 클릭**: 우측 상단의 **Authorize** 버튼 클릭.
-4.  **OIDC Flow 선택**: `oidc_scheme` 섹션에서 모든 스코프를 체크하고 **Authorize** 클릭.
-5.  **Authelia 로그인**: 리다이렉트된 Authelia 페이지에서 로그인 (`user` / `password`).
-6.  **인증 완료**: Swagger로 돌아오면 이제 모든 API를 인증된 상태로 호출할 수 있습니다.
+1. **Swagger 접속**: `https://localhost:8000/docs` (Nginx HTTPS 포트)
+2. **보안 경고 우회**: 브라우저에서 '고급' 클릭 후 이동하거나, 화면에 `thisisunsafe`를 입력하여 자체 서명 인증서를 통과합니다.
+3. **Authorize 클릭**: 우측 상단의 **Authorize** 버튼 클릭.
+4. **OIDC Flow 선택**: `oidc_scheme` 섹션에서 모든 스코프를 체크하고 **Authorize** 클릭.
+5. **Authelia 로그인**: 리다이렉트된 Authelia 페이지에서 로그인 (`user` / `password`).
+6. **인증 완료**: Swagger로 돌아오면 이제 모든 API를 인증된 상태로 호출할 수 있습니다.
 
 #### 2. 로컬 개발용 간이 인증 (Password Flow)
+
 Authelia 없이 백엔드 로직만 빠르게 테스트할 때 사용합니다.
 
-1.  **Authorize 클릭**: `password_scheme` 섹션 선택.
-2.  **정보 입력**:
-    *   **Username**: `testuser`
-    *   **Password**: `testpassword`
-3.  **로그인**: 내부 `/token` 엔드포인트를 통해 발급된 임시 토큰으로 인증됩니다.
+1. **Authorize 클릭**: `password_scheme` 섹션 선택.
+2. **정보 입력**:
+    * **Username**: `testuser`
+    * **Password**: `testpassword`
+3. **로그인**: 내부 `/token` 엔드포인트를 통해 발급된 임시 토큰으로 인증됩니다.
 
 #### 3. Authelia 직접 접속 및 세션 확인
+
 인증 서버 상태를 직접 확인하려면 `http://localhost:9091`에 접속하세요.
 
 ## Chat Test UI 가이드
