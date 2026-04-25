@@ -51,8 +51,3 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [x] **Track: Swagger UI OIDC CORS & Mixed Content Fix**
 *Link: [./tracks/fix_swagger_oidc_cors_20260419/](./tracks/fix_swagger_oidc_cors_20260419/)*
-
----
-
-- [x] **Track: FastLangFrame에서 지원하는 LLM Provider별 .env 설정 정보 README.md에 내용 추가**
-*Link: [./tracks/readme_llm_config_20260425/](./tracks/readme_llm_config_20260425/)*

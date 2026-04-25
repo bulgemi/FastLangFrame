@@ -1,0 +1,8 @@
+{
+  "track_id": "readme_llm_config_20260425",
+  "type": "chore",
+  "status": "new",
+  "created_at": "2026-04-25T00:00:00Z",
+  "updated_at": "2026-04-25T00:00:00Z",
+  "description": "FastLangFrame에서 지원하는 LLM Provider별 .env 설정 정보 README.md에 내용 추가"
+}
