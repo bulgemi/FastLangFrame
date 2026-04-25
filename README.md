@@ -137,7 +137,7 @@ MODEL_NAME=claude-3-5-sonnet-20240620  # 또는 claude-3-opus-20240229
 ```bash
 LLM_PROVIDER=google
 GOOGLE_API_KEY=your_google_api_key_here
-MODEL_NAME=gemini-1.5-pro  # 또는 gemini-1.5-flash
+MODEL_NAME=gemini-2.5-pro  # 또는 gemini-2.5-flash
 ```
 
 ### ⚙️ 환경 변수 설정 (`.env`)
