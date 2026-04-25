@@ -116,6 +116,17 @@ def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> Fas
         access_token = create_access_token(data=user_info)
         return {"access_token": access_token, "token_type": "bearer"}
     
+    @app.get("/api/v1/auth/callback", summary="Authelia Callback")
+    async def authelia_callback(code: str):
+        """
+        OIDC callback endpoint that receives the authorization code 
+        and exchanges it for a token from Authelia.
+        """
+        token_data = await exchange_code_for_authelia_token(code)
+        # For simplicity, we just return the token data from Authelia.
+        # In a real app, you might want to issue a native JWT or set a session cookie.
+        return token_data
+
     @app.get("/", summary="Health Check")
     async def root():
         return {"status": "ok", "message": f"Welcome to {title}"}
