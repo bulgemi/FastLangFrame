@@ -51,3 +51,8 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [x] **Track: Swagger UI OIDC CORS & Mixed Content Fix**
 *Link: [./tracks/fix_swagger_oidc_cors_20260419/](./tracks/fix_swagger_oidc_cors_20260419/)*
+
+---
+
+- [ ] **Track: FastAPI DB Integration (SQLModel, Alembic, PostgreSQL)**
+*Link: [./tracks/db_integration_20260507/](./tracks/db_integration_20260507/)*
