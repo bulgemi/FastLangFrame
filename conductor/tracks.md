@@ -54,5 +54,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [~] **Track: FastAPI DB Integration (SQLModel, Alembic, PostgreSQL)**
+- [x] **Track: FastAPI DB Integration (SQLModel, Alembic, PostgreSQL)**
 *Link: [./tracks/db_integration_20260507/](./tracks/db_integration_20260507/)*
