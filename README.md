@@ -182,6 +182,68 @@ Authelia 없이 백엔드 로직만 빠르게 테스트할 때 사용합니다.
 
 인증 서버 상태를 직접 확인하려면 `http://localhost:9091`에 접속하세요.
 
+---
+
+## 데이터베이스 연동 가이드 (Database Integration)
+
+FastLangFrame은 SQLModel(SQLAlchemy)과 Alembic을 통한 표준화된 DB 연동 기능을 제공합니다.
+
+### ⚙️ DB 설정 (`.env`)
+
+```bash
+DATABASE_DRIVER=postgresql  # 또는 mysql, sqlite
+DATABASE_HOST=localhost
+DATABASE_PORT=5432
+DATABASE_USERNAME=admin
+DATABASE_PASSWORD=admin
+DATABASE_DBNAME=backend
+DATABASE_SCHEMA=public      # PostgreSQL 전용
+```
+
+### 📝 데이터 모델 정의
+
+`src/common/types/models.py` 또는 각 도메인 하위에 `SQLModel`을 사용하여 테이블을 정의합니다.
+
+```python
+from typing import Optional
+from sqlmodel import SQLModel, Field
+
+class MyModel(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str = Field(index=True)
+```
+
+### 💉 세션 주입 및 CRUD 처리
+
+FastAPI의 `Depends`를 사용하여 DB 세션을 주입받습니다.
+
+```python
+from fastapi import Depends
+from sqlmodel import Session
+from src.utils.connectors.db.database import get_session
+
+@app.post("/items/")
+def create_item(item: MyModel, session: Session = Depends(get_session)):
+    session.add(item)
+    session.commit()
+    session.refresh(item)
+    return item
+```
+
+### 🔄 데이터베이스 마이그레이션 (Alembic)
+
+1. **마이그레이션 파일 생성**:
+   ```bash
+   # 스키마 변경 후 실행
+   poetry run alembic revision --autogenerate -m "Add new table"
+   ```
+2. **DB 반영**:
+   ```bash
+   poetry run alembic upgrade head
+   ```
+
+---
+
 ## Chat Test UI 가이드
 
 FastLangFrame은 에이전트의 추론 과정을 시각화하여 디버깅을 돕는 전용 UI를 제공합니다.
