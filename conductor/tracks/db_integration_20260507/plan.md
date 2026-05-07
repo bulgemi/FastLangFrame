@@ -29,8 +29,8 @@
     - [x] Apply migration: `alembic upgrade head`.
 - [x] Task: Conductor - User Manual Verification 'Alembic Integration and Initial Migration' (Protocol in workflow.md)
 
-## Phase 3: Agent/CRUD Verification
+## Phase 3: Agent/CRUD Verification [checkpoint: ecd01cb]
 - [x] Task: Create a simple CRUD operation test verifying the injected session. afea78c
     - [x] Write a test that uses `get_session` to create, read, update, and delete the dummy model.
     - [x] Ensure the test passes against a local PostgreSQL instance (or sqlite for testing if fallback is needed).
-- [~] Task: Conductor - User Manual Verification 'Agent/CRUD Verification' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Agent/CRUD Verification' (Protocol in workflow.md)
