@@ -1,19 +1,19 @@
 # Implementation Plan: FastAPI Database Integration
 
 ## Phase 1: Configuration and Connection Setup
-- [ ] Task: Update `config.yaml` (or sample) and `src/common/configs/settings.py` to support database connection strings (PostgreSQL).
-    - [ ] Write tests for settings loading DB configuration.
-    - [ ] Implement settings update.
-- [ ] Task: Implement database engine initialization in `src/utils/connectors/db/database.py`.
-    - [ ] Write unit tests for engine creation.
-    - [ ] Implement engine creation using `SQLModel`.
-- [ ] Task: Implement FastAPI dependency `get_session` as a yield generator in `src/utils/connectors/db/database.py`.
-    - [ ] Write unit tests for the dependency generator.
-    - [ ] Implement the `get_session` function.
-- [ ] Task: Integrate DB engine initialization into FastAPI app startup events (e.g., lifespan in `src/core/server.py`).
-    - [ ] Write integration test for app startup.
-    - [ ] Update app lifecycle to initialize DB.
-- [ ] Task: Conductor - User Manual Verification 'Configuration and Connection Setup' (Protocol in workflow.md)
+- [x] Task: Update `config.yaml` (or sample) and `src/common/configs/settings.py` to support database connection strings (PostgreSQL). afea78c
+    - [x] Write tests for settings loading DB configuration.
+    - [x] Implement settings update.
+- [x] Task: Implement database engine initialization in `src/utils/connectors/db/database.py`. afea78c
+    - [x] Write unit tests for engine creation.
+    - [x] Implement engine creation using `SQLModel`.
+- [x] Task: Implement FastAPI dependency `get_session` as a yield generator in `src/utils/connectors/db/database.py`. afea78c
+    - [x] Write unit tests for the dependency generator.
+    - [x] Implement the `get_session` function.
+- [x] Task: Integrate DB engine initialization into FastAPI app startup events (e.g., lifespan in `src/core/server.py`). afea78c
+    - [x] Write integration test for app startup.
+    - [x] Update app lifecycle to initialize DB.
+- [~] Task: Conductor - User Manual Verification 'Configuration and Connection Setup' (Protocol in workflow.md)
 
 ## Phase 2: Alembic Integration and Initial Migration
 - [ ] Task: Initialize Alembic in the project root.

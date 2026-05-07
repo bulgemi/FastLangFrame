@@ -1,6 +1,7 @@
 import jwt
 import json
 import asyncio
+from contextlib import asynccontextmanager
 from typing import Any, Optional
 from fastapi import FastAPI, Request, Depends, HTTPException, status
 from fastapi.responses import StreamingResponse
@@ -14,6 +15,7 @@ from src.common.middleware.auth import (
 )
 from src.common.configs.settings import get_settings
 from src.common.logging.logger_config import setup_logger
+from src.utils.connectors.db.database import db
 
 settings = get_settings()
 logger = setup_logger(__name__)
@@ -84,6 +86,21 @@ async def authenticated_user(
         verify_func = await get_current_verify_token()
         return await verify_func(token)
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: Initialize DB Engine
+    logger.info("Initializing database engine...")
+    try:
+        # Accessing async_engine triggers initialization in our lazy-loading Database class
+        _ = db.async_engine
+        logger.info("Database engine initialized successfully.")
+    except Exception as e:
+        logger.error(f"Failed to initialize database engine: {e}")
+    
+    yield
+    # Shutdown: Close DB connections if needed (SQLAlchemy handles most of this via pooling)
+    logger.info("Shutting down database engine...")
+
 def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> FastAPI:
     """
     LangGraph 객체(또는 Runnable)를 받아 /invoke, /stream, /invoke_batch, /invoke_stream_batch
@@ -91,6 +108,7 @@ def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> Fas
     """
     app = FastAPI(
         title=title,
+        lifespan=lifespan,
         swagger_ui_init_oauth={
             "clientId": settings.authelia_client_id,
             "appName": title,
