@@ -104,6 +104,13 @@ class Database:
 
     def _get_db_extra_config(self) -> dict[str, Any]:
         driver = self.settings.database_driver
+        if driver == "sqlite":
+            db_url = f"sqlite:///{self.settings.database_dbname}"
+            db_extra_config_dict = {
+                "database.url": db_url,
+            }
+            return db_extra_config_dict
+
         if driver == "mysql":
             connector = "mysql+pymysql"
         elif driver == "postgresql":
