@@ -1,6 +1,6 @@
 # Implementation Plan: FastAPI Database Integration
 
-## Phase 1: Configuration and Connection Setup
+## Phase 1: Configuration and Connection Setup [checkpoint: 1adf7cd]
 - [x] Task: Update `config.yaml` (or sample) and `src/common/configs/settings.py` to support database connection strings (PostgreSQL). afea78c
     - [x] Write tests for settings loading DB configuration.
     - [x] Implement settings update.
@@ -13,10 +13,10 @@
 - [x] Task: Integrate DB engine initialization into FastAPI app startup events (e.g., lifespan in `src/core/server.py`). afea78c
     - [x] Write integration test for app startup.
     - [x] Update app lifecycle to initialize DB.
-- [~] Task: Conductor - User Manual Verification 'Configuration and Connection Setup' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Configuration and Connection Setup' (Protocol in workflow.md)
 
 ## Phase 2: Alembic Integration and Initial Migration
-- [ ] Task: Initialize Alembic in the project root.
+- [~] Task: Initialize Alembic in the project root.
     - [ ] Run `alembic init alembic`.
 - [ ] Task: Configure Alembic to use the connection string from `settings.py`.
     - [ ] Update `alembic/env.py` to load config dynamically.
