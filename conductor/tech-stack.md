@@ -26,6 +26,6 @@
 - **Copier**: Template generation tool for bootstrapping new projects.
 
 ## Databases & Storage (Supported)
-- **SQLAlchemy & Alembic**: ORM and migration tool for relational databases (PostgreSQL, MySQL).
+- **SQLModel (SQLAlchemy) & Alembic**: ORM and migration tool for relational databases (PostgreSQL, MySQL).
 - **Redis**: For caching and temporary state storage.
 - **OpenSearch / VectorDB**: For RAG-based search and retrieval.
