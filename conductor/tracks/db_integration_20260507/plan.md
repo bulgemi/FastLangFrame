@@ -16,18 +16,18 @@
 - [x] Task: Conductor - User Manual Verification 'Configuration and Connection Setup' (Protocol in workflow.md)
 
 ## Phase 2: Alembic Integration and Initial Migration
-- [~] Task: Initialize Alembic in the project root.
-    - [ ] Run `alembic init alembic`.
-- [ ] Task: Configure Alembic to use the connection string from `settings.py`.
-    - [ ] Update `alembic/env.py` to load config dynamically.
-- [ ] Task: Define a baseline `SQLModel` for testing (e.g., a dummy `User` or `Item` model).
-    - [ ] Create a models module with a simple model.
-- [ ] Task: Configure Alembic `env.py` to discover `SQLModel` metadata.
-    - [ ] Import models and set `target_metadata = SQLModel.metadata`.
-- [ ] Task: Generate and apply the initial migration.
-    - [ ] Generate migration: `alembic revision --autogenerate -m "initial"`.
-    - [ ] Apply migration: `alembic upgrade head`.
-- [ ] Task: Conductor - User Manual Verification 'Alembic Integration and Initial Migration' (Protocol in workflow.md)
+- [x] Task: Initialize Alembic in the project root. afea78c
+    - [x] Run `alembic init alembic`.
+- [x] Task: Configure Alembic to use the connection string from `settings.py`. afea78c
+    - [x] Update `alembic/env.py` to load config dynamically.
+- [x] Task: Define a baseline `SQLModel` for testing (e.g., a dummy `User` or `Item` model). afea78c
+    - [x] Create a models module with a simple model.
+- [x] Task: Configure Alembic `env.py` to discover `SQLModel` metadata. afea78c
+    - [x] Import models and set `target_metadata = SQLModel.metadata`.
+- [x] Task: Generate and apply the initial migration. afea78c
+    - [x] Generate migration: `alembic revision --autogenerate -m "initial"`.
+    - [x] Apply migration: `alembic upgrade head`.
+- [~] Task: Conductor - User Manual Verification 'Alembic Integration and Initial Migration' (Protocol in workflow.md)
 
 ## Phase 3: Agent/CRUD Verification
 - [ ] Task: Create a simple CRUD operation test verifying the injected session.
