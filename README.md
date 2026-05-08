@@ -90,18 +90,30 @@ FastLangFrame은 LangChain 및 LangGraph를 기반으로 한 경량급 LLM 에�
 ./bin/lapm my_agent create 1 1
 ```
 
-### 2. 인프라 및 환경 설정
+2. **인프라 및 환경 설정**
 
-1. **인프라(Nginx, Authelia, Redis) 기동**:
+1. **인프라(Nginx, Authelia, Redis, PostgreSQL) 기동**:
 
    ```bash
    docker compose up -d
    ```
 
 2. **환경 변수 설정**:
-   `.env` 파일을 생성하고 LLM API Key 및 Authelia 설정을 입력합니다.
+   `.env` 파일을 생성하고 LLM API Key 및 Authelia, DB 설정을 입력합니다.
+
+### 🗄️ 기본 DB 접속 정보 (Default Credentials)
+
+Docker Compose로 기동된 PostgreSQL의 기본 접속 정보입니다.
+
+*   **Host**: `localhost` (또는 `postgres`)
+*   **Port**: `5432`
+*   **Username**: `admin`
+*   **Password**: `fastlangframe1@`
+*   **Database**: `backend`
+*   **Default Schema**: `public`
 
 ### 3. 서버 실행
+
 
 ```bash
 # 기본 포트 8888로 실행 (Nginx가 8000 -> 8888로 프록시)
@@ -195,7 +207,7 @@ DATABASE_DRIVER=postgresql  # 또는 mysql, sqlite
 DATABASE_HOST=localhost
 DATABASE_PORT=5432
 DATABASE_USERNAME=admin
-DATABASE_PASSWORD=admin
+DATABASE_PASSWORD=fastlangframe1@
 DATABASE_DBNAME=backend
 DATABASE_SCHEMA=public      # PostgreSQL 전용
 ```
