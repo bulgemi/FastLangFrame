@@ -6,8 +6,19 @@ from sqlalchemy import pool
 from alembic import context
 
 # --- CUSTOM IMPORTS ---
+import os
+import sys
 from sqlmodel import SQLModel
 from src.common.configs.settings import get_settings
+
+# Setup project path dynamically if PROJECT_NAME is set
+project_name = os.getenv("PROJECT_NAME")
+if project_name:
+    project_root = os.path.join(os.getcwd(), "projects", project_name)
+    if os.path.exists(project_root):
+        sys.path.insert(0, project_root)
+        sys.path.insert(0, os.path.join(os.getcwd(), "projects"))
+
 from src.common.types.models import User # Ensure models are imported for metadata
 # ----------------------
 

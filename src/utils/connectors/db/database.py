@@ -135,11 +135,17 @@ class Database:
         encoded_password = urllib.parse.quote_plus(self.settings.database_password)
         db_url = f"{connector}://{encoded_username}:{encoded_password}@{self.settings.database_host}:{self.settings.database_port}/{self.settings.database_dbname}"
 
-        db_extra_config_dict = {
-            "database.url": db_url,
-            "database.connect_args": {"options": f"-csearch_path={self.settings.database_schema}"},
-            "database.execution_options": {"schema_translate_map": {APP_SCHEMA: self.settings.database_schema}},
-        }
+        if driver == "postgresql-async":
+            db_extra_config_dict = {
+                "database.url": db_url,
+                "database.execution_options": {"schema_translate_map": {APP_SCHEMA: self.settings.database_schema}},
+            }
+        else:
+            db_extra_config_dict = {
+                "database.url": db_url,
+                "database.connect_args": {"options": f"-csearch_path={self.settings.database_schema}"},
+                "database.execution_options": {"schema_translate_map": {APP_SCHEMA: self.settings.database_schema}},
+            }
         return db_extra_config_dict
 
     def get_engine(self, project_name: str = None) -> sqlalchemy.engine.Engine:
