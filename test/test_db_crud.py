@@ -3,7 +3,7 @@ import pytest_asyncio
 import os
 from sqlalchemy import Column, Integer, String, select, delete, update
 from sqlalchemy.orm import declarative_base
-from src.utils.connectors.db.db_client import DBClient
+from src.utils.connectors.db.database import DBClient
 from src.common.configs.settings import FastLangFrameSettings
 
 Base = declarative_base()
@@ -20,15 +20,19 @@ def db_settings():
     # Ensure a clean start
     if os.path.exists(db_path):
         os.remove(db_path)
-    return FastLangFrameSettings(database_url=f"sqlite+aiosqlite:///{db_path}")
+    return FastLangFrameSettings(
+        database_driver="sqlite",
+        database_dbname=db_path
+    )
 
 @pytest_asyncio.fixture(scope="module")
 async def db_client_instance(db_settings):
     client = DBClient(settings=db_settings)
     # Create tables
-    async with client.engine.begin() as conn:
+    async with client.async_engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    yield client
+    return client
+
     # Cleanup after tests
     if os.path.exists("./test_crud.db"):
         try:

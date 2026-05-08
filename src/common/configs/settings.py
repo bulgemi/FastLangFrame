@@ -1,16 +1,19 @@
+import os
 import json
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Literal
 from pydantic import Field, AliasChoices
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+
 class FastLangFrameSettings(BaseSettings):
     """Core settings for FastLangFrame projects"""
+
     model_config = SettingsConfigDict(
-        env_file=".env", 
+        env_file=".env",
         env_file_encoding="utf-8",
         extra="ignore",
         case_sensitive=False,
-        protected_namespaces=('settings_',)
+        protected_namespaces=("settings_",),
     )
 
     # LLM Settings
@@ -26,8 +29,8 @@ class FastLangFrameSettings(BaseSettings):
             "GOOGLE_API_KEY",
             "GEMINI_API_KEY",
             "DEEPSEEK_API_KEY",
-            "LLM_API_KEY"
-        )
+            "LLM_API_KEY",
+        ),
     )
     llm_endpoint: str = Field(
         default="https://api.openai.com/v1",
@@ -36,8 +39,8 @@ class FastLangFrameSettings(BaseSettings):
             "LLM_ENDPOINT",
             "OPENAI_BASE_URL",
             "DEEPSEEK_API_BASE",
-            "LOCAL_LLM_ENDPOINT"
-        )
+            "LOCAL_LLM_ENDPOINT",
+        ),
     )
     model_name: str = Field(
         default="gpt-4o",
@@ -48,15 +51,23 @@ class FastLangFrameSettings(BaseSettings):
             "DEEPSEEK_MODEL_NAME",
             "GEMINI_MODEL_NAME",
             "CLAUDE_MODEL_NAME",
-            "LOCAL_LLM_MODEL"
-        )
+            "LOCAL_LLM_MODEL",
+        ),
     )
-    
+
     # Azure OpenAI Specific
-    azure_openai_api_key: Optional[str] = Field(default=None, alias="AZURE_OPENAI_API_KEY")
-    azure_openai_endpoint: Optional[str] = Field(default=None, alias="AZURE_OPENAI_ENDPOINT")
-    azure_openai_api_version: str = Field(default="2024-02-15-preview", alias="AZURE_OPENAI_API_VERSION")
-    azure_deployment_name: Optional[str] = Field(default=None, alias="AZURE_DEPLOYMENT_NAME")
+    azure_openai_api_key: Optional[str] = Field(
+        default=None, alias="AZURE_OPENAI_API_KEY"
+    )
+    azure_openai_endpoint: Optional[str] = Field(
+        default=None, alias="AZURE_OPENAI_ENDPOINT"
+    )
+    azure_openai_api_version: str = Field(
+        default="2024-02-15-preview", alias="AZURE_OPENAI_API_VERSION"
+    )
+    azure_deployment_name: Optional[str] = Field(
+        default=None, alias="AZURE_DEPLOYMENT_NAME"
+    )
 
     # Anthropic (Claude) Specific
     anthropic_api_key: Optional[str] = Field(default=None, alias="ANTHROPIC_API_KEY")
@@ -69,10 +80,11 @@ class FastLangFrameSettings(BaseSettings):
     light_thinking_model_name: Optional[str] = None
     llm_timeout_sec: int = 60
 
-    # DB Settings
+    # Redis Settings
     redis_url: Optional[str] = None
+
+    # Opensearch Settings
     opensearch_url: Optional[str] = None
-    database_url: Optional[str] = None
 
     # MCP Settings
     mcp_server_url: Optional[str] = None
@@ -88,20 +100,74 @@ class FastLangFrameSettings(BaseSettings):
     llm_models_json: Optional[str] = Field(default=None, alias="LLM_MODELS_JSON")
 
     # Native JWT Configuration
-    jwt_secret_key: str = Field(default="your_jwt_secret_key_at_least_32_chars_long", alias="JWT_SECRET_KEY")
+    jwt_secret_key: str = Field(
+        default="your_jwt_secret_key_at_least_32_chars_long", alias="JWT_SECRET_KEY"
+    )
     jwt_algorithm: str = Field(default="HS256", alias="JWT_ALGORITHM")
-    jwt_access_token_expire_minutes: int = Field(default=60, alias="JWT_ACCESS_TOKEN_EXPIRE_MINUTES")
+    jwt_access_token_expire_minutes: int = Field(
+        default=60, alias="JWT_ACCESS_TOKEN_EXPIRE_MINUTES"
+    )
 
     # Authelia Configuration
     authelia_url: Optional[str] = Field(default=None, alias="AUTHELIA_URL")
-    authelia_introspection_url: Optional[str] = Field(default=None, alias="AUTHELIA_INTROSPECTION_URL")
+    authelia_introspection_url: Optional[str] = Field(
+        default=None, alias="AUTHELIA_INTROSPECTION_URL"
+    )
     authelia_token_url: Optional[str] = Field(default=None, alias="AUTHELIA_TOKEN_URL")
-    authelia_userinfo_url: Optional[str] = Field(default=None, alias="AUTHELIA_USERINFO_URL")
-    authelia_authorization_url: Optional[str] = Field(default=None, alias="AUTHELIA_AUTHORIZATION_URL")
+    authelia_userinfo_url: Optional[str] = Field(
+        default=None, alias="AUTHELIA_USERINFO_URL"
+    )
+    authelia_authorization_url: Optional[str] = Field(
+        default=None, alias="AUTHELIA_AUTHORIZATION_URL"
+    )
     authelia_client_id: Optional[str] = Field(default=None, alias="AUTHELIA_CLIENT_ID")
-    authelia_client_secret: Optional[str] = Field(default=None, alias="AUTHELIA_CLIENT_SECRET")
-    authelia_redirect_uri: Optional[str] = Field(default=None, alias="AUTHELIA_REDIRECT_URI")
-    authelia_public_key_path: str = Field(default="authelia/config/oidc_pub.pem", alias="AUTHELIA_PUBLIC_KEY_PATH")
+    authelia_client_secret: Optional[str] = Field(
+        default=None, alias="AUTHELIA_CLIENT_SECRET"
+    )
+    authelia_redirect_uri: Optional[str] = Field(
+        default=None, alias="AUTHELIA_REDIRECT_URI"
+    )
+    authelia_public_key_path: str = Field(
+        default="authelia/config/oidc_pub.pem", alias="AUTHELIA_PUBLIC_KEY_PATH"
+    )
+
+    # Database Settings
+    database_driver: str = Field(
+        default="postgresql",
+        validation_alias=AliasChoices("database_driver", "DATABASE_DRIVER"),
+    )
+    database_host: str = Field(
+        default="localhost",
+        validation_alias=AliasChoices("database_host", "DATABASE_HOST"),
+    )
+    database_port: int = Field(
+        default=5432,
+        validation_alias=AliasChoices("database_port", "DATABASE_PORT"),
+    )
+    database_username: str = Field(
+        default="admin",
+        validation_alias=AliasChoices("database_username", "DATABASE_USERNAME"),
+    )
+    database_password: str = Field(
+        default="admin",
+        validation_alias=AliasChoices("database_password", "DATABASE_PASSWORD"),
+    )
+    database_dbname: str = Field(
+        default="backend",
+        validation_alias=AliasChoices("database_dbname", "DATABASE_DBNAME"),
+    )
+    database_schema: str = Field(
+        default="public",
+        validation_alias=AliasChoices("database_schema", "DATABASE_SCHEMA"),
+    )
+
+    @property
+    def database_url(self) -> Optional[str]:
+        """Constructs the database URL from components"""
+        if not self.database_driver:
+            return None
+        # handle potential async drivers or special cases if needed
+        return f"{self.database_driver}://{self.database_username}:{self.database_password}@{self.database_host}:{self.database_port}/{self.database_dbname}"
 
     @property
     def llm_models(self) -> Dict[str, Dict[str, Any]]:
@@ -114,7 +180,9 @@ class FastLangFrameSettings(BaseSettings):
             # Fallback or log error
             return {}
 
+
 _settings_instance: Optional[FastLangFrameSettings] = None
+
 
 def get_settings() -> FastLangFrameSettings:
     global _settings_instance

@@ -1,0 +1,8 @@
+{
+  "track_id": "db_integration_20260507",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-05-07T00:00:00Z",
+  "updated_at": "2026-05-07T00:00:00Z",
+  "description": "FastAPI app 생성시 DB 연결 생성하고 agent에서 depend로 db session 주입받아 db crud 처리 가능하도록 기능 제공"
+}

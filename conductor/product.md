@@ -12,7 +12,7 @@ FastLangFrame is a flexible and lightweight framework designed for the rapid cre
 - **Built-in API Server**: Standard FastAPI server with Swagger UI for every agent project.
 - **Integrated Security**: Standard OAuth2 Password and Bearer Token authentication with RBAC, supporting local JWT validation via Authelia.
 - **Interactive UI**: Streamlit-based chat interface for real-time node trace and testing.
-- **Extensibility**: Support for MCP, Skills, and integrations with databases (PostgreSQL, MySQL, Redis, OpenSearch).
+- **Extensibility**: Support for MCP, Skills, and integrated database support (PostgreSQL) with standardized CRUD capabilities and migration management (Alembic).
 - **Deployment Ready**: Included Dockerfiles and Kubernetes deployment manifests.
 
 ## Core Value Proposition

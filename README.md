@@ -92,14 +92,26 @@ FastLangFrame은 LangChain 및 LangGraph를 기반으로 한 경량급 LLM 에�
 
 ### 2. 인프라 및 환경 설정
 
-1. **인프라(Nginx, Authelia, Redis) 기동**:
+1. **인프라(Nginx, Authelia, Redis, PostgreSQL) 기동**:
 
    ```bash
    docker compose up -d
    ```
 
 2. **환경 변수 설정**:
-   `.env` 파일을 생성하고 LLM API Key 및 Authelia 설정을 입력합니다.
+
+   `.env` 파일을 생성하고 LLM API Key 및 Authelia, DB 설정을 입력합니다.
+
+### 🗄️ 기본 DB 접속 정보 (Default Credentials)
+
+Docker Compose로 기동된 PostgreSQL의 기본 접속 정보입니다.
+
+* **Host**: `localhost` (또는 `postgres`)
+* **Port**: `5432`
+* **Username**: `admin`
+* **Password**: `fastlangframe1@`
+* **Database**: `backend`
+* **Default Schema**: `public`
 
 ### 3. 서버 실행
 
@@ -181,6 +193,71 @@ Authelia 없이 백엔드 로직만 빠르게 테스트할 때 사용합니다.
 #### 3. Authelia 직접 접속 및 세션 확인
 
 인증 서버 상태를 직접 확인하려면 `http://localhost:9091`에 접속하세요.
+
+---
+
+## 데이터베이스 연동 가이드 (Database Integration)
+
+FastLangFrame은 SQLModel(SQLAlchemy)과 Alembic을 통한 표준화된 DB 연동 기능을 제공합니다.
+
+### ⚙️ DB 설정 (`.env`)
+
+```bash
+DATABASE_DRIVER=postgresql  # 또는 mysql, sqlite
+DATABASE_HOST=localhost
+DATABASE_PORT=5432
+DATABASE_USERNAME=admin
+DATABASE_PASSWORD=fastlangframe1@
+DATABASE_DBNAME=backend
+DATABASE_SCHEMA=public      # PostgreSQL 전용
+```
+
+### 📝 데이터 모델 정의
+
+`src/common/types/models.py` 또는 각 도메인 하위에 `SQLModel`을 사용하여 테이블을 정의합니다.
+
+```python
+from typing import Optional
+from sqlmodel import SQLModel, Field
+
+class MyModel(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str = Field(index=True)
+```
+
+### 💉 세션 주입 및 CRUD 처리
+
+FastAPI의 `Depends`를 사용하여 DB 세션을 주입받습니다.
+
+```python
+from fastapi import Depends
+from sqlmodel import Session
+from src.utils.connectors.db.database import get_session
+
+@app.post("/items/")
+def create_item(item: MyModel, session: Session = Depends(get_session)):
+    session.add(item)
+    session.commit()
+    session.refresh(item)
+    return item
+```
+
+### 🔄 데이터베이스 마이그레이션 (Alembic)
+
+1. **마이그레이션 파일 생성**:
+
+   ```bash
+   # 스키마 변경 후 실행
+   poetry run alembic revision --autogenerate -m "Add new table"
+   ```
+
+2. **DB 반영**:
+
+   ```bash
+   poetry run alembic upgrade head
+   ```
+
+---
 
 ## Chat Test UI 가이드
 

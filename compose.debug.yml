@@ -1,0 +1,9 @@
+---
+services:
+  authelia:
+    healthcheck:
+      disable: true
+    environment:
+      AUTHELIA_LOG_LEVEL: 'trace'
+    command: 'sleep 3300'
+...

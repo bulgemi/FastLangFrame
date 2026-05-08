@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
-from src.utils.connectors.db.db_client import DBClient
+from src.utils.connectors.db.database import DBClient
 from src.common.configs.settings import FastLangFrameSettings
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -10,23 +10,17 @@ def anyio_backend():
 
 @pytest.mark.anyio
 async def test_db_client_get_session_mocked():
-    # Setup mock session and session factory
+    # Setup mock session
     mock_session = AsyncMock(spec=AsyncSession)
-    mock_session.__aenter__.return_value = mock_session
-    mock_session.__aexit__.return_value = None
     
-    mock_session_factory = MagicMock()
-    mock_session_factory.return_value = mock_session
+    settings = FastLangFrameSettings(database_url="sqlite+aiosqlite:///:memory:")
+    client = DBClient(settings=settings)
     
-    # Patch create_async_engine and sessionmaker to avoid and database driver issues
-    with patch("src.utils.connectors.db.db_client.create_async_engine"), \
-         patch("src.utils.connectors.db.db_client.async_sessionmaker"):
-        
-        settings = FastLangFrameSettings(database_url="sqlite+aiosqlite:///:memory:")
-        client = DBClient(settings=settings)
-        # Manually inject the mock session factory
-        client.session_factory = mock_session_factory
-        
+    # Define an async generator to be yielded by the mock
+    async def mock_async_gen(*args, **kwargs):
+        yield mock_session
+
+    with patch.object(client, "get_async_session", side_effect=mock_async_gen):
         # Check if get_session yields the mock session
         sessions = []
         async for session in client.get_session():
@@ -34,17 +28,13 @@ async def test_db_client_get_session_mocked():
         
         assert len(sessions) == 1
         assert sessions[0] == mock_session
-        mock_session_factory.assert_called_once()
 
 @pytest.mark.anyio
 async def test_db_client_no_url():
-    # Patch create_async_engine and async_sessionmaker
-    with patch("src.utils.connectors.db.db_client.create_async_engine"), \
-         patch("src.utils.connectors.db.db_client.async_sessionmaker"):
-        
-        settings = FastLangFrameSettings(database_url="")
-        client = DBClient(settings=settings)
-        
-        with pytest.raises(ValueError, match="Database URL not configured"):
-            async for _ in client.get_session():
-                pass
+    # Setting database_driver="" will result in database_url returning None/empty
+    settings = FastLangFrameSettings(database_driver="")
+    client = DBClient(settings=settings)
+    
+    with pytest.raises(ValueError, match="Database URL not configured"):
+        async for _ in client.get_session():
+            pass

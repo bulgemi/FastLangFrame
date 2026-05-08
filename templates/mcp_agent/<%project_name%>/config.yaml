@@ -1,0 +1,36 @@
+app:
+    root_path: "/api/v1/agent"
+    allowed_hosts:
+        - "*"
+    version: "${APP__VERSION}"
+    locale: "en" # ko, en
+    profile: "development"
+    log_level: "debug"
+    static_dir: "static"
+    auth_provider: "keycloak-builtin" # "keycloak", "keycloak-builtin"
+
+database:
+    driver: "${DATABASE__DRIVER:-postgresql}"
+    host: "${DATABASE__HOST:-localhost}"
+    port: "${DATABASE__PORT:-5432}"
+    dbname: "${DATABASE__DBNAME:-backend}"
+    username: "${DATABASE__USERNAME:-admin}"
+    password: "${DATABASE__PASSWORD:-admin}"
+    schema: "${DATABASE__SCHEMA:-public}"
+
+    echo: True
+    pool_size: 5
+    max_overflow: 10
+
+websocket:
+    host: "http://localhost"
+    port: 8080
+
+opensearch:
+    use_flag: "false"
+
+redis:
+    use_redis: false
+
+phoenix:
+    enabled: false
