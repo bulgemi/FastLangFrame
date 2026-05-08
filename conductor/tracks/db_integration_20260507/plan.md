@@ -34,3 +34,10 @@
     - [x] Write a test that uses `get_session` to create, read, update, and delete the dummy model.
     - [x] Ensure the test passes against a local PostgreSQL instance (or sqlite for testing if fallback is needed).
 - [x] Task: Conductor - User Manual Verification 'Agent/CRUD Verification' (Protocol in workflow.md)
+
+## Phase 4: Template Updates and Distribution
+- [x] Task: Add `config.yaml` to agent templates to ensure DB support in new projects. afea78c
+    - [x] Update `templates/simple_agent` with `config.yaml`.
+    - [x] Update other templates (rag, multi, mcp, deep, research).
+    - [x] Verify a new project can be created and run with DB support using `lapm`.
+- [~] Task: Conductor - User Manual Verification 'Template Updates' (Protocol in workflow.md)
