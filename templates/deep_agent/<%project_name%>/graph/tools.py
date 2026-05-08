@@ -1,5 +1,5 @@
 from langchain_core.tools import tool
-from src.utils.connectors.db.db_client import DBClient
+from src.utils.connectors.db.database import DBClient
 from src.utils.connectors.vdb.vector_db import VectorDBClient
 
 @tool

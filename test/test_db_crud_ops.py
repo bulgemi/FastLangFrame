@@ -50,7 +50,8 @@ def test_user_crud_operations(session: Session):
     deleted_user = session.exec(statement).first()
     assert deleted_user is None
 
-def test_database_get_session_integration():
+@pytest.mark.asyncio
+async def test_database_get_session_integration():
     """Test the actual Database.get_session integration with sqlite."""
     # Ensure schema is cleared for sqlite
     SQLModel.metadata.schema = None
@@ -64,24 +65,21 @@ def test_database_get_session_integration():
     db = Database(settings=settings)
     
     # We need to create tables on the lazy-loaded engine
-    SQLModel.metadata.create_all(db.engine)
+    # For SQLite memory, we should use the same engine for creation and access
+    # Since get_session uses async_engine, let's use that
+    async with db.async_engine.begin() as conn:
+        await conn.run_sync(SQLModel.metadata.create_all)
     
     # Use the dependency-style generator
-    gen = db.get_session()
-    session = next(gen)
-    
-    try:
+    async for session in db.get_session():
         user = User(username="integrated", email="integrated@example.com")
         session.add(user)
-        # The generator will commit on success
-    finally:
-        try:
-            next(gen)
-        except StopIteration:
-            pass
-            
+        # The generator (db.get_async_session) handles commit/rollback/close
+
     # Verify it was committed using a new session
-    with Session(db.engine) as new_session:
-        db_user = new_session.exec(select(User).where(User.username == "integrated")).first()
+    async for session in db.get_session():
+        statement = select(User).where(User.username == "integrated")
+        result = await session.execute(statement)
+        db_user = result.scalar_one_or_none()
         assert db_user is not None
         assert db_user.email == "integrated@example.com"

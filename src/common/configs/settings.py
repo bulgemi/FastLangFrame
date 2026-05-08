@@ -162,8 +162,10 @@ class FastLangFrameSettings(BaseSettings):
     )
 
     @property
-    def database_url(self) -> str:
+    def database_url(self) -> Optional[str]:
         """Constructs the database URL from components"""
+        if not self.database_driver:
+            return None
         # handle potential async drivers or special cases if needed
         return f"{self.database_driver}://{self.database_username}:{self.database_password}@{self.database_host}:{self.database_port}/{self.database_dbname}"
 

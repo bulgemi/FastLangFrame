@@ -8,7 +8,7 @@ import traceback
 import urllib.parse
 from contextlib import asynccontextmanager, contextmanager
 from types import ModuleType
-from typing import Any, Callable, ContextManager, Generator
+from typing import Any, AsyncGenerator, Callable, ContextManager, Generator
 
 from autologging import logged
 import sqlalchemy
@@ -39,7 +39,10 @@ SQLModel.metadata = sqlalchemy.MetaData(schema=APP_SCHEMA)
 
 __all__ = [
     "Database",
-    "db_config",
+    "DBClient",
+    "db",
+    "get_session",
+    "get_async_session",
 ]
 
 
@@ -86,6 +89,13 @@ class Database:
         # Defer initialization to first use (Lazy)
         self.db_url = None  # Will be set on first engine creation
 
+    async def get_session(self, project_name: str = None) -> AsyncGenerator[AsyncSession, None]:
+        """Compatibility method for old DBClient"""
+        if not self.settings.database_url:
+            raise ValueError("Database URL not configured")
+        async for session in self.get_async_session(project_name):
+            yield session
+
     @property
     def engine(self) -> sqlalchemy.engine.Engine:
         return self.get_engine()
@@ -102,10 +112,11 @@ class Database:
     def async_session(self) -> async_scoped_session:
         return self.get_async_scoped_session()
 
-    def _get_db_extra_config(self) -> dict[str, Any]:
+    def _get_db_extra_config(self, is_async: bool = False) -> dict[str, Any]:
         driver = self.settings.database_driver
         if driver == "sqlite":
-            db_url = f"sqlite:///{self.settings.database_dbname}"
+            connector = "sqlite+aiosqlite" if is_async else "sqlite"
+            db_url = f"{connector}:///{self.settings.database_dbname}"
             db_extra_config_dict = {
                 "database.url": db_url,
             }
@@ -133,7 +144,7 @@ class Database:
 
     def get_engine(self, project_name: str = None) -> sqlalchemy.engine.Engine:
         if project_name not in self._engines:
-            config_dict = self._get_db_extra_config()
+            config_dict = self._get_db_extra_config(is_async=False)
             self._engines[project_name] = engine_from_config(
                 config_dict,
                 prefix="database.",
@@ -144,7 +155,7 @@ class Database:
 
     def get_async_engine(self, project_name: str = None):
         if project_name not in self._async_engines:
-            config_dict = self._get_db_extra_config()
+            config_dict = self._get_db_extra_config(is_async=True)
             self._async_engines[project_name] = async_engine_from_config(
                 config_dict,
                 prefix="database.",
@@ -187,7 +198,7 @@ class Database:
             )
         return self._async_scoped_sessions[project_name]
 
-    def get_session(
+    def get_sync_session(
         self, project_name: str = None
     ) -> Generator[sqlmodel_Session, None, None]:
         session_factory = self.get_scoped_session(project_name)
@@ -204,6 +215,7 @@ class Database:
             session.commit()
         finally:
             session.close()
+
 
     @staticmethod
     @contextmanager
@@ -274,7 +286,7 @@ class Database:
 
             driver = self.settings.database_driver
             if driver == "postgresql":
-                driver = "postgresql+psycopg"
+                driver = "postgresql+psycopg2"
             elif driver == "mysql":
                 driver = "mysql+pymysql"
 
@@ -378,7 +390,8 @@ class Database:
             self.__log.info("No project-specific databases to prepare.")
 
     def ping(self) -> bool:
-        session: sqlmodel_Session = self.session()
+        session_factory = self.get_scoped_session()
+        session: sqlmodel_Session = session_factory()
         try:
             session.exec(text("SELECT 1;"))
             session.commit()
@@ -389,6 +402,9 @@ class Database:
             session.close()
 
 
+DBClient = Database
+
+
 # pagination.py
 
 # Initialize Database with settings
@@ -397,10 +413,10 @@ db = Database(settings=settings)
 
 def get_session() -> Generator[sqlmodel_Session, None, None]:
     """FastAPI dependency for database session"""
-    yield from db.get_session()
+    yield from db.get_sync_session()
 
 
-async def get_async_session() -> Generator[AsyncSession, None, None]:
+async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
     """FastAPI dependency for async database session"""
     async for session in db.get_async_session():
         yield session
