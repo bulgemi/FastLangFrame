@@ -114,7 +114,7 @@ class Database:
         if driver == "mysql":
             connector = "mysql+pymysql"
         elif driver == "postgresql":
-            connector = "postgresql+psycopg"
+            connector = "postgresql+psycopg2"
         elif driver == "postgresql-async":
             connector = "postgresql+asyncpg"
         else:
