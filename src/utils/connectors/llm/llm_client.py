@@ -83,16 +83,19 @@ def get_langchain_chat_model(model_name: Optional[str] = None, settings: Optiona
             http_client=httpx.Client(verify=False, timeout=settings.llm_timeout_sec)
         )
     
-    # Default: Standard OpenAI logic
-    api_key = settings.openai_api_key
-    if not api_key:
-        raise ValueError("OPENAI_API_KEY is not set in your .env file.")
-    return ChatOpenAI(
-        model_name=model_name or settings.openai_model_name,
-        openai_api_key=SecretStr(api_key),
-        openai_api_base=settings.openai_api_base,
-        http_client=httpx.Client(verify=False, timeout=settings.llm_timeout_sec)
-    )
+    # OpenAI logic
+    if provider == "openai":
+        api_key = settings.openai_api_key
+        if not api_key:
+            raise ValueError("OPENAI_API_KEY is not set in your .env file.")
+        return ChatOpenAI(
+            model_name=model_name or settings.openai_model_name,
+            openai_api_key=SecretStr(api_key),
+            openai_api_base=settings.openai_api_base,
+            http_client=httpx.Client(verify=False, timeout=settings.llm_timeout_sec)
+        )
+    
+    raise ValueError(f"Unsupported or missing LLM provider: {provider}. Check your LLM_PROVIDER in .env")
 
 @log_connector
 def get_llm_by_role(role: str, settings: Optional[Any] = None) -> BaseChatModel:
@@ -113,34 +116,64 @@ def get_llm_by_role(role: str, settings: Optional[Any] = None) -> BaseChatModel:
     provider = config.get("provider", settings.llm_provider).lower()
     
     if provider == "azure":
+        api_key = config.get("api_key") or settings.azure_openai_api_key
+        if not api_key:
+            raise ValueError(f"AZURE_OPENAI_API_KEY is not set for role {role}.")
         return AzureChatOpenAI(
             deployment_name=config.get("deployment") or config.get("model") or settings.azure_openai_deployment_name,
-            openai_api_key=SecretStr(config.get("api_key") or settings.azure_openai_api_key),
+            openai_api_key=SecretStr(api_key),
             azure_endpoint=config.get("endpoint") or settings.azure_openai_endpoint,
             openai_api_version=config.get("api_version") or settings.azure_openai_api_version,
             validate_base_url=False,
         )
     
     if provider in ["claude", "anthropic"]:
+        api_key = config.get("api_key") or settings.anthropic_api_key
+        if not api_key:
+            raise ValueError(f"ANTHROPIC_API_KEY is not set for role {role}.")
         return ChatAnthropic(
             model_name=config.get("model") or config.get("deployment") or settings.claude_model_name,
-            anthropic_api_key=SecretStr(config.get("api_key") or settings.anthropic_api_key),
+            anthropic_api_key=SecretStr(api_key),
             anthropic_api_url=config.get("endpoint") or settings.anthropic_api_url,
         )
         
     if provider in ["gemini", "google"]:
         api_key = config.get("api_key") or settings.google_api_key
         if not api_key:
-            raise ValueError("GOOGLE_API_KEY is not set or invalid for role {role}.")
+            raise ValueError(f"GOOGLE_API_KEY is not set for role {role}.")
         return ChatGoogleGenerativeAI(
             model=config.get("model") or config.get("deployment") or settings.gemini_model_name,
             google_api_key=SecretStr(api_key),
         )
+
+    if provider == "deepseek":
+        api_key = config.get("api_key") or settings.deepseek_api_key
+        if not api_key:
+            raise ValueError(f"DEEPSEEK_API_KEY is not set for role {role}.")
+        return ChatOpenAI(
+            model_name=config.get("model") or config.get("deployment") or settings.deepseek_model_name,
+            openai_api_key=SecretStr(api_key),
+            openai_api_base=config.get("endpoint") or settings.deepseek_api_base,
+            http_client=httpx.Client(verify=False, timeout=settings.llm_timeout_sec)
+        )
+
+    if provider == "local":
+        return ChatOpenAI(
+            model_name=config.get("model") or config.get("deployment") or settings.local_llm_model,
+            openai_api_key=SecretStr("dummy"),
+            openai_api_base=config.get("endpoint") or settings.local_llm_endpoint,
+            http_client=httpx.Client(verify=False, timeout=settings.llm_timeout_sec)
+        )
     
-    # Default to OpenAI logic for other providers
-    return ChatOpenAI(
-        model_name=config.get("model") or config.get("deployment") or settings.openai_model_name,
-        openai_api_key=SecretStr(config.get("api_key") or settings.openai_api_key),
-        openai_api_base=config.get("endpoint") or settings.openai_api_base,
-        http_client=httpx.Client(verify=False, timeout=settings.llm_timeout_sec)
-    )
+    if provider == "openai":
+        api_key = config.get("api_key") or settings.openai_api_key
+        if not api_key:
+            raise ValueError(f"OPENAI_API_KEY is not set for role {role}.")
+        return ChatOpenAI(
+            model_name=config.get("model") or config.get("deployment") or settings.openai_model_name,
+            openai_api_key=SecretStr(api_key),
+            openai_api_base=config.get("endpoint") or settings.openai_api_base,
+            http_client=httpx.Client(verify=False, timeout=settings.llm_timeout_sec)
+        )
+    
+    raise ValueError(f"Unsupported LLM provider: {provider} for role {role}")
