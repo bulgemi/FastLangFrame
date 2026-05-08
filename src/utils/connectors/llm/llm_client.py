@@ -15,70 +15,83 @@ async def get_async_openai_client(settings: Optional[FastLangFrameSettings] = No
     if not settings:
         settings = get_settings()
     return AsyncOpenAI(
-        base_url=settings.llm_endpoint,
-        api_key=settings.llm_api_key,
+        base_url=settings.openai_api_base,
+        api_key=settings.openai_api_key,
         http_client=httpx.AsyncClient(verify=False, timeout=settings.llm_timeout_sec)
     )
 
 @log_connector
 def get_langchain_chat_model(model_name: Optional[str] = None, settings: Optional[Any] = None) -> BaseChatModel:
-    """Returns a Langchain Chat Model (OpenAI or Azure)"""
+    """Returns a Langchain Chat Model based on the provider settings"""
     if not settings:
         settings = get_settings()
     
-    # Azure OpenAI logic (triggered by prefix OR provider choice)
-    is_azure = (
-        (getattr(settings, "azure_openai_api_key", None) and getattr(settings, "azure_openai_endpoint", None)) or 
-        (settings.llm_provider.lower() == "azure")
-    )
+    provider = settings.llm_provider.lower()
     
-    if is_azure:
-        deployment = (
-            getattr(settings, "azure_deployment_name", None) or 
-            model_name or 
-            settings.model_name
-        )
+    # Azure OpenAI logic
+    if provider == "azure":
+        api_key = settings.azure_openai_api_key
+        if not api_key:
+            raise ValueError("AZURE_OPENAI_API_KEY is not set in your .env file.")
         return AzureChatOpenAI(
-            deployment_name=deployment,
-            openai_api_key=SecretStr(getattr(settings, "azure_openai_api_key", None) or settings.llm_api_key),
-            azure_endpoint=getattr(settings, "azure_openai_endpoint", None) or settings.llm_endpoint,
-            openai_api_version=getattr(settings, "azure_openai_api_version", "2024-02-15-preview"),
+            deployment_name=model_name or settings.azure_openai_deployment_name or settings.openai_model_name,
+            openai_api_key=SecretStr(api_key),
+            azure_endpoint=settings.azure_openai_endpoint,
+            openai_api_version=settings.azure_openai_api_version,
             validate_base_url=False,
         )
     
     # Claude (Anthropic) logic
-    is_claude = (
-        getattr(settings, "anthropic_api_key", None) or 
-        (settings.llm_provider.lower() in ["claude", "anthropic"])
-    )
-    if is_claude:
+    if provider in ["claude", "anthropic"]:
+        api_key = settings.anthropic_api_key
+        if not api_key:
+            raise ValueError("ANTHROPIC_API_KEY is not set in your .env file.")
         return ChatAnthropic(
-            model_name=model_name or settings.model_name,
-            anthropic_api_key=SecretStr(getattr(settings, "anthropic_api_key", None) or settings.llm_api_key),
-            anthropic_api_url=getattr(settings, "anthropic_api_url", None) or settings.llm_endpoint if "anthropic" in (settings.llm_endpoint or "") else None,
+            model_name=model_name or settings.claude_model_name,
+            anthropic_api_key=SecretStr(api_key),
+            anthropic_api_url=settings.anthropic_api_url,
         )
         
     # Gemini (Google) logic
-    is_gemini = (
-        getattr(settings, "google_api_key", None) or 
-        (settings.llm_provider.lower() in ["gemini", "google"])
-    )
-    if is_gemini:
-        api_key = getattr(settings, "google_api_key", None) or settings.llm_api_key
-        if not api_key or api_key == "default_key":
-            raise ValueError("Gemini API Key is not set or invalid. Please set GOOGLE_API_KEY in your .env file.")
+    if provider in ["gemini", "google"]:
+        api_key = settings.google_api_key
+        if not api_key:
+            raise ValueError("GOOGLE_API_KEY is not set in your .env file.")
         return ChatGoogleGenerativeAI(
-            model=model_name or settings.model_name,
+            model=model_name or settings.gemini_model_name,
             google_api_key=SecretStr(api_key),
         )
+
+    # DeepSeek logic
+    if provider == "deepseek":
+        api_key = settings.deepseek_api_key
+        if not api_key:
+            raise ValueError("DEEPSEEK_API_KEY is not set in your .env file.")
+        return ChatOpenAI(
+            model_name=model_name or settings.deepseek_model_name,
+            openai_api_key=SecretStr(api_key),
+            openai_api_base=settings.deepseek_api_base,
+            http_client=httpx.Client(verify=False, timeout=settings.llm_timeout_sec)
+        )
+
+    # Local LLM logic
+    if provider == "local":
+        return ChatOpenAI(
+            model_name=model_name or settings.local_llm_model,
+            openai_api_key=SecretStr("dummy"),
+            openai_api_base=settings.local_llm_endpoint,
+            http_client=httpx.Client(verify=False, timeout=settings.llm_timeout_sec)
+        )
     
-    # Standard OpenAI logic
-    name_to_use = model_name or settings.model_name
+    # Default: Standard OpenAI logic
+    api_key = settings.openai_api_key
+    if not api_key:
+        raise ValueError("OPENAI_API_KEY is not set in your .env file.")
     return ChatOpenAI(
-        model_name=name_to_use,
-        openai_api_key=SecretStr(settings.llm_api_key),
-        openai_api_base=settings.llm_endpoint,
-        http_client=httpx.Client(verify=False, timeout=getattr(settings, "llm_timeout_sec", 60))
+        model_name=model_name or settings.openai_model_name,
+        openai_api_key=SecretStr(api_key),
+        openai_api_base=settings.openai_api_base,
+        http_client=httpx.Client(verify=False, timeout=settings.llm_timeout_sec)
     )
 
 @log_connector
@@ -97,37 +110,37 @@ def get_llm_by_role(role: str, settings: Optional[Any] = None) -> BaseChatModel:
         return get_langchain_chat_model(settings=settings)
     
     config = models[role]
-    provider = config.get("provider", "openai").lower()
+    provider = config.get("provider", settings.llm_provider).lower()
     
     if provider == "azure":
         return AzureChatOpenAI(
-            deployment_name=config.get("deployment") or config.get("model"),
-            openai_api_key=SecretStr(config.get("api_key") or getattr(settings, "azure_openai_api_key", None) or settings.llm_api_key),
-            azure_endpoint=config.get("endpoint") or getattr(settings, "azure_openai_endpoint", None) or settings.llm_endpoint,
-            openai_api_version=config.get("api_version") or getattr(settings, "azure_openai_api_version", "2024-02-15-preview"),
+            deployment_name=config.get("deployment") or config.get("model") or settings.azure_openai_deployment_name,
+            openai_api_key=SecretStr(config.get("api_key") or settings.azure_openai_api_key),
+            azure_endpoint=config.get("endpoint") or settings.azure_openai_endpoint,
+            openai_api_version=config.get("api_version") or settings.azure_openai_api_version,
             validate_base_url=False,
         )
     
     if provider in ["claude", "anthropic"]:
         return ChatAnthropic(
-            model_name=config.get("model") or config.get("deployment") or settings.model_name,
-            anthropic_api_key=SecretStr(config.get("api_key") or getattr(settings, "anthropic_api_key", None) or settings.llm_api_key),
-            anthropic_api_url=config.get("endpoint") or getattr(settings, "anthropic_api_url", None),
+            model_name=config.get("model") or config.get("deployment") or settings.claude_model_name,
+            anthropic_api_key=SecretStr(config.get("api_key") or settings.anthropic_api_key),
+            anthropic_api_url=config.get("endpoint") or settings.anthropic_api_url,
         )
         
     if provider in ["gemini", "google"]:
-        api_key = config.get("api_key") or getattr(settings, "google_api_key", None) or settings.llm_api_key
-        if not api_key or api_key == "default_key":
-            raise ValueError("Gemini API Key is not set or invalid. Please set GOOGLE_API_KEY in your .env file.")
+        api_key = config.get("api_key") or settings.google_api_key
+        if not api_key:
+            raise ValueError("GOOGLE_API_KEY is not set or invalid for role {role}.")
         return ChatGoogleGenerativeAI(
-            model=config.get("model") or config.get("deployment") or settings.model_name,
+            model=config.get("model") or config.get("deployment") or settings.gemini_model_name,
             google_api_key=SecretStr(api_key),
         )
     
-    # Default to OpenAI logic for other providers (can be extended)
+    # Default to OpenAI logic for other providers
     return ChatOpenAI(
-        model_name=config.get("model") or config.get("deployment") or settings.model_name,
-        openai_api_key=SecretStr(config.get("api_key") or settings.llm_api_key),
-        openai_api_base=config.get("endpoint") or settings.llm_endpoint,
-        http_client=httpx.Client(verify=False, timeout=getattr(settings, "llm_timeout_sec", 60))
+        model_name=config.get("model") or config.get("deployment") or settings.openai_model_name,
+        openai_api_key=SecretStr(config.get("api_key") or settings.openai_api_key),
+        openai_api_base=config.get("endpoint") or settings.openai_api_base,
+        http_client=httpx.Client(verify=False, timeout=settings.llm_timeout_sec)
     )

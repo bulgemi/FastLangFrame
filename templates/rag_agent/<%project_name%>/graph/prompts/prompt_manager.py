@@ -9,7 +9,7 @@ from jinja2 import Template
 from langchain_core.messages import BaseMessage, SystemMessage
 from pydantic import BaseModel
 
-from <%project_name%>.common.config import mari_config
+from <%project_name%>.common.config import flf_config
 from <%project_name%>.common.mcp import get_ax_mcp_prompt_messages
 
 logging.basicConfig(level=logging.INFO)
@@ -161,7 +161,7 @@ async def build_formatted_prompts(
         for tag in prompt_codes:
             prompt_tags.append(PromptTag.to_prompt_tag(tag))
 
-        if mari_config.AX_MCP_PROMPT_ENABLED:
+        if flf_config.AX_MCP_PROMPT_ENABLED:
             try:
                 prompt_messages = await _ax_prompt_cache.get(prompt_tags)
             except Exception as e:

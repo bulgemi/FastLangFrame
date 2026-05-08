@@ -29,7 +29,7 @@ from langgraph.config import get_stream_writer
 from langgraph.types import StreamWriter
 from pydantic import BaseModel, ConfigDict
 
-from <%project_name%>.common.config import mari_config
+from <%project_name%>.common.config import flf_config
 from <%project_name%>.common.mcp import (
     get_ax_mcp_prompt_resources,
 )
@@ -156,7 +156,7 @@ class PrepareAxPromptNode(
         config: RunnableConfig | None = None,
         writer: StreamWriter | None = None,
     ) -> MariGraphState:
-        if not mari_config.AX_MCP_PROMPT_ENABLED:
+        if not flf_config.AX_MCP_PROMPT_ENABLED:
             return state
 
         input_data = self.input_type(**state.req_input.model_dump())
@@ -268,7 +268,7 @@ class DataCollectNode(WorkflowNode[DataCollectNodeInput, DataCollectNodeOutput])
                 value=f"Starting {step.tool_name} data collection...",
             )
 
-        semaphore = asyncio.Semaphore(mari_config.DATA_COLLECT_MAX_CONCURRENT_TASKS)
+        semaphore = asyncio.Semaphore(flf_config.DATA_COLLECT_MAX_CONCURRENT_TASKS)
 
         async def execute_with_semaphore(step: Step):
             async with semaphore:
