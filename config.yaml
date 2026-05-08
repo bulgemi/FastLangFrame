@@ -1,0 +1,207 @@
+app:
+    root_path: "/api/v1/agent"
+    allowed_hosts:
+        - "*"
+        - "backend.default.svc.cluster.local"
+    version: "${APP__VERSION}"
+    locale: "en" # ko, en
+    # log_level: debug  #
+    profile: "development"
+    log_level: "debug"
+    static_dir: "static"
+    auth_provider: "keycloak-builtin" # "keycloak", "keycloak-builtin"
+    use_lineage: false
+    fetch_mode_default: "lazy"
+    domains:
+        - tool
+        - prompting
+        - agent
+        - common
+
+projects:
+    skon-multi-db:
+        database: skon_db
+        # opensearch: skon_opensearch
+        # phoenix: skon_phenix
+
+database:
+    # driver: "mysql"  # posgresql=psycopg
+    driver: "postgresql" # "postgresql-async"
+    host: "${DATABASE__HOST}"
+    port: "${DATABASE__PORT}"
+    dbname: "${DATABASE__DBNAME}"
+    username: "${DATABASE__USERNAME}"
+    password: "${DATABASE__PASSWORD}"
+    # schema: "${DATABASE__SCHEMA}"
+
+    # # MYSQL
+    echo: True
+    echo_pool: False
+    
+    isolation_level: "Read committed"
+    pool_reset_on_return: rollback # rollback, commit, None
+    pool_timeout: 100
+    pool_pre_ping: True
+    pool_recycle: 1500
+    pool_size: 5
+    max_overflow: 10
+    implicit_returning: True
+    hide_parameters: False
+
+    named:
+        skon_db: 
+            driver: "postgresql" # "postgresql-async"
+            host: "${DATABASE__HOST}"
+            port: 5433
+            dbname: "${DATABASE__DBNAME}"
+            username: "${DATABASE__USERNAME}"
+            password: "${DATABASE__PASSWORD}"
+            # schema: "skon_schema"
+
+            # # MYSQL
+            echo: True
+            echo_pool: False
+            isolation_level: "Read committed"
+            pool_reset_on_return: rollback # rollback, commit, None
+            pool_timeout: 100
+            pool_pre_ping: True
+            pool_recycle: 1500
+            pool_size: 5
+            max_overflow: 10
+            implicit_returning: True
+            hide_parameters: False
+
+websocket:
+    host: "http://localhost"
+    port: 8080
+    username: "admin" #"${ WEBSOCKET_USERNAME}"
+    password: "admin" #"${ WEBSOCKET_PASSWORD}"
+
+opensearch:
+    server_type: "opensearch" 
+    host: "localhost"
+    port: 9200 
+    username: "admin" 
+    password: "Opensearch1!" 
+    use_ssl: "false" 
+    verify_certs: "false"
+    ssl_show_warn: "false"
+    pool_maxsize: 10
+    timeout: 10
+    named:
+        # docker-compose `opensearch-secondary` (host 9201 -> container 9200)
+        skon_opensearch:
+            host: "localhost"
+            port: 9201
+            username: "admin"
+            password: "Opensearch1!"
+            timeout: 20
+    use_flag:  "true" # true
+    index_name_agent_tracing: agent-tracing
+    index_name_agent_tool: agent-tool
+    enable_agent_tracing: False
+    enable_agent_tool: true
+
+    cacert: |
+        Bag Attributes: <Empty Attributes>
+        subject=C = US, ST = Arizona, L = Scottsdale, O = "GoDaddy.com, Inc.", CN = Go Daddy Root Certificate Authority - G2
+
+        issuer=C = US, ST = Arizona, L = Scottsdale, O = "GoDaddy.com, Inc.", CN = Go Daddy Root Certificate Authority - G2
+
+        -----BEGIN CERTIFICATE-----
+        MIIDxTCCAq2gAwIBAgIBADANBgkqhkiG9w0BAQsFADCBgzELMAkGA1UEBhMCVVMx
+        EDAOBgNVBAgTB0FyaXpvbmExEzARBgNVBAcTClNjb3R0c2RhbGUxGjAYBgNVBAoT
+        EUdvRGFkZHkuY29tLCBJbmMuMTEwLwYDVQQDEyhHbyBEYWRkeSBSb290IENlcnRp
+        ZmljYXRlIEF1dGhvcml0eSAtIEcyMB4XDTA5MDkwMTAwMDAwMFoXDTM3MTIzMTIz
+        NTk1OVowgYMxCzAJBgNVBAYTAlVTMRAwDgYDVQQIEwdBcml6b25hMRMwEQYDVQQH
+        EwpTY290dHNkYWxlMRowGAYDVQQKExFHb0RhZGR5LmNvbSwgSW5jLjExMC8GA1UE
+        AxMoR28gRGFkZHkgUm9vdCBDZXJ0aWZpY2F0ZSBBdXRob3JpdHkgLSBHMjCCASIw
+        DQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAL9xYgjx+lk09xvJGKP3gElY6SKD
+        E6bFIEMBO4Tx5oVJnyfq9oQbTqC023CYxzIBsQU+B07u9PpPL1kwIuerGVZr4oAH
+        /PMWdYA5UXvl+TW2dE6pjYIT5LY/qQOD+qK+ihVqf94Lw7YZFAXK6sOoBJQ7Rnwy
+        DfMAZiLIjWltNowRGLfTshxgtDj6AozO091GB94KPutdfMh8+7ArU6SSYmlRJQVh
+        GkSBjCypQ5Yj36w6gZoOKcUcqeldHraenjAKOc7xiID7S13MMuyFYkMlNAJWJwGR
+        tDtwKj9useiciAF9n9T521NtYJ2/LOdYq7hfRvzOxBsDPAnrSTFcaUaz4EcCAwEA
+        AaNCMEAwDwYDVR0TAQH/BAUwAwEB/zAOBgNVHQ8BAf8EBAMCAQYwHQYDVR0OBBYE
+        FDqahQcQZyi27/a9BUFuIMGU2g/eMA0GCSqGSIb3DQEBCwUAA4IBAQCZ21151fmX
+        WWcDYfF+OwYxdS2hII5PZYe096acvNjpL9DbWu7PdIxztDhC2gV7+AJ1uP2lsdeu
+        9tfeE8tTEH6KRtGX+rcuKxGrkLAngPnon1rpN5+r5N9ss4UXnT3ZJE95kTXWXwTr
+        gIOrmgIttRD02JDHBHNA7XIloKmf7J6raBKZV8aPEjoJpL1E/QYVN8Gb5DKj7Tjo
+        2GTzLH4U/ALqn83/B2gX2yKQOC16jdFU8WnjXzPKej17CuPKf1855eJ1usV2GDPO
+        LPAvTK33sefOT6jEm0pUBsV/fdUID+Ic/n4XuKxe9tQWskMJDE32p2u0mYRlynqI
+        4uJEvlz36hz1
+        -----END CERTIFICATE-----
+        Bag Attributes: <Empty Attributes>
+        subject=C = US, ST = Arizona, L = Scottsdale, O = "GoDaddy.com, Inc.", OU = http://certs.godaddy.com/repository/, CN = Go Daddy Secure Certificate Authority - G2
+
+        issuer=C = US, ST = Arizona, L = Scottsdale, O = "GoDaddy.com, Inc.", CN = Go Daddy Root Certificate Authority - G2
+
+        -----BEGIN CERTIFICATE-----
+        MIIE0DCCA7igAwIBAgIBBzANBgkqhkiG9w0BAQsFADCBgzELMAkGA1UEBhMCVVMx
+        EDAOBgNVBAgTB0FyaXpvbmExEzARBgNVBAcTClNjb3R0c2RhbGUxGjAYBgNVBAoT
+        EUdvRGFkZHkuY29tLCBJbmMuMTEwLwYDVQQDEyhHbyBEYWRkeSBSb290IENlcnRp
+        ZmljYXRlIEF1dGhvcml0eSAtIEcyMB4XDTExMDUwMzA3MDAwMFoXDTMxMDUwMzA3
+        MDAwMFowgbQxCzAJBgNVBAYTAlVTMRAwDgYDVQQIEwdBcml6b25hMRMwEQYDVQQH
+        EwpTY290dHNkYWxlMRowGAYDVQQKExFHb0RhZGR5LmNvbSwgSW5jLjEtMCsGA1UE
+        CxMkaHR0cDovL2NlcnRzLmdvZGFkZHkuY29tL3JlcG9zaXRvcnkvMTMwMQYDVQQD
+        EypHbyBEYWRkeSBTZWN1cmUgQ2VydGlmaWNhdGUgQXV0aG9yaXR5IC0gRzIwggEi
+        MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC54MsQ1K92vdSTYuswZLiBCGzD
+        BNliF44v/z5lz4/OYuY8UhzaFkVLVat4a2ODYpDOD2lsmcgaFItMzEUz6ojcnqOv
+        K/6AYZ15V8TPLvQ/MDxdR/yaFrzDN5ZBUY4RS1T4KL7QjL7wMDge87Am+GZHY23e
+        cSZHjzhHU9FGHbTj3ADqRay9vHHZqm8A29vNMDp5T19MR/gd71vCxJ1gO7GyQ5HY
+        pDNO6rPWJ0+tJYqlxvTV0KaudAVkV4i1RFXULSo6Pvi4vekyCgKUZMQWOlDxSq7n
+        eTOvDCAHf+jfBDnCaQJsY1L6d8EbyHSHyLmTGFBUNUtpTrw700kuH9zB0lL7AgMB
+        AAGjggEaMIIBFjAPBgNVHRMBAf8EBTADAQH/MA4GA1UdDwEB/wQEAwIBBjAdBgNV
+        HQ4EFgQUQMK9J47MNIMwojPX+2yz8LQsgM4wHwYDVR0jBBgwFoAUOpqFBxBnKLbv
+        9r0FQW4gwZTaD94wNAYIKwYBBQUHAQEEKDAmMCQGCCsGAQUFBzABhhhodHRwOi8v
+        b2NzcC5nb2RhZGR5LmNvbS8wNQYDVR0fBC4wLDAqoCigJoYkaHR0cDovL2NybC5n
+        b2RhZGR5LmNvbS9nZHJvb3QtZzIuY3JsMEYGA1UdIAQ/MD0wOwYEVR0gADAzMDEG
+        CCsGAQUFBwIBFiVodHRwczovL2NlcnRzLmdvZGFkZHkuY29tL3JlcG9zaXRvcnkv
+        MA0GCSqGSIb3DQEBCwUAA4IBAQAIfmyTEMg4uJapkEv/oV9PBO9sPpyIBslQj6Zz
+        91cxG7685C/b+LrTW+C05+Z5Yg4MotdqY3MxtfWoSKQ7CC2iXZDXtHwlTxFWMMS2
+        RJ17LJ3lXubvDGGqv+QqG+6EnriDfcFDzkSnE3ANkR/0yBOtg2DZ2HKocyQetawi
+        DsoXiWJYRBuriSUBAA/NxBti21G00w9RKpv0vHP8ds42pM3Z2Czqrpv1KrKQ0U11
+        GIo/ikGQI31bS/6kA1ibRrLDYGCD+H1QQc7CoZDDu+8CL9IVVO5EFdkKrqeKM+2x
+        LXY2JtwE65/3YR8V3Idv7kaWKK2hJn0KCacuBKONvPi8BDAB
+        -----END CERTIFICATE-----
+
+llm:
+    endpoint: "${GATEWAY_ENDPOINT}"
+    apikey_url: "${GATEWAY_APIKEY_URL}"
+
+retriever:  
+    knowledge_queries_endpoint: "${KNOWLEDGE_QUERIES_ENDPOINT}"
+    knowledge_repos_endpoint: "${KNOWLEDGE_REPOS_ENDPOINT}"
+    knowledge_retrieval_info_endpoint: "${KNOWLEDGE_RETRIEVAL_INFO_ENDPOINT}"
+    unique_check_key: chunk_id
+
+redis:
+    use_redis: false
+    host: "${REDIS__HOST}" # localhost
+    port: "${REDIS__PORT}" # 6379
+    password: "${REDIS__PASSWORD}" # admin
+    use_sentinel: "${REDIS__SENTINEL}"  # false
+    master_name: "${REDIS__MASTER}"
+    max_connections: 10
+    cache_config_path: cache_config.yaml
+    
+
+
+phoenix:
+    enabled: false
+    endpoint: "http://aip.sktai.io/phoenix/v1/traces"
+    graphql_endpoint: "http://aip.sktai.io/phoenix/graphql"
+    verbose: false
+    as_global: false
+    phoenix_apikey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJBcGlLZXk6MiJ9.TtWHNsVA0iVhlqlId1r4I4wvg_DLrAXpBfwmw777ThI"
+
+notification:
+    queue_maxsize: 1000
+    worker_count: 3
+    shutdown_drain_timeout: 5
+    queue_wait_warn_ms: 500
+    semaphore_wait_warn_ms: 200
+    opensearch_warn_ms: 1000
+    redis_warn_ms: 500
+    total_publish_warn_ms: 1500
+

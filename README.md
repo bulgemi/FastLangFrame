@@ -90,7 +90,7 @@ FastLangFrame은 LangChain 및 LangGraph를 기반으로 한 경량급 LLM 에�
 ./bin/lapm my_agent create 1 1
 ```
 
-2. **인프라 및 환경 설정**
+### 2. 인프라 및 환경 설정
 
 1. **인프라(Nginx, Authelia, Redis, PostgreSQL) 기동**:
 
@@ -99,21 +99,21 @@ FastLangFrame은 LangChain 및 LangGraph를 기반으로 한 경량급 LLM 에�
    ```
 
 2. **환경 변수 설정**:
+
    `.env` 파일을 생성하고 LLM API Key 및 Authelia, DB 설정을 입력합니다.
 
 ### 🗄️ 기본 DB 접속 정보 (Default Credentials)
 
 Docker Compose로 기동된 PostgreSQL의 기본 접속 정보입니다.
 
-*   **Host**: `localhost` (또는 `postgres`)
-*   **Port**: `5432`
-*   **Username**: `admin`
-*   **Password**: `fastlangframe1@`
-*   **Database**: `backend`
-*   **Default Schema**: `public`
+* **Host**: `localhost` (또는 `postgres`)
+* **Port**: `5432`
+* **Username**: `admin`
+* **Password**: `fastlangframe1@`
+* **Database**: `backend`
+* **Default Schema**: `public`
 
 ### 3. 서버 실행
-
 
 ```bash
 # 기본 포트 8888로 실행 (Nginx가 8000 -> 8888로 프록시)
@@ -245,11 +245,14 @@ def create_item(item: MyModel, session: Session = Depends(get_session)):
 ### 🔄 데이터베이스 마이그레이션 (Alembic)
 
 1. **마이그레이션 파일 생성**:
+
    ```bash
    # 스키마 변경 후 실행
    poetry run alembic revision --autogenerate -m "Add new table"
    ```
+
 2. **DB 반영**:
+
    ```bash
    poetry run alembic upgrade head
    ```
