@@ -24,6 +24,7 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 from sqlalchemy.orm import scoped_session, sessionmaker
+
 # from sqlalchemy_filters import apply_filters, apply_pagination, apply_sort
 from sqlmodel import Session, SQLModel, engine_from_config
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -89,7 +90,9 @@ class Database:
         # Defer initialization to first use (Lazy)
         self.db_url = None  # Will be set on first engine creation
 
-    async def get_session(self, project_name: str = None) -> AsyncGenerator[AsyncSession, None]:
+    async def get_session(
+        self, project_name: str = None
+    ) -> AsyncGenerator[AsyncSession, None]:
         """Compatibility method for old DBClient"""
         if not self.settings.database_url:
             raise ValueError("Database URL not configured")
@@ -138,13 +141,19 @@ class Database:
         if driver == "postgresql-async":
             db_extra_config_dict = {
                 "database.url": db_url,
-                "database.execution_options": {"schema_translate_map": {APP_SCHEMA: self.settings.database_schema}},
+                "database.execution_options": {
+                    "schema_translate_map": {APP_SCHEMA: self.settings.database_schema}
+                },
             }
         else:
             db_extra_config_dict = {
                 "database.url": db_url,
-                "database.connect_args": {"options": f"-csearch_path={self.settings.database_schema}"},
-                "database.execution_options": {"schema_translate_map": {APP_SCHEMA: self.settings.database_schema}},
+                "database.connect_args": {
+                    "options": f"-csearch_path={self.settings.database_schema}"
+                },
+                "database.execution_options": {
+                    "schema_translate_map": {APP_SCHEMA: self.settings.database_schema}
+                },
             }
         return db_extra_config_dict
 
@@ -222,7 +231,6 @@ class Database:
         finally:
             session.close()
 
-
     @staticmethod
     @contextmanager
     def session_context_manager(session: sqlmodel_Session):
@@ -286,7 +294,7 @@ class Database:
     ):
         try:
             alembic_cfg = AlembicConfig(alembic_config_filepath)
-            
+
             # Use self.settings directly
             from sqlalchemy.engine.url import URL
 
@@ -301,7 +309,11 @@ class Database:
                 username=self.settings.database_username,
                 password=self.settings.database_password,
                 host=self.settings.database_host,
-                port=int(self.settings.database_port) if self.settings.database_port else None,
+                port=(
+                    int(self.settings.database_port)
+                    if self.settings.database_port
+                    else None
+                ),
                 database=self.settings.database_dbname,
             ).render_as_string(hide_password=False)
 

@@ -6,6 +6,7 @@ from sqlmodel import SQLModel, Field
 
 logger = logging.getLogger(__name__)
 
+
 class User(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     username: str = Field(index=True, unique=True)
@@ -13,8 +14,9 @@ class User(SQLModel, table=True):
     full_name: Optional[str] = None
     is_active: bool = Field(default=True)
 
+
 # Dynamic Project Model Discovery
-# This allows project-specific models (like ChatHistory) to be registered 
+# This allows project-specific models (like ChatHistory) to be registered
 # in SQLModel.metadata without being hardcoded in the framework core.
 project_name = os.getenv("PROJECT_NAME")
 if project_name:
