@@ -1,13 +1,13 @@
 import logging
 
-from <%project_name%>.common.config import get_mari_config
+from <%project_name%>.common.config import get_flf_config
 from <%project_name%>.common.types.nodes import (
     DataSearchToolNodeInput,
     DataSearchToolNodeOutput,
 )
 from <%project_name%>.graph.tools.tool_manager import BaseSearchTool
 
-mari_config = get_mari_config()
+flf_config = get_flf_config()
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

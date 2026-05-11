@@ -16,70 +16,96 @@ class FastLangFrameSettings(BaseSettings):
         protected_namespaces=("settings_",),
     )
 
-    # LLM Settings
+    # LLM Provider Choice
     llm_provider: str = Field(default="openai", alias="LLM_PROVIDER")
-    llm_api_key: str = Field(
-        default="default_key",
-        validation_alias=AliasChoices(
-            "llm_api_key",
-            "OPENAI_API_KEY",
-            "AZURE_OPENAI_API_KEY",
-            "ANTHROPIC_API_KEY",
-            "CLAUDE_API_KEY",
-            "GOOGLE_API_KEY",
-            "GEMINI_API_KEY",
-            "DEEPSEEK_API_KEY",
-            "LLM_API_KEY",
-        ),
+
+    # OpenAI Settings
+    openai_api_key: Optional[str] = Field(
+        default=None, validation_alias=AliasChoices("OPENAI_API_KEY", "LLM_API_KEY")
     )
-    llm_endpoint: str = Field(
+    openai_model_name: str = Field(
+        default="gpt-4o",
+        validation_alias=AliasChoices("OPENAI_MODEL_NAME", "MODEL_NAME"),
+    )
+    openai_api_base: Optional[str] = Field(
         default="https://api.openai.com/v1",
         validation_alias=AliasChoices(
-            "llm_endpoint",
-            "LLM_ENDPOINT",
-            "OPENAI_BASE_URL",
-            "DEEPSEEK_API_BASE",
-            "LOCAL_LLM_ENDPOINT",
-        ),
-    )
-    model_name: str = Field(
-        default="gpt-4o",
-        validation_alias=AliasChoices(
-            "model_name",
-            "MODEL_NAME",
-            "OPENAI_MODEL_NAME",
-            "DEEPSEEK_MODEL_NAME",
-            "GEMINI_MODEL_NAME",
-            "CLAUDE_MODEL_NAME",
-            "LOCAL_LLM_MODEL",
+            "OPENAI_API_BASE", "LLM_API_BASE", "LLM_ENDPOINT"
         ),
     )
 
-    # Azure OpenAI Specific
+    # Azure OpenAI Settings
     azure_openai_api_key: Optional[str] = Field(
-        default=None, alias="AZURE_OPENAI_API_KEY"
+        default=None,
+        validation_alias=AliasChoices("AZURE_OPENAI_API_KEY", "LLM_API_KEY"),
     )
     azure_openai_endpoint: Optional[str] = Field(
-        default=None, alias="AZURE_OPENAI_ENDPOINT"
+        default=None,
+        validation_alias=AliasChoices(
+            "AZURE_OPENAI_ENDPOINT", "LLM_API_BASE", "LLM_ENDPOINT"
+        ),
     )
     azure_openai_api_version: str = Field(
         default="2024-02-15-preview", alias="AZURE_OPENAI_API_VERSION"
     )
-    azure_deployment_name: Optional[str] = Field(
-        default=None, alias="AZURE_DEPLOYMENT_NAME"
+    azure_openai_deployment_name: Optional[str] = Field(
+        default=None,
+        validation_alias=AliasChoices("AZURE_OPENAI_DEPLOYMENT_NAME", "MODEL_NAME"),
     )
 
-    # Anthropic (Claude) Specific
-    anthropic_api_key: Optional[str] = Field(default=None, alias="ANTHROPIC_API_KEY")
-    anthropic_api_url: Optional[str] = Field(default=None, alias="ANTHROPIC_API_URL")
+    # Google Gemini Settings
+    google_api_key: Optional[str] = Field(
+        default=None, validation_alias=AliasChoices("GOOGLE_API_KEY", "LLM_API_KEY")
+    )
+    gemini_model_name: str = Field(
+        default="gemini-1.5-pro",
+        validation_alias=AliasChoices("GEMINI_MODEL_NAME", "MODEL_NAME"),
+    )
 
-    # Google (Gemini) Specific
-    google_api_key: Optional[str] = Field(default=None, alias="GOOGLE_API_KEY")
+    # Anthropic Claude Settings
+    anthropic_api_key: Optional[str] = Field(
+        default=None, validation_alias=AliasChoices("ANTHROPIC_API_KEY", "LLM_API_KEY")
+    )
+    claude_model_name: str = Field(
+        default="claude-3-5-sonnet-20240620",
+        validation_alias=AliasChoices("CLAUDE_MODEL_NAME", "MODEL_NAME"),
+    )
+    anthropic_api_url: Optional[str] = Field(
+        default=None,
+        validation_alias=AliasChoices(
+            "ANTHROPIC_API_URL", "LLM_API_BASE", "LLM_ENDPOINT"
+        ),
+    )
 
-    deep_thinking_model_name: Optional[str] = None
-    light_thinking_model_name: Optional[str] = None
+    # DeepSeek Settings
+    deepseek_api_key: Optional[str] = Field(
+        default=None, validation_alias=AliasChoices("DEEPSEEK_API_KEY", "LLM_API_KEY")
+    )
+    deepseek_model_name: str = Field(
+        default="deepseek-chat",
+        validation_alias=AliasChoices("DEEPSEEK_MODEL_NAME", "MODEL_NAME"),
+    )
+    deepseek_api_base: str = Field(
+        default="https://api.deepseek.com",
+        validation_alias=AliasChoices(
+            "DEEPSEEK_API_BASE", "LLM_API_BASE", "LLM_ENDPOINT"
+        ),
+    )
+
+    # Local LLM Settings
+    local_llm_endpoint: str = Field(
+        default="http://localhost:11434/v1",
+        validation_alias=AliasChoices(
+            "LOCAL_LLM_ENDPOINT", "LLM_API_BASE", "LLM_ENDPOINT"
+        ),
+    )
+    local_llm_model: str = Field(
+        default="llama3", validation_alias=AliasChoices("LOCAL_LLM_MODEL", "MODEL_NAME")
+    )
+
     llm_timeout_sec: int = 60
 
+    # Redis Settings
     # Redis Settings
     redis_url: Optional[str] = None
 
@@ -166,7 +192,6 @@ class FastLangFrameSettings(BaseSettings):
         """Constructs the database URL from components"""
         if not self.database_driver:
             return None
-        # handle potential async drivers or special cases if needed
         return f"{self.database_driver}://{self.database_username}:{self.database_password}@{self.database_host}:{self.database_port}/{self.database_dbname}"
 
     @property
@@ -177,7 +202,6 @@ class FastLangFrameSettings(BaseSettings):
         try:
             return json.loads(self.llm_models_json)
         except json.JSONDecodeError:
-            # Fallback or log error
             return {}
 
 

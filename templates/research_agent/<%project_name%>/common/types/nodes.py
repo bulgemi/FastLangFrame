@@ -21,7 +21,7 @@ from typing import TypeVar
 
 from pydantic import BaseModel, Field, field_validator
 
-from <%project_name%>.common.config import mari_config
+from <%project_name%>.common.config import flf_config
 from <%project_name%>.common.types.schemas import (
     DataBundle,
     PeriodQuery,
@@ -48,7 +48,7 @@ class UserRequestInput(BaseModel):
     histories: list[dict] = Field(
         default_factory=list,
         description="대화 히스토리",
-        max_length=mari_config.LATEST_HISTORIES_CNT,
+        max_length=flf_config.LATEST_HISTORIES_CNT,
     )
     web_search_enabled: bool = Field(default=True, description="웹 검색 도구 사용 여부")
 
@@ -56,8 +56,8 @@ class UserRequestInput(BaseModel):
     @classmethod
     def latest_histories(cls, v: list[dict]) -> list[dict]:
         return (
-            v[-mari_config.LATEST_HISTORIES_CNT :]
-            if len(v) > mari_config.LATEST_HISTORIES_CNT
+            v[-flf_config.LATEST_HISTORIES_CNT :]
+            if len(v) > flf_config.LATEST_HISTORIES_CNT
             else v
         )
 
@@ -66,7 +66,7 @@ class UserRequestInput(BaseModel):
 class PrepareAxPromptNodeInput(BaseModel):
     # 프롬프트 리소스를 가져오기 위한 태그 정보
     prompt_group: str = Field(
-        default=mari_config.AX_MCP_PROMPT_MARI_TAG_GROUP,
+        default=flf_config.AX_MCP_PROMPT_MARI_TAG_GROUP,
         description="프롬프트 그룹 태그",
     )
     company_code: str = Field(default="")

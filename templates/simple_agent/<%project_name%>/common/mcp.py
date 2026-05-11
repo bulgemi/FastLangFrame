@@ -4,7 +4,7 @@ import logging
 from langchain_core.messages import BaseMessage, HumanMessage, SystemMessage
 from langchain_mcp_adapters.client import MultiServerMCPClient
 
-from <%project_name%>.common.config import MCP_CONNECTIONS, mari_config
+from <%project_name%>.common.config import MCP_CONNECTIONS, flf_config
 from <%project_name%>.common.types.schemas import PromptResource
 
 logging.basicConfig(level=logging.INFO)
@@ -44,12 +44,12 @@ async def get_ax_mcp_prompt_resources(prompt_group: str) -> list[PromptResource]
     """
     MCP 서버에서 프롬프트 리소스 목록을 조회합니다.
     """
-    uri = mari_config.AX_MCP_PROMPT_LIST_URL + prompt_group
+    uri = flf_config.AX_MCP_PROMPT_LIST_URL + prompt_group
 
     mcp_client = await create_mcp_client()
     try:
         resources = await mcp_client.get_resources(
-            mari_config.AX_MCP_SERVER_NAME, uris=uri
+            flf_config.AX_MCP_SERVER_NAME, uris=uri
         )
         if not resources:
             raise ValueError(f"No prompt resources found for tag group: {uri}")
@@ -68,13 +68,13 @@ async def get_ax_mcp_prompt_messages(prompt_tags: list[str]) -> list[BaseMessage
     """
     MCP 서버에서 prompt_id에 해당하는 프롬프트 메시지 리스트를 반환합니다.
     """
-    tags = f"{mari_config.AX_MCP_PROMPT_MARI_TAG_GROUP},{','.join(prompt_tags)}"
-    uri = mari_config.AX_MCP_PROMPT_MESSAGE_BY_TAG.format(tags=tags)
+    tags = f"{flf_config.AX_MCP_PROMPT_MARI_TAG_GROUP},{','.join(prompt_tags)}"
+    uri = flf_config.AX_MCP_PROMPT_MESSAGE_BY_TAG.format(tags=tags)
 
     mcp_client = await create_mcp_client()
     try:
         resources = await mcp_client.get_resources(
-            mari_config.AX_MCP_SERVER_NAME, uris=[uri]
+            flf_config.AX_MCP_SERVER_NAME, uris=[uri]
         )
         if not resources:
             logger.error(f"No resources found for uri: {uri}")

@@ -8,14 +8,14 @@ from typing import Any, Dict, List
 from dateutil import parser as date_parser
 from tavily import TavilyClient
 
-from <%project_name%>.common.config import get_mari_config
+from <%project_name%>.common.config import get_flf_config
 from <%project_name%>.common.types.nodes import (
     DataSearchToolNodeInput,
     DataSearchToolNodeOutput,
 )
 from <%project_name%>.graph.tools.tool_manager import BaseSearchTool
 
-mari_config = get_mari_config()
+flf_config = get_flf_config()
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -40,7 +40,7 @@ class WebSearchTool(BaseSearchTool):
     @property
     def client(self) -> TavilyClient:
         if self._client is None:
-            self._client = TavilyClient(mari_config.TAVILY_API_KEY)
+            self._client = TavilyClient(flf_config.TAVILY_API_KEY)
         return self._client
 
     def _split_periods(self, period: Dict[str, str]) -> List[Dict[str, str]]:
@@ -107,7 +107,7 @@ class WebSearchTool(BaseSearchTool):
 
         if not hasattr(self.__class__, "_semaphore"):
             self.__class__._semaphore = asyncio.Semaphore(
-                mari_config.TAVILY_MAX_CONCURRENT_REQUESTS
+                flf_config.TAVILY_MAX_CONCURRENT_REQUESTS
             )
 
         async with self.__class__._semaphore:
@@ -120,7 +120,7 @@ class WebSearchTool(BaseSearchTool):
 
         results = self._filter_results_by_score(
             response["results"],
-            result_filter.get("score_threshold", mari_config.TAVILY_SCORE_THRESHOLD),
+            result_filter.get("score_threshold", flf_config.TAVILY_SCORE_THRESHOLD),
         )
 
         # 메타데이터 추가 - 인덱싱은 상위에서 처리하므로 제거
@@ -160,7 +160,7 @@ class WebSearchTool(BaseSearchTool):
             query = input.period_query.query
             periods = self._split_periods(input.period_query.period)
 
-            tavily_config = mari_config.TAVILY_CONFIG_JSON
+            tavily_config = flf_config.TAVILY_CONFIG_JSON
             search_params = tavily_config.get("search_params", {})
             result_filter = tavily_config.get("result_filter", {})
 
@@ -219,7 +219,7 @@ class TavilyExecutor:
         if cls._instance is None:
             cls._instance = cls()
             cls._executor = ThreadPoolExecutor(
-                max_workers=mari_config.TAVILY_MAX_CONCURRENT_REQUESTS,
+                max_workers=flf_config.TAVILY_MAX_CONCURRENT_REQUESTS,
                 thread_name_prefix="tavily_search",
             )
         return cls._executor

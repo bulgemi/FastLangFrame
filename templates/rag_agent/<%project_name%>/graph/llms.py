@@ -9,25 +9,23 @@ from langchain_core.tools import BaseTool
 from langgraph.prebuilt import create_react_agent
 from pydantic import BaseModel
 
-from <%project_name%>.common.config import mari_config
+from <%project_name%>.common.config import flf_config
 from src.utils.connectors.llm.llm_client import get_langchain_chat_model
 
 http_client = httpx.Client(verify=False)
 http_async_client = httpx.AsyncClient(verify=False)
 
 
-def _create_ax_chat_model(model_name: str) -> any:
+def _create_ax_chat_model(model_name: str | None = None) -> any:
     # Use framework's get_langchain_chat_model for proper provider support
-    return get_langchain_chat_model(model_name=model_name, settings=mari_config)
+    return get_langchain_chat_model(model_name=model_name, settings=flf_config)
 
 
-_llm_gpt_4o = _create_ax_chat_model(mari_config.LLM_MODEL_GPT_4o)
-_llm_gpt_4_1 = _create_ax_chat_model(mari_config.LLM_MODEL_GPT_4_1)
+_llm_main = _create_ax_chat_model()
 
 
 class LlmClient(Enum):
-    llm_gpt_4o = _llm_gpt_4o
-    llm_gpt_4_1 = _llm_gpt_4_1
+    main = _llm_main
 
     def __call__(self):
         return self.value
@@ -35,7 +33,7 @@ class LlmClient(Enum):
 
 async def ainvoke_llm(
     messages: list[BaseMessage],
-    llm_client: LlmClient = LlmClient.llm_gpt_4_1,
+    llm_client: LlmClient = LlmClient.main,
     output_type: Type[BaseModel] | None = None,
 ) -> BaseModel | dict | str:
     """
@@ -45,18 +43,15 @@ async def ainvoke_llm(
         llm = llm_client()
 
         # Gemini-specific fix: Ensure at least one HumanMessage exists
-        if mari_config.llm_provider.lower() in ["gemini", "google"]:
+        if flf_config.llm_provider.lower() in ["gemini", "google"]:
             has_human = any(isinstance(m, HumanMessage) for m in messages)
             if not has_human:
                 if len(messages) == 1 and isinstance(messages[0], SystemMessage):
-                    # Convert single SystemMessage to HumanMessage
                     messages = [HumanMessage(content=messages[0].content)]
                 else:
-                    # Append empty HumanMessage
                     messages.append(HumanMessage(content="Please proceed."))
 
         if output_type:
-            # Use native structured output if available, else fallback to parser
             try:
                 llm = llm.with_structured_output(output_type)
             except Exception:
@@ -64,12 +59,14 @@ async def ainvoke_llm(
         
         content = await llm.ainvoke(messages)
         if output_type and isinstance(content, str):
+            import json
             return json.loads(content)
         return content
 
     except OutputParserException as e:
         if not getattr(e, "llm_output", None):
             raise RuntimeError(f"Empty llm_output: {e}") from e
+        import json, ast
         try:
             return json.loads(e.llm_output)
         except Exception:
@@ -82,13 +79,13 @@ async def ainvoke_llm(
 
 
 async def astream_llm(
-    messages: list[BaseMessage], llm_client: LlmClient = LlmClient.llm_gpt_4_1
+    messages: list[BaseMessage], llm_client: LlmClient = LlmClient.main
 ) -> AsyncIterator[str]:
     try:
         llm = llm_client()
 
         # Gemini-specific fix: Ensure at least one HumanMessage exists
-        if mari_config.llm_provider.lower() in ["gemini", "google"]:
+        if flf_config.llm_provider.lower() in ["gemini", "google"]:
             has_human = any(isinstance(m, HumanMessage) for m in messages)
             if not has_human:
                 if len(messages) == 1 and isinstance(messages[0], SystemMessage):
@@ -109,7 +106,7 @@ async def astream_llm(
 async def ainvoke_react_agent(
     messages: list[BaseMessage],
     tools: list[BaseTool],
-    llm_client: LlmClient = LlmClient.llm_gpt_4_1,
+    llm_client: LlmClient = LlmClient.main,
     output_type: Type[BaseModel] | None = None,
 ) -> dict | str:
     """
@@ -126,12 +123,14 @@ async def ainvoke_react_agent(
             and isinstance(result["messages"], list)
         ):
             latest_message = result["messages"][-1]
+            import json
             content = json.loads(latest_message.content)
             return content
 
     except OutputParserException as e:
         if not getattr(e, "llm_output", None):
             raise RuntimeError(f"Empty llm_output: {e}") from e
+        import json, ast
         try:
             return json.loads(e.llm_output)
         except Exception:

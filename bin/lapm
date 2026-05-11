@@ -103,6 +103,12 @@ case $COMMAND in
         
         $COPIER_CMD copy -f -d project_name="$PROJECT_NAME" -d llm_provider="$LLM_PROVIDER" "$TEMPLATE_DIR" "$PROJECT_DIR"
         
+        # Copy .env.example to .env if it exists
+        if [ -f "$PROJECT_DIR/.env.example" ]; then
+            cp "$PROJECT_DIR/.env.example" "$PROJECT_DIR/.env"
+            echo "✅ Created .env from .env.example"
+        fi
+        
         # Copy root pyproject.toml to the new project and update its name
         cp "$BASE_DIR/pyproject.toml" "$PROJECT_DIR/pyproject.toml"
         # Update name in pyproject.toml (using a platform-compatible sed)

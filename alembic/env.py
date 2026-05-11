@@ -6,9 +6,21 @@ from sqlalchemy import pool
 from alembic import context
 
 # --- CUSTOM IMPORTS ---
+import os
+import sys
 from sqlmodel import SQLModel
 from src.common.configs.settings import get_settings
-from src.common.types.models import User # Ensure models are imported for metadata
+
+# Setup project path dynamically if PROJECT_NAME is set
+project_name = os.getenv("PROJECT_NAME")
+if project_name:
+    project_root = os.path.join(os.getcwd(), "projects", project_name)
+    if os.path.exists(project_root):
+        sys.path.insert(0, project_root)
+        sys.path.insert(0, os.path.join(os.getcwd(), "projects"))
+
+from src.common.types.models import User  # Ensure models are imported for metadata
+
 # ----------------------
 
 # this is the Alembic Config object, which provides
@@ -33,8 +45,10 @@ target_metadata = SQLModel.metadata
 
 settings = get_settings()
 
+
 def get_url():
     from sqlalchemy.engine.url import URL
+
     driver = settings.database_driver
     if driver == "postgresql":
         driver = "postgresql+psycopg"
@@ -43,7 +57,7 @@ def get_url():
     elif driver == "sqlite":
         # SQLite doesn't need credentials/host/port
         return f"sqlite:///{settings.database_dbname}"
-    
+
     return URL.create(
         drivername=driver,
         username=settings.database_username,
@@ -52,6 +66,7 @@ def get_url():
         port=int(settings.database_port) if settings.database_port else None,
         database=settings.database_dbname,
     ).render_as_string(hide_password=False)
+
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
@@ -87,7 +102,7 @@ def run_migrations_online() -> None:
     # Overwrite sqlalchemy.url with dynamic URL
     configuration = config.get_section(config.config_ini_section, {})
     configuration["sqlalchemy.url"] = get_url()
-    
+
     connectable = engine_from_config(
         configuration,
         prefix="sqlalchemy.",
@@ -96,7 +111,7 @@ def run_migrations_online() -> None:
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, 
+            connection=connection,
             target_metadata=target_metadata,
             # Add schema support if needed
             # version_table_schema=settings.database_schema,
