@@ -101,6 +101,25 @@ async def lifespan(app: FastAPI):
     # Shutdown: Close DB connections if needed (SQLAlchemy handles most of this via pooling)
     logger.info("Shutting down database engine...")
 
+def agent_json_serializer(obj: Any) -> Any:
+    """
+    Custom JSON serializer for LangGraph and LangChain objects.
+    Ensures that types like 'Overwrite' and 'BaseMessage' are serializable.
+    """
+    # 1. LangGraph Overwrite handling (common in deepagent updates)
+    if obj.__class__.__name__ == "Overwrite" and hasattr(obj, "value"):
+        return obj.value
+    
+    # 2. LangChain BaseMessage and Pydantic models
+    if hasattr(obj, "dict") and callable(obj.dict):
+        return obj.dict()
+    
+    # 3. Fallback to string representation
+    try:
+        return str(obj)
+    except Exception:
+        return f"<Non-serializable {type(obj).__name__}>"
+
 def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> FastAPI:
     """
     LangGraph 객체(또는 Runnable)를 받아 /invoke, /stream, /invoke_batch, /invoke_stream_batch
@@ -166,10 +185,10 @@ def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> Fas
         async def event_generator():
             try:
                 async for event in graph.astream(req.input, req.config):
-                    yield f"data: {json.dumps(event)}\n\n"
-                yield f"data: {json.dumps({'__end__': True})}\n\n"
+                    yield f"data: {json.dumps(event, default=agent_json_serializer)}\n\n"
+                yield f"data: {json.dumps({'__end__': True}, default=agent_json_serializer)}\n\n"
             except Exception as e:
-                yield f"data: {json.dumps({'error': str(e)})}\n\n"
+                yield f"data: {json.dumps({'error': str(e)}, default=agent_json_serializer)}\n\n"
         
         return StreamingResponse(event_generator(), media_type="text/event-stream")
 
@@ -210,7 +229,7 @@ def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> Fas
                 item = await queue.get()
                 if item.get("done"):
                     active_tasks -= 1
-                yield f"data: {json.dumps(item)}\n\n"
+                yield f"data: {json.dumps(item, default=agent_json_serializer)}\n\n"
 
             for t in tasks:
                 t.cancel()
