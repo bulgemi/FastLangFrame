@@ -2,7 +2,7 @@
 
 ## Phase 1: Configuration & Redis Setup
 - [x] Task: Add Langfuse configuration variables (`NEXTAUTH_SECRET`, `SALT`, `NEXTAUTH_URL`, `TELEMETRY_ENABLED`) to `.env.sample`. 1e4c6f9
-- [ ] Task: Add Redis service definition to `docker-compose.yml`.
+- [x] Task: Add Redis service definition to `docker-compose.yml`. 7d0e011
 - [ ] Task: Conductor - User Manual Verification 'Configuration & Redis Setup' (Protocol in workflow.md)
 
 ## Phase 2: PostgreSQL Database Initialization
