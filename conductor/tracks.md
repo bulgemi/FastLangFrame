@@ -64,5 +64,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: Langfuse Observability Integration via CallbackHandler**
+- [x] **Track: Langfuse Observability Integration via CallbackHandler**
 *Link: [./tracks/langfuse_observability_20260512/](./tracks/langfuse_observability_20260512/)*
