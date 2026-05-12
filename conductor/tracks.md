@@ -56,3 +56,8 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [x] **Track: FastAPI DB Integration (SQLModel, Alembic, PostgreSQL)**
 *Link: [./tracks/db_integration_20260507/](./tracks/db_integration_20260507/)*
+
+---
+
+- [ ] **Track: docker compose에 self-hosting용 langfuse 컨테이너 추가. (storage: postgreseql)**
+*Link: [./tracks/langfuse_integration_20260512/](./tracks/langfuse_integration_20260512/)*
