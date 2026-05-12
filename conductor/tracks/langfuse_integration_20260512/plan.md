@@ -1,7 +1,7 @@
 # Implementation Plan: Langfuse Docker Compose Integration
 
 ## Phase 1: Configuration & Redis Setup
-- [ ] Task: Add Langfuse configuration variables (`NEXTAUTH_SECRET`, `SALT`, `NEXTAUTH_URL`, `TELEMETRY_ENABLED`) to `.env.sample`.
+- [x] Task: Add Langfuse configuration variables (`NEXTAUTH_SECRET`, `SALT`, `NEXTAUTH_URL`, `TELEMETRY_ENABLED`) to `.env.sample`. 1e4c6f9
 - [ ] Task: Add Redis service definition to `docker-compose.yml`.
 - [ ] Task: Conductor - User Manual Verification 'Configuration & Redis Setup' (Protocol in workflow.md)
 
