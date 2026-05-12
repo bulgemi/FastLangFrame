@@ -32,5 +32,3 @@ opensearch:
 redis:
     use_redis: false
 
-phoenix:
-    enabled: false

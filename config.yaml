@@ -22,7 +22,6 @@ projects:
     skon-multi-db:
         database: skon_db
         # opensearch: skon_opensearch
-        # phoenix: skon_phenix
 
 database:
     # driver: "mysql"  # posgresql=psycopg
@@ -186,14 +185,6 @@ redis:
     cache_config_path: cache_config.yaml
     
 
-
-phoenix:
-    enabled: false
-    endpoint: "http://aip.sktai.io/phoenix/v1/traces"
-    graphql_endpoint: "http://aip.sktai.io/phoenix/graphql"
-    verbose: false
-    as_global: false
-    phoenix_apikey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJBcGlLZXk6MiJ9.TtWHNsVA0iVhlqlId1r4I4wvg_DLrAXpBfwmw777ThI"
 
 notification:
     queue_maxsize: 1000

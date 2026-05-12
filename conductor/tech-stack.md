@@ -22,10 +22,11 @@
 ## Infrastructure & Deployment
 - **Docker**: For containerizing agent projects.
 - **Nginx**: Reverse proxy for HTTPS support and request routing.
+- **Langfuse**: Self-hosted LLM observability and tracing platform.
 - **Kubernetes (K8s)**: Target deployment platform.
 - **Copier**: Template generation tool for bootstrapping new projects.
 
 ## Databases & Storage (Supported)
 - **SQLModel (SQLAlchemy) & Alembic**: ORM and migration tool for relational databases (PostgreSQL, MySQL).
-- **Redis**: For caching and temporary state storage.
+- **Redis**: For caching, temporary state storage, and service workers (shared by Authelia and Langfuse).
 - **OpenSearch / VectorDB**: For RAG-based search and retrieval.

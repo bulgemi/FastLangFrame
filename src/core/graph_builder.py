@@ -7,7 +7,6 @@ logger = logging.getLogger(__name__)
 class BaseGraphBuilder:
     """
     Standard LangGraph Builder for FastLangFrame projects.
-    Handles Phoenix tracing injection implicitly if enabled.
     """
     def __init__(self, state_schema: type[BaseModel]):
         self.builder = StateGraph(state_schema)

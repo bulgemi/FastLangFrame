@@ -27,12 +27,29 @@ services:
     container_name: postgres
     environment:
       - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=fastlangframe1@
+      - POSTGRES_PASSWORD=fastlangframe1
       - POSTGRES_DB=backend
     volumes:
       - postgres-data:/var/lib/postgresql/data
+      - ./postgres-init:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
+    restart: unless-stopped
+
+  langfuse:
+    image: langfuse/langfuse:2
+    container_name: langfuse
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=${LANGFUSE_DATABASE_URL}
+      - NEXTAUTH_SECRET=${LANGFUSE_NEXTAUTH_SECRET}
+      - SALT=${LANGFUSE_SALT}
+      - NEXTAUTH_URL=${LANGFUSE_NEXTAUTH_URL}
+      - TELEMETRY_ENABLED=${LANGFUSE_TELEMETRY_ENABLED}
     restart: unless-stopped
 
   nginx:

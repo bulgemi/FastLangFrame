@@ -19,7 +19,6 @@ DEFAULT_TAVILY_CONFIG = {
     "result_filter": {"score_threshold": 0.6, "extract_publish_date_by_url": False},
 }
 
-
 class FlfAgentConfig(BaseSettings):
     """Market Intelligence Agent Configuration"""
 
@@ -146,44 +145,7 @@ class FlfAgentConfig(BaseSettings):
 
         return self
 
-
-class PhoenixConfig(BaseSettings):
-    """Tracing with Phoenix"""
-
-    model_config = SettingsConfigDict(
-        env_file=[".env", "../.env"], env_file_encoding="utf-8", case_sensitive=True, extra="ignore"
-    )
-
-    enabled: bool = Field(
-        default=False,
-        alias="PHOENIX_TRACER__ENABLED",
-    )
-    endpoint: str = Field(
-        default="http://aip.sktai.io/phoenix/v1/traces",
-        alias="PHOENIX_TRACER__ENDPOINT",
-    )
-    project_name: str = Field(
-        default="default",
-        alias="PHOENIX_TRACER__PROJECT_NAME",
-    )
-
-    @field_validator("enabled", mode="before")
-    def _bool(cls, v):
-        if isinstance(v, bool): return v
-        if isinstance(v, str): return v.lower() == "true"
-        return False
-
-
-_phoenix_config: Optional[PhoenixConfig] = None
 _flf_config: Optional[FlfAgentConfig] = None
-
-
-def get_phoenix_config() -> PhoenixConfig:
-    global _phoenix_config
-    if _phoenix_config is None:
-        _phoenix_config = PhoenixConfig()
-    return _phoenix_config
-
 
 def get_flf_config() -> FlfAgentConfig:
     global _flf_config
@@ -191,6 +153,4 @@ def get_flf_config() -> FlfAgentConfig:
         _flf_config = FlfAgentConfig()
     return _flf_config
 
-
-phoenix_config = get_phoenix_config()
 flf_config = get_flf_config()

@@ -117,9 +117,7 @@ class FastLangFrameSettings(BaseSettings):
     mcp_server_api_key: Optional[str] = None
     mcp_server_name: Optional[str] = None
 
-    # Tracing (e.g. Phoenix)
-    phoenix_enabled: bool = False
-    phoenix_endpoint: Optional[str] = None
+    # Tracing
     project_name: str = "fastlangframe-agent"
 
     # Multi-Model Configuration (JSON string)
