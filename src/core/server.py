@@ -25,6 +25,7 @@ from src.common.middleware.auth import (
 from src.common.configs.settings import get_settings
 from src.common.logging.logger_config import setup_logger
 from src.utils.connectors.db.database import db
+from src.utils.observability import get_langfuse_callback
 
 settings = get_settings()
 logger = setup_logger(__name__)
@@ -157,6 +158,24 @@ def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> Fas
         },
     )
 
+    def _prepare_config(config: Optional[dict], auth: dict) -> dict:
+        config = config or {}
+        if "callbacks" not in config:
+            config["callbacks"] = []
+
+        user_id = auth.get("sub") or auth.get("user_id")
+        # Extract thread_id as session_id if present
+        session_id = config.get("configurable", {}).get("thread_id")
+
+        callback = get_langfuse_callback(
+            user_id=str(user_id) if user_id else None,
+            session_id=str(session_id) if session_id else None,
+            tags=[title],
+        )
+        if callback:
+            config["callbacks"].append(callback)
+        return config
+
     @app.post("/token", summary="Token 발행")
     async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
         """사용자 이름과 비밀번호를 받아 JWT를 발급합니다."""
@@ -193,7 +212,8 @@ def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> Fas
     async def invoke(req: AgentInvokeRequest, auth: dict = Depends(authenticated_user)):
         """단일 Agent 입력을 받아 전체 처리가 끝난 뒤 결과 반환"""
         try:
-            result = await graph.ainvoke(req.input, req.config)
+            config = _prepare_config(req.config, auth)
+            result = await graph.ainvoke(req.input, config)
             # BaseMessage 등 직렬화 불가능한 객체 처리 (필요시)
             return AgentInvokeResponse(result=result)
         except Exception as e:
@@ -205,7 +225,8 @@ def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> Fas
 
         async def event_generator():
             try:
-                async for event in graph.astream(req.input, req.config):
+                config = _prepare_config(req.config, auth)
+                async for event in graph.astream(req.input, config):
                     yield f"data: {json.dumps(event, default=agent_json_serializer)}\n\n"
                 yield f"data: {json.dumps({'__end__': True}, default=agent_json_serializer)}\n\n"
             except Exception as e:
@@ -221,7 +242,8 @@ def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> Fas
     ):
         """다수의 입력을 병렬로 처리 후 모든 결과가 완료되면 리스트 리턴"""
         try:
-            results = await graph.abatch(req.inputs, req.config)
+            config = _prepare_config(req.config, auth)
+            results = await graph.abatch(req.inputs, config)
             return AgentBatchResponse(results=results)
         except Exception as e:
             return AgentBatchResponse(error=str(e), status="error")
@@ -237,10 +259,11 @@ def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> Fas
 
         async def event_generator():
             queue = asyncio.Queue()
+            config = _prepare_config(req.config, auth)
 
             async def stream_item(index: int, inp: dict):
                 try:
-                    async for event in graph.astream(inp, req.config):
+                    async for event in graph.astream(inp, config):
                         await queue.put({"index": index, "event": event})
                 except Exception as e:
                     await queue.put({"index": index, "error": str(e)})
