@@ -10,12 +10,12 @@
     - [x] Ensure all tests pass.
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Setup and Configuration' (Protocol in workflow.md) (3f19ca0)
 
-## Phase 2: CallbackHandler Factory Implementation
+## Phase 2: CallbackHandler Factory Implementation [checkpoint: ae1a6f6]
 - [x] Task: Create Langfuse Callback Factory Utility. (d0d4db2)
     - [x] Write tests for a new utility function (e.g., in `src/utils/observability.py`) that initializes the `CallbackHandler` with the appropriate User ID, Session ID, and Tags.
     - [x] Implement the logic to instantiate the `CallbackHandler` securely, parsing metadata and gracefully handling missing configs.
     - [x] Ensure all tests pass.
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: CallbackHandler Factory Implementation' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 2: CallbackHandler Factory Implementation' (Protocol in workflow.md) (ae1a6f6)
 
 ## Phase 3: Core Engine Integration
 - [ ] Task: Inject CallbackHandler into LangChain/LangGraph Core.
