@@ -61,3 +61,8 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [x] **Track: docker compose에 self-hosting용 langfuse 컨테이너 추가. (storage: postgreseql)**
 *Link: [./tracks/langfuse_integration_20260512/](./tracks/langfuse_integration_20260512/)*
+
+---
+
+- [ ] **Track: Langfuse Observability Integration via CallbackHandler**
+*Link: [./tracks/langfuse_observability_20260512/](./tracks/langfuse_observability_20260512/)*
