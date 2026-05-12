@@ -1,6 +1,6 @@
 # Implementation Plan: Langfuse Observability Integration via CallbackHandler
 
-## Phase 1: Setup and Configuration
+## Phase 1: Setup and Configuration [checkpoint: 3f19ca0]
 - [x] Task: Add `langfuse` and `langchain-openai` to project dependencies. (0c23ac6)
     - [x] Update `pyproject.toml` (and `requirements.txt` if needed) to include `langfuse` and `langchain-openai`.
     - [x] Update `.env.sample` with `LANGFUSE_SECRET_KEY`, `LANGFUSE_PUBLIC_KEY`, and `LANGFUSE_HOST`.
@@ -8,7 +8,7 @@
     - [x] Write tests in `test/test_settings.py` to verify Langfuse settings are loaded correctly from environment variables.
     - [x] Update `src/common/configs/settings.py` to define and load Langfuse configurations.
     - [x] Ensure all tests pass.
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Setup and Configuration' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 1: Setup and Configuration' (Protocol in workflow.md) (3f19ca0)
 
 ## Phase 2: CallbackHandler Factory Implementation
 - [ ] Task: Create Langfuse Callback Factory Utility.
