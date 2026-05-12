@@ -92,7 +92,7 @@ FastLangFrame은 LangChain 및 LangGraph를 기반으로 한 경량급 LLM 에�
 
 ### 2. 인프라 및 환경 설정
 
-1. **인프라(Nginx, Authelia, Redis, PostgreSQL) 기동**:
+1. **인프라(Nginx, Authelia, Redis, PostgreSQL, Langfuse) 기동**:
 
    ```bash
    docker compose up -d
@@ -100,7 +100,7 @@ FastLangFrame은 LangChain 및 LangGraph를 기반으로 한 경량급 LLM 에�
 
 2. **환경 변수 설정**:
 
-   `.env` 파일을 생성하고 LLM API Key 및 Authelia, DB 설정을 입력합니다.
+   `.env` 파일을 생성하고 LLM API Key 및 Authelia, DB 설정을 입력합니다. Langfuse용 `NEXTAUTH_SECRET`과 `SALT`는 무작위 문자열로 설정하세요.
 
 ### 🗄️ 기본 DB 접속 정보 (Default Credentials)
 
@@ -273,3 +273,5 @@ FastLangFrame은 에이전트의 추론 과정을 시각화하여 디버깅을 �
 ## 라이선스
 
 이 프로젝트는 [MIT License](LICENSE)를 따릅니다.
+
+�� 프로젝트는 [MIT License](LICENSE)를 따릅니다.
