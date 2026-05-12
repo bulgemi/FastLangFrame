@@ -22,7 +22,7 @@
 ## Infrastructure & Deployment
 - **Docker**: For containerizing agent projects.
 - **Nginx**: Reverse proxy for HTTPS support and request routing.
-- **Langfuse**: Self-hosted LLM observability and tracing platform.
+- Langfuse: Self-hosted LLM observability and tracing platform. Fully integrated with automated LangChain/LangGraph tracing via standard CallbackHandlers.
 - **Kubernetes (K8s)**: Target deployment platform.
 - **Copier**: Template generation tool for bootstrapping new projects.
 
