@@ -27,7 +27,7 @@ services:
     container_name: postgres
     environment:
       - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=fastlangframe1@
+      - POSTGRES_PASSWORD=fastlangframe1
       - POSTGRES_DB=backend
     volumes:
       - postgres-data:/var/lib/postgresql/data
