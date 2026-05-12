@@ -58,8 +58,6 @@ from opentelemetry.sdk.trace import Span
 from opentelemetry.sdk.trace import TracerProvider as OTelTracerProvider
 from opentelemetry.sdk.trace.export import ConsoleSpanExporter, SimpleSpanProcessor
 from opentelemetry.trace.span import NonRecordingSpan
-from phoenix.otel import TracerProvider as PhoenixTracerProvider
-from phoenix.otel import register
 from pydantic import BaseModel, field_validator
 from starlette.middleware.exceptions import ExceptionMiddleware
 from starlette.status import (
@@ -69,20 +67,14 @@ from starlette.status import (
 from starlette.types import Message, Receive, Scope, Send
 from typing_extensions import Self
 
-from <%project_name%>.common.config import phoenix_config
-
-
 def gen_session_id(session_id: str | None):
     return session_id or str(uuid.uuid4())
-
 
 def build_tags(values: dict[str, str]) -> set[str]:
     return set(f"{k}:{v}" for k, v in values if v is not None)
 
-
 TraceEngine = Literal["langchain", "langgraph", "openai", "autogen"]
 FeedbackType = Literal["thumbsup", "score"]
-
 
 def get_instrument(engine: TraceEngine = "langgraph") -> BaseInstrumentor:
     match engine:
@@ -94,8 +86,7 @@ def get_instrument(engine: TraceEngine = "langgraph") -> BaseInstrumentor:
         case _:
             raise TypeError(f"'engine' should be one of {TraceEngine}")
 
-
-def get_span_exporter(tracer_provider: PhoenixTracerProvider):
+def get_span_exporter(tracer_provider: OTelTracerProvider):
     active_span_processsor = tracer_provider._active_span_processor
     span_processors = active_span_processsor._span_processors
     span_processor = span_processors[0]
@@ -108,42 +99,25 @@ def get_span_exporter(tracer_provider: PhoenixTracerProvider):
     # url = URL(span_exporter._endpoint)
     return span_exporter
 
+def get_tracer(*args, **kwargs):
+    return OTelTracerProvider()
 
-def get_tracer(
-    project_name: str = "default",
-    endpoint: str | None = None,
-    verbose: bool | None = None,
-    batch: bool = False,
-    as_global: bool = False,
-) -> PhoenixTracerProvider:
-    return register(
-        endpoint=endpoint or phoenix_config.endpoint,
-        project_name=project_name,
-        set_global_tracer_provider=as_global,
-        batch=batch,
-        verbose=verbose or phoenix_config.verbose,
-        auto_instrument=True,
-    )
-
-
-GLOBAL_TRACER_PROVIDER = ContextVar("GLOBAL_TRACER_PROVIDER")  # PhoenixTracerProvider
+GLOBAL_TRACER_PROVIDER = ContextVar("GLOBAL_TRACER_PROVIDER")  # OTelTracerProvider
 GLOBAL_TRACERS = ContextVar("GLOBAL_TRACERS")  # list[OITracer]
 GLOBAL_TRACERS.set({})
 GLOBAL_ROOT_TRACER = ContextVar("GLOBAL_ROOT_TRACER")  # OITracer
 GLOBAL_TRACER_ENABLED = ContextVar("GLOBAL_TRACER_ENABLED")  # bool: False
 GLOBAL_TRACER_ENABLED.set(False)
 
-
 def _get_project_name_from_tracer_provider(
-    tracer_provider: PhoenixTracerProvider,
+    tracer_provider: OTelTracerProvider,
 ) -> str | None:
     return tracer_provider.resource.attributes.get("openinference.project.name")
-
 
 class using_tracer:
     def __init__(
         self,
-        tracer_provider: PhoenixTracerProvider | None = None,
+        tracer_provider: OTelTracerProvider | None = None,
         engines: TraceEngine = ["langgraph"],
         project_name: str | None = None,
         session_id: str | None = None,
@@ -155,13 +129,13 @@ class using_tracer:
         prompt_template_version: str = "",
         enable: bool = True,
     ):
-        self.tracing_enabled = enable or phoenix_config.enabled
+        self.tracing_enabled = enable or False
         GLOBAL_TRACER_ENABLED.set(self.tracing_enabled)
 
         if self.tracing_enabled:
-            self.verbose = phoenix_config.verbose
+            self.verbose = False
 
-            self.tracer_provider: PhoenixTracerProvider | OTelTracerProvider
+            self.tracer_provider: OTelTracerProvider | OTelTracerProvider
             if tracer_provider:
                 self.tracer_provider = tracer_provider
             else:
@@ -169,18 +143,17 @@ class using_tracer:
                 self.tracer_provider.add_span_processor(
                     SimpleSpanProcessor(
                         OTLPSpanExporter(
-                            phoenix_config.endpoint,
+                            "",
                             headers=(
                                 {
-                                    "authorization": f"Bearer {phoenix_config.phoenix_apikey}"
+                                    "authorization": f"Bearer {None}"
                                 }
-                                if phoenix_config.phoenix_apikey
-                                else None
+                                if False else None
                             ),
                         ),
                     )
                 )
-                if phoenix_config.verbose:
+                if False:
                     # verbose가 true여야 console에 logging
                     self.tracer_provider.add_span_processor(
                         SimpleSpanProcessor(ConsoleSpanExporter())
@@ -361,7 +334,6 @@ class using_tracer:
                 # headers=headers,
             )
 
-
 def add_feedback(
     span_id: str,
     feedback_name: str = "feedback",
@@ -406,8 +378,7 @@ def add_feedback(
             ]
         }
 
-        # headers = {"api_key": "<your phoenix api key>"}
-        url = URL(phoenix_config.endpoint)
+        url = URL("")
         host = f"{url.scheme}://{url.netloc.decode()}"
 
         resp = client.post(
@@ -419,7 +390,6 @@ def add_feedback(
             return resp.json()
         else:
             resp.raise_for_status()
-
 
 class TraceHeaders(BaseModel):
     model_config = {"extra": "allow"}
@@ -446,9 +416,7 @@ class TraceHeaders(BaseModel):
         else:
             return {}
 
-
 TraceHeadersAnnotated = Annotated[TraceHeaders, Header()]
-
 
 def as_header(cls):
     """decorator for pydantic model
@@ -482,7 +450,6 @@ def as_header(cls):
         ]
     )
     return cls
-
 
 def traced(
     func: Callable,
@@ -524,7 +491,7 @@ def traced(
             if global_root_tracer is None:
                 tracer_provider = get_tracer(project_name="default")
                 tracer_provider.add_span_processor(
-                    SimpleSpanProcessor(OTLPSpanExporter(phoenix_config.endpoint))
+                    SimpleSpanProcessor(OTLPSpanExporter(""))
                 )
                 tracer_provider.add_span_processor(
                     SimpleSpanProcessor(ConsoleSpanExporter())
@@ -581,13 +548,12 @@ def traced(
 
     return traced_decorator
 
-
 async def using_tracer_as_fastapi_dependency(
     request: Request,
 ):
     user_id = request.headers.get("aip-user", None)
     project_name = (
-        request.headers.get("aip-project", None) or phoenix_config.project_name
+        request.headers.get("aip-project", None) or "default"
     )
 
     tracer = using_tracer(
@@ -595,7 +561,7 @@ async def using_tracer_as_fastapi_dependency(
         user_id=user_id,
         metadata={},
         tags=None,
-        enable=phoenix_config.enabled,
+        enable=False,
     ).__enter__()
     try:
         yield tracer
@@ -604,9 +570,7 @@ async def using_tracer_as_fastapi_dependency(
     finally:
         tracer.__exit__(exc_type=None, exc_val=None, exc_tb=None)
 
-
 _json_dumps = partial(json.dumps, indent=4, sort_keys=True, ensure_ascii=False)
-
 
 def _get_request_info(request: Request, body: bytes | None = None) -> str:
     body_msg: str = ""
@@ -638,7 +602,6 @@ def _get_request_info(request: Request, body: bytes | None = None) -> str:
         ],
     )
 
-
 def _get_last_traceback(tb: TracebackType) -> TracebackType:
     """Get last traceback"""
     new_tb = tb.tb_next
@@ -646,11 +609,9 @@ def _get_last_traceback(tb: TracebackType) -> TracebackType:
         return tb
     return _get_last_traceback(new_tb)
 
-
 def _gen_logtrace_id() -> str:
     """Generate random trace id"""
     return f"log-{uuid.uuid4()!s}"
-
 
 class TracerException(HTTPException):
     """Application-managed Exception, which is an exception wrapper.
@@ -658,7 +619,6 @@ class TracerException(HTTPException):
     This Exception is designed to handle the exceptions raised from
     application API is responsing. When it is raised, it is catched by
     exception handlers and `ErrorResponse` is responsed.
-
 
     Parameters
     ----------
@@ -752,14 +712,12 @@ class TracerException(HTTPException):
             ],
         )
 
-
 def _log_exception(exc: Exception, logger: logging.Logger, request_msg: str = ""):
     if isinstance(exc, TracerException):
         logger.error(f"{request_msg}\n{exc.log_message}")
     else:
         wrapped_exc = TracerException(e=exc)
         logger.error(f"{request_msg}\n{wrapped_exc.log_message}")
-
 
 class TraceExceptionMiddleware(ExceptionMiddleware):
     def __init__(self, *args, **kwargs):
@@ -784,7 +742,7 @@ class TraceExceptionMiddleware(ExceptionMiddleware):
         try:
             user_id = request.headers.get("aip-user", None)
             project_name = (
-                request.headers.get("aip-project", None) or phoenix_config.project_name
+                request.headers.get("aip-project", None) or "default"
             )
 
             with using_tracer(
@@ -792,7 +750,7 @@ class TraceExceptionMiddleware(ExceptionMiddleware):
                 user_id=user_id,
                 metadata={},
                 tags=None,
-                enable=phoenix_config.enabled,
+                enable=False,
             ) as tracer:
                 await self.app(scope, receive, sender)
         except Exception as exc:
