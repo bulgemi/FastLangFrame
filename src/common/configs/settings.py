@@ -191,6 +191,49 @@ class FastLangFrameSettings(BaseSettings):
     )
 
     @property
+    def llm_api_key(self) -> Optional[str]:
+        """Returns the API key for the current provider"""
+        if self.llm_provider == "openai":
+            return self.openai_api_key
+        elif self.llm_provider == "azure":
+            return self.azure_openai_api_key
+        elif self.llm_provider == "google":
+            return self.google_api_key
+        elif self.llm_provider == "anthropic":
+            return self.anthropic_api_key
+        elif self.llm_provider == "deepseek":
+            return self.deepseek_api_key
+        return None
+
+    @property
+    def model_name(self) -> str:
+        """Returns the model name for the current provider"""
+        if self.llm_provider == "openai":
+            return self.openai_model_name
+        elif self.llm_provider == "azure":
+            return self.azure_openai_deployment_name or self.openai_model_name
+        elif self.llm_provider == "google":
+            return self.gemini_model_name
+        elif self.llm_provider == "anthropic":
+            return self.claude_model_name
+        elif self.llm_provider == "deepseek":
+            return self.deepseek_model_name
+        return "gpt-4o"
+
+    @property
+    def llm_endpoint(self) -> Optional[str]:
+        """Returns the API endpoint for the current provider"""
+        if self.llm_provider == "openai":
+            return self.openai_api_base
+        elif self.llm_provider == "azure":
+            return self.azure_openai_endpoint
+        elif self.llm_provider == "anthropic":
+            return self.anthropic_api_url
+        elif self.llm_provider == "deepseek":
+            return self.deepseek_api_base
+        return None
+
+    @property
     def database_url(self) -> Optional[str]:
         """Constructs the database URL from components"""
         if not self.database_driver:
