@@ -17,7 +17,7 @@
     - [x] Ensure all tests pass.
 - [x] Task: Conductor - User Manual Verification 'Phase 2: CallbackHandler Factory Implementation' (Protocol in workflow.md) (ae1a6f6)
 
-## Phase 3: Core Engine Integration
+## Phase 3: Core Engine Integration [checkpoint: 9d097fe]
 - [x] Task: Inject CallbackHandler into LangChain/LangGraph Core. (720eff3)
     - [x] Write integration/unit tests simulating a graph run to ensure the callback handler is present in the execution config.
     - [x] Modify `src/core/graph_builder.py` and `src/core/runtime/` to inject the Langfuse `CallbackHandler` dynamically.
@@ -25,4 +25,4 @@
     - [x] Ensure all tests pass and existing agents run smoothly.
 - [x] Task: Update Agent Templates. (7fcefad)
     - [x] Apply the same injection logic to all generated project templates (`templates/*/`).
-- [ ] Task: Conductor - User Manual Verification 'Phase 3: Core Engine Integration' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 3: Core Engine Integration' (Protocol in workflow.md) (9d097fe)
