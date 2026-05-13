@@ -25,7 +25,7 @@ from src.common.middleware.auth import (
 from src.common.configs.settings import get_settings
 from src.common.logging.logger_config import setup_logger
 from src.utils.connectors.db.database import db
-from src.utils.observability import get_langfuse_callback
+from src.utils.observability import get_langfuse_callback, prepare_langfuse_metadata
 
 settings = get_settings()
 logger = setup_logger(__name__)
@@ -167,11 +167,15 @@ def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> Fas
         # Extract thread_id as session_id if present
         session_id = config.get("configurable", {}).get("thread_id")
 
-        callback = get_langfuse_callback(
+        # Prepare Langfuse metadata for v3+ CallbackHandler
+        config["metadata"] = prepare_langfuse_metadata(
             user_id=str(user_id) if user_id else None,
             session_id=str(session_id) if session_id else None,
             tags=[title],
+            existing_metadata=config.get("metadata"),
         )
+
+        callback = get_langfuse_callback()
         if callback:
             config["callbacks"].append(callback)
         return config

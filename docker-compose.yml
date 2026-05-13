@@ -5,6 +5,11 @@ services:
     volumes:
       - redis-data:/data
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   authelia:
     image: authelia/authelia:4.38.10
@@ -15,7 +20,6 @@ services:
       - "9091:9091"
     depends_on:
       - redis
-    # Secrets can be generated using: openssl rand -hex 32
     environment:
       - AUTHELIA_STORAGE_ENCRYPTION_KEY=0aa061727320ad5522922606b34beadd5be6de5db23ce0cb778d1d82325cf2c9
       - AUTHELIA_SESSION_SECRET=afd4f9bc0a4cfcc2bc896315b55fe6efc82a31689b009a539c593518a1a107b6
@@ -34,14 +38,35 @@ services:
       - ./postgres-init:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d backend"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.3-alpine
+    container_name: clickhouse
+    volumes:
+      - clickhouse-data:/var/lib/clickhouse
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "localhost:8123/ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     restart: unless-stopped
 
   langfuse:
-    image: langfuse/langfuse:2
+    image: langfuse/langfuse:3
     container_name: langfuse
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      clickhouse:
+        condition: service_healthy
     ports:
       - "3000:3000"
     environment:
@@ -50,6 +75,32 @@ services:
       - SALT=${LANGFUSE_SALT}
       - NEXTAUTH_URL=${LANGFUSE_NEXTAUTH_URL}
       - TELEMETRY_ENABLED=${LANGFUSE_TELEMETRY_ENABLED}
+      - ENCRYPTION_KEY=${LANGFUSE_ENCRYPTION_KEY}
+      - CLICKHOUSE_URL=http://clickhouse:8123
+      - CLICKHOUSE_MIGRATION_URL=clickhouse://clickhouse:9000
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    restart: unless-stopped
+
+  langfuse-worker:
+    image: langfuse/langfuse-worker:3
+    container_name: langfuse-worker
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      clickhouse:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=${LANGFUSE_DATABASE_URL}
+      - NEXTAUTH_SECRET=${LANGFUSE_NEXTAUTH_SECRET}
+      - SALT=${LANGFUSE_SALT}
+      - TELEMETRY_ENABLED=${LANGFUSE_TELEMETRY_ENABLED}
+      - ENCRYPTION_KEY=${LANGFUSE_ENCRYPTION_KEY}
+      - CLICKHOUSE_URL=http://clickhouse:8123
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     restart: unless-stopped
 
   nginx:
@@ -70,3 +121,4 @@ services:
 volumes:
   redis-data:
   postgres-data:
+  clickhouse-data:
