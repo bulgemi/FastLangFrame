@@ -50,14 +50,16 @@ FastLangFrame은 LangChain 및 LangGraph를 기반으로 한 경량급 LLM 에�
 
 * **Streamlit Chat UI**: 생성된 에이전트를 즉시 테스트할 수 있는 웹 인터페이스 (OAuth 연동 완료)
 * **Node Trace**: 실행 중인 에이전트의 각 단계(Node)를 시각적으로 추적
+* **Langfuse Integration**: LLM 호출 트레이싱, 성능 분석, 프롬프트 관리 및 비용 모니터링
 
 ## 기술 스택 (S/W Stack)
 
 * **Runtime**: Python 3.12+
 * **Framework**: LangChain, LangGraph, FastAPI, deepagents
 * **Security**: Authelia (OAuth2/OIDC), PyJWT
-* **DevOps**: Docker (Nginx, Redis, Authelia), Kubernetes, Poetry, Copier
-* **Storage/Middleware**: SQLAlchemy (PostgreSQL/MySQL), Alembic, Redis, OpenSearch
+* **Observability**: Langfuse (Tracing, Metrics, Prompt Management)
+* **DevOps**: Docker (Nginx, Redis, Authelia, Langfuse, ClickHouse), Kubernetes, Poetry, Copier
+* **Storage/Middleware**: SQLAlchemy (PostgreSQL/MySQL), Alembic, Redis, OpenSearch, ClickHouse, MinIO
 * **UI/Test**: Streamlit, Pytest
 
 ## 디렉토리 구조
@@ -100,7 +102,7 @@ FastLangFrame은 LangChain 및 LangGraph를 기반으로 한 경량급 LLM 에�
 
 2. **환경 변수 설정**:
 
-   `.env` 파일을 생성하고 LLM API Key 및 Authelia, DB 설정을 입력합니다. Langfuse용 `NEXTAUTH_SECRET`과 `SALT`는 무작위 문자열로 설정하세요.
+   `.env` 파일을 생성하고 LLM API Key 및 Authelia, DB 설정을 입력합니다. Langfuse용 `LANGFUSE_NEXTAUTH_SECRET`, `LANGFUSE_SALT`, `ENCRYPTION_KEY`는 무작위 문자열로 설정하세요. (Self-hosted Langfuse 기동을 위해 필요)
 
 ### 🗄️ 기본 DB 접속 정보 (Default Credentials)
 
@@ -196,6 +198,43 @@ Authelia 없이 백엔드 로직만 빠르게 테스트할 때 사용합니다.
 
 ---
 
+## 🔍 관측성 및 트레이싱 (Langfuse)
+
+FastLangFrame은 [Langfuse](https://langfuse.com/)를 통해 LLM 에이전트의 복잡한 실행 과정을 투명하게 기록하고 분석합니다.
+
+### ⚙️ Langfuse 설정 (`.env`)
+
+자가 호스팅(Self-hosted) Langfuse 서버 및 SDK 연동을 위한 설정입니다.
+
+```bash
+# Langfuse SDK 연동 (애플리케이션용)
+LANGFUSE_PUBLIC_KEY=pk-lf-...  # Langfuse UI에서 프로젝트 생성 후 발급
+LANGFUSE_SECRET_KEY=sk-lf-...
+LANGFUSE_HOST=http://localhost:3000
+
+# Langfuse 서버 기동 설정 (Docker Compose용)
+LANGFUSE_DATABASE_URL=postgresql://admin:fastlangframe1@postgres:5432/langfuse
+LANGFUSE_NEXTAUTH_URL=http://localhost:3000
+LANGFUSE_NEXTAUTH_SECRET=your_random_secret
+LANGFUSE_SALT=your_random_salt
+ENCRYPTION_KEY=your_32char_encryption_key
+```
+
+### 🛠️ 주요 기능
+
+* **자동 트레이싱**: API 서버(`src/core/server.py`)가 모든 요청에 대해 Langfuse 콜백을 자동으로 주입합니다. 사용자는 별도의 코드 수정 없이 LLM 호출, 도구 사용, 그래프 노드 전이 과정을 추적할 수 있습니다.
+* **메타데이터 연동**: Authelia를 통해 인증된 `user_id`와 LangGraph의 `thread_id`(session_id)가 Langfuse 트레이스에 자동으로 매핑되어 사용자별/세션별 분석이 가능합니다.
+* **성능 및 비용 분석**: 모델별 토큰 사용량, 지연 시간(Latency), 성공률 등을 대시보드에서 한눈에 파악할 수 있습니다.
+
+### 📊 대시보드 접속
+
+1. `http://localhost:3000`에 접속합니다.
+2. 첫 접속 시 계정을 생성(Sign up)합니다.
+3. 새 프로젝트를 생성하고 발급된 API Key를 `.env`에 반영합니다.
+4. 에이전트 호출 후 **Traces** 메뉴에서 실행 상세 내역을 확인합니다.
+
+---
+
 ## 데이터베이스 연동 가이드 (Database Integration)
 
 FastLangFrame은 SQLModel(SQLAlchemy)과 Alembic을 통한 표준화된 DB 연동 기능을 제공합니다.
@@ -274,4 +313,4 @@ FastLangFrame은 에이전트의 추론 과정을 시각화하여 디버깅을 �
 
 이 프로젝트는 [MIT License](LICENSE)를 따릅니다.
 
-�� 프로젝트는 [MIT License](LICENSE)를 따릅니다.
+�� 프로젝트는 [MIT License](LICENSE)를 따릅니다.

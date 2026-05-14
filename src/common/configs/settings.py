@@ -123,7 +123,10 @@ class FastLangFrameSettings(BaseSettings):
     # Langfuse Settings
     langfuse_secret_key: Optional[str] = Field(default=None, alias="LANGFUSE_SECRET_KEY")
     langfuse_public_key: Optional[str] = Field(default=None, alias="LANGFUSE_PUBLIC_KEY")
-    langfuse_host: str = Field(default="http://localhost:3000", alias="LANGFUSE_HOST")
+    langfuse_host: str = Field(
+        default="http://localhost:3000", 
+        validation_alias=AliasChoices("LANGFUSE_HOST", "LANGFUSE_BASE_URL")
+    )
 
     # Multi-Model Configuration (JSON string)
     llm_models_json: Optional[str] = Field(default=None, alias="LLM_MODELS_JSON")
