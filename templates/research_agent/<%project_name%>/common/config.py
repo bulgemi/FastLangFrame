@@ -121,11 +121,47 @@ class FlfAgentConfig(BaseSettings):
         default="<%project_name%>",
         alias="AX_MCP_PROMPT_MARI_TAG_GROUP",
     )
+    ax_mcp_prompt_list_url: str = Field(
+        default="prompt://ax_platform/tags/",
+        alias="AX_MCP_PROMPT_LIST_URL",
+    )
+    ax_mcp_prompt_message_by_tag: str = Field(
+        default="prompt://ax_platform/messages/tags/{tags}/latest",
+        alias="AX_MCP_PROMPT_MESSAGE_BY_TAG",
+    )
 
     latest_histories_cnt: int = Field(
         default=10,
         alias="LATEST_HISTORIES_CNT",
     )
+
+    @property
+    def AX_MCP_SERVER_URL(self) -> str:
+        return self.ax_mcp_server_url
+
+    @property
+    def AX_MCP_SERVER_API_KEY(self) -> str:
+        return self.ax_mcp_server_api_key
+
+    @property
+    def AX_MCP_SERVER_NAME(self) -> str:
+        return self.ax_mcp_server_name
+
+    @property
+    def AX_MCP_PROMPT_LIST_URL(self) -> str:
+        return self.ax_mcp_prompt_list_url
+
+    @property
+    def AX_MCP_PROMPT_MESSAGE_BY_TAG(self) -> str:
+        return self.ax_mcp_prompt_message_by_tag
+
+    @property
+    def AX_MCP_PROMPT_MARI_TAG_GROUP(self) -> str:
+        return self.ax_mcp_prompt_mari_tag_group
+
+    @property
+    def LATEST_HISTORIES_CNT(self) -> int:
+        return self.latest_histories_cnt
 
     @model_validator(mode="after")
     def validate_critical_configs(self):
@@ -154,3 +190,25 @@ def get_flf_config() -> FlfAgentConfig:
     return _flf_config
 
 flf_config = get_flf_config()
+
+
+def get_mcp_connections() -> Dict:
+    """MCP 연결 설정 반환"""
+    config = get_flf_config()
+    return {
+        config.AX_MCP_SERVER_NAME: {
+            "transport": "streamable_http",
+            "url": config.AX_MCP_SERVER_URL,
+            "headers": {"Authorization": f"Bearer {config.AX_MCP_SERVER_API_KEY}"},
+            "session_kwargs": {
+                "client_info": {
+                    "name": "agent-backend-builder",
+                    "version": "0.1",
+                },
+            },
+        }
+    }
+
+
+# MCP 연결 설정 전역 변수
+MCP_CONNECTIONS = get_mcp_connections()
