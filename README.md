@@ -62,21 +62,23 @@ FastLangFrame은 LangChain 및 LangGraph를 기반으로 한 경량급 LLM 에�
 ./bin/lapm my_agent create 1 4
 ```
 
-#### 🤖 지원 LLM Provider (`LLM_번호`)
-1. **openai**: OpenAI (GPT-4o, etc.)
-2. **azure**: Azure OpenAI Service
-3. **deepseek**: DeepSeek API
-4. **gemini**: Google Gemini (2.0 Pro/Flash)
-5. **claude**: Anthropic Claude (3.5 Sonnet, etc.)
-6. **local**: Local LLM (Ollama/vLLM via OpenAI compatible API)
+#### 🤖 지원 LLM Provider
 
-#### 📝 지원 에이전트 유형 (`템플릿_번호`)
-1. **simple_agent**: 최소한의 구조를 가진 기본 ReAct 에이전트
-2. **deep_agent**: 복잡한 추론과 사고 과정(Thinking)에 최적화된 에이전트
-3. **mcp_agent**: MCP(Model Context Protocol)를 통한 외부 도구 연동 특화 에이전트
-4. **rag_agent**: 지식 베이스 검색 및 참조(RAG) 기능이 내장된 에이전트
-5. **research_agent**: 다단계 웹 검색 및 보고서 작성에 최적화된 연구용 에이전트
-6. **multi_agent**: 여러 에이전트 간의 협업 및 오케스트레이션 데모
+* **openai**: OpenAI (GPT-4o, etc.)
+* **azure**: Azure OpenAI Service
+* **deepseek**: DeepSeek API
+* **gemini**: Google Gemini (2.5/3.0 Pro/Flash, etc.)
+* **claude**: Anthropic Claude (3.5 Sonnet, etc.)
+* **local**: Local LLM (Ollama/vLLM via OpenAI compatible API)
+
+#### 📝 지원 에이전트 유형
+
+* **simple_agent**: 최소한의 구조를 가진 기본 ReAct 에이전트
+* **deep_agent**: 복잡한 추론과 사고 과정(Thinking)에 최적화된 에이전트
+* **mcp_agent**: MCP(Model Context Protocol)를 통한 외부 도구 연동 특화 에이전트
+* **rag_agent**: 지식 베이스 검색 및 참조(RAG) 기능이 내장된 에이전트
+* **research_agent**: 다단계 웹 검색 및 보고서 작성에 최적화된 연구용 에이전트
+* **multi_agent**: 여러 에이전트 간의 협업 및 오케스트레이션 데모
 
 ### 2. Docker 이미지 빌드 (Build)
 
