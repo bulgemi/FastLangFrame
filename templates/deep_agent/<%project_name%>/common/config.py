@@ -23,7 +23,7 @@ class FlfAgentConfig(BaseSettings):
     """Market Intelligence Agent Configuration"""
 
     model_config = SettingsConfigDict(
-        env_file=[".env", "../.env"], env_file_encoding="utf-8", case_sensitive=True, extra="ignore"
+        env_file=".env", env_file_encoding="utf-8", case_sensitive=True, extra="ignore"
     )
 
     # LLM Provider Choice
@@ -117,6 +117,11 @@ class FlfAgentConfig(BaseSettings):
         default=False,
         alias="AX_MCP_PROMPT_ENABLED",
     )
+
+    @property
+    def AX_MCP_PROMPT_ENABLED(self) -> bool:
+        return self.ax_mcp_prompt_enabled
+
     ax_mcp_prompt_mari_tag_group: str = Field(
         default="<%project_name%>",
         alias="AX_MCP_PROMPT_MARI_TAG_GROUP",
