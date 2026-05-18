@@ -39,9 +39,10 @@ FastLangFrame은 LangChain 및 LangGraph를 기반으로 한 경량급 LLM 에�
 * **Connectors**: Database (PostgreSQL, MySQL), Redis, OpenSearch, HTTP, MCP, VectorDB 등 다양한 외부 시스템 연동 모듈 완비
 * **Multimodal**: 이미지, 오디오 등 멀티모달 데이터 처리 지원
 
-### 📦 Project Manager (`lapm`)
+### 📦 LLM Agent Project Manager (`lapm`)
 
 통합 CLI 도구를 통한 프로젝트 생애주기 관리
+
 * **`create`**: 템플릿 기반 보일러플레이트 생성 (LLM 및 에이전트 유형 선택)
 * **`build`**: 최적화된 Docker 이미지 빌드 (프로젝트별 독립 빌드 환경)
 * **`deploy`**: Kubernetes 매니페스트 생성 및 배포 지원
