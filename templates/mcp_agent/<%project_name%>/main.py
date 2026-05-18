@@ -10,7 +10,7 @@ FRAMEWORK_ROOT = os.path.abspath(os.path.join(PROJECTS_DIR, ".."))
 
 # 2. .env 파일 로드 (패키지 임포트 전, 우선순위 높임)
 # 프로젝트 루트(PROJECT_ROOT)에 있는 .env를 로드합니다.
-env_path = os.path.join(PROJECT_ROOT, ".env")
+env_path = os.path.join(CURRENT_DIR, ".env")
 if os.path.exists(env_path):
     load_dotenv(env_path, override=True)
 

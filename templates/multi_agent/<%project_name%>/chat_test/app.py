@@ -18,7 +18,7 @@ PROJECTS_DIR = os.path.abspath(os.path.join(PROJECT_ROOT, ".."))
 FRAMEWORK_ROOT = os.path.abspath(os.path.join(PROJECTS_DIR, ".."))
 
 # 2. 환경 변수 우선 로드 (패키지 임포트 전)
-env_path = os.path.join(PROJECT_ROOT, ".env")
+env_path = os.path.join(PACKAGE_ROOT, ".env")
 load_dotenv(env_path)
 
 # 3. 경로 추가 (패키지 임포트 전)
