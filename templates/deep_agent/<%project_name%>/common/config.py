@@ -117,6 +117,11 @@ class FlfAgentConfig(BaseSettings):
         default=False,
         alias="AX_MCP_PROMPT_ENABLED",
     )
+
+    @property
+    def AX_MCP_PROMPT_ENABLED(self) -> bool:
+        return self.ax_mcp_prompt_enabled
+
     ax_mcp_prompt_mari_tag_group: str = Field(
         default="<%project_name%>",
         alias="AX_MCP_PROMPT_MARI_TAG_GROUP",

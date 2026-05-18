@@ -156,6 +156,10 @@ class FlfAgentConfig(BaseSettings):
         return self.ax_mcp_prompt_message_by_tag
 
     @property
+    def AX_MCP_PROMPT_ENABLED(self) -> bool:
+        return self.ax_mcp_prompt_enabled
+
+    @property
     def AX_MCP_PROMPT_MARI_TAG_GROUP(self) -> str:
         return self.ax_mcp_prompt_mari_tag_group
 
