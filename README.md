@@ -41,10 +41,58 @@ FastLangFrame은 LangChain 및 LangGraph를 기반으로 한 경량급 LLM 에�
 
 ### 📦 Project Manager (`lapm`)
 
-* 통합 CLI 도구를 통한 프로젝트 생애주기 관리
-* `create`: 템플릿 기반 보일러플레이트 생성
-* `build`: 최적화된 Docker 이미지 빌드
-* `deploy`: Kubernetes 매니페스트 생성 및 배포
+통합 CLI 도구를 통한 프로젝트 생애주기 관리
+* **`create`**: 템플릿 기반 보일러플레이트 생성 (LLM 및 에이전트 유형 선택)
+* **`build`**: 최적화된 Docker 이미지 빌드 (프로젝트별 독립 빌드 환경)
+* **`deploy`**: Kubernetes 매니페스트 생성 및 배포 지원
+
+---
+
+## CLI 도구 사용법 (`lapm`)
+
+`bin/lapm`은 FastLangFrame의 핵심 CLI 도구로, 프로젝트 생성부터 배포까지의 전 과정을 자동화합니다.
+
+### 1. 프로젝트 생성 (Create)
+
+```bash
+# 기본 사용법
+./bin/lapm <프로젝트명> create <LLM_번호> <템플릿_번호>
+
+# 예시: OpenAI 기반의 RAG 에이전트 생성
+./bin/lapm my_agent create 1 4
+```
+
+#### 🤖 지원 LLM Provider (`LLM_번호`)
+1. **openai**: OpenAI (GPT-4o, etc.)
+2. **azure**: Azure OpenAI Service
+3. **deepseek**: DeepSeek API
+4. **gemini**: Google Gemini (2.0 Pro/Flash)
+5. **claude**: Anthropic Claude (3.5 Sonnet, etc.)
+6. **local**: Local LLM (Ollama/vLLM via OpenAI compatible API)
+
+#### 📝 지원 에이전트 유형 (`템플릿_번호`)
+1. **simple_agent**: 최소한의 구조를 가진 기본 ReAct 에이전트
+2. **deep_agent**: 복잡한 추론과 사고 과정(Thinking)에 최적화된 에이전트
+3. **mcp_agent**: MCP(Model Context Protocol)를 통한 외부 도구 연동 특화 에이전트
+4. **rag_agent**: 지식 베이스 검색 및 참조(RAG) 기능이 내장된 에이전트
+5. **research_agent**: 다단계 웹 검색 및 보고서 작성에 최적화된 연구용 에이전트
+6. **multi_agent**: 여러 에이전트 간의 협업 및 오케스트레이션 데모
+
+### 2. Docker 이미지 빌드 (Build)
+
+생성된 프로젝트 디렉토리 내부의 `Dockerfile`을 사용하여 최적화된 이미지를 생성합니다.
+
+```bash
+./bin/lapm <프로젝트명> build
+```
+
+### 3. 배포 (Deploy)
+
+Kubernetes 환경으로의 배포를 지원합니다. (준비 중)
+
+```bash
+./bin/lapm <프로젝트명> deploy
+```
 
 ### 🧪 Test & Monitoring
 
