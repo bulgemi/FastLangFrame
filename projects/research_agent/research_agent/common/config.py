@@ -33,6 +33,8 @@ class MariAgentConfig(BaseSettings):
         alias="LLM_PROVIDER",
         description="LLM Provider (openai, gemini, azure, etc.)",
     )
+    google_api_key: Optional[str] = Field(default=None, alias="GOOGLE_API_KEY")
+    gemini_model_name: str = Field(default="gemini-1.5-pro", alias="GEMINI_MODEL_NAME")
     llm_api_key: str = Field(
         default="sk-2e9622c660cf089567e7967a5a7d481b",
         validation_alias=AliasChoices("LLM_API_KEY", "GOOGLE_API_KEY", "GEMINI_API_KEY", "OPENAI_API_KEY"),

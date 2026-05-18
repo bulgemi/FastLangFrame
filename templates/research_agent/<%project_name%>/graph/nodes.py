@@ -133,7 +133,7 @@ class ResearchPlannerNode(
         )
         llm_response = await ainvoke_llm(
             messages=prompts,
-            llm_client=LlmClient.llm_gpt_4o,
+            llm_client=LlmClient.main,
             output_type=self.output_type,
         )
         state.planner = self.validate_output(llm_response)
@@ -165,7 +165,7 @@ class ResearchSearchNode(
         )
         llm_response = await ainvoke_llm(
             messages=prompts,
-            llm_client=LlmClient.llm_gpt_4o,
+            llm_client=LlmClient.main,
             output_type=self.output_type,
         )
         state.search = self.validate_output(llm_response)
@@ -197,7 +197,7 @@ class ResearchSynthesisNode(
         )
         llm_response = await ainvoke_llm(
             messages=prompts,
-            llm_client=LlmClient.llm_gpt_4o,
+            llm_client=LlmClient.main,
             output_type=self.output_type,
         )
         state.synthesis = self.validate_output(llm_response)
