@@ -12,7 +12,7 @@ FastLangFrame은 LangChain 및 LangGraph를 기반으로 한 경량급 LLM 에�
 
 * **유연함 (Flexibility)**: 선형/비선형 그래프 워크플로우를 자유롭게 구성 가능
 * **경량화 (Lightweight)**: 최소한의 핵심 의존성으로 빠른 실행 속도 및 낮은 오버헤드 유지
-* **신속한 구현 (Rapid Prototyping)**: CLI 도구(`lapm`)와 템플릿을 통한 즉각적인 프로젝트 시작
+* **신속한 구현 (Rapid Prototyping)**: CLI 도구(`lapm`: llm agent project manager)와 템플릿을 통한 즉각적인 프로젝트 시작
 * **표준 구조 (Standardization)**: 유지보수가 용이한 일관된 프로젝트 레이아웃 및 API 규격 제공
 
 ## 주요 구성요소 (Components)
