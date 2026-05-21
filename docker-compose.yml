@@ -21,6 +21,7 @@ services:
     depends_on:
       - redis
     environment:
+      - TZ=Asia/Seoul
       - AUTHELIA_STORAGE_ENCRYPTION_KEY=0aa061727320ad5522922606b34beadd5be6de5db23ce0cb778d1d82325cf2c9
       - AUTHELIA_SESSION_SECRET=afd4f9bc0a4cfcc2bc896315b55fe6efc82a31689b009a539c593518a1a107b6
       - AUTHELIA_IDENTITY_PROVIDERS_OIDC_HMAC_SECRET=c4a7b98248dbf5f6b5366993fe53bd5020fc1c8e4411dc24becfa88934f7abd8

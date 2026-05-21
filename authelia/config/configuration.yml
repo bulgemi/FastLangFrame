@@ -1,5 +1,5 @@
 server:
-  address: 'tcp://0.0.0.0:9091/'
+  address: 'tcp://0.0.0.0:9091/authelia'
 
 log:
   level: debug
@@ -84,8 +84,9 @@ identity_providers:
     clients:
       - client_id: fastapi
         client_name: FastAPI Backend
-        client_secret: '$argon2id$v=19$m=65536,t=3,p=4$MTIzNDU2Nzg5MDEyMzQ1Ng$v9V9V9V9V9V9V9V9V9V9V9V9V9V9V9V9V9V9V9V9V9V'
         public: false
+        secret: '$plaintext$fastapi-secret'
+        token_endpoint_auth_method: 'client_secret_post'
         authorization_policy: one_factor
         redirect_uris:
           - http://127.0.0.1:8888/api/v1/auth/callback

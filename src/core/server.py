@@ -35,7 +35,9 @@ async def get_current_verify_token():
     """Dynamic dependency to select the verification method based on settings."""
     # Preference: Local Authelia Validation > Introspection > Native Token
     if settings.authelia_url:
-        return verify_authelia_token
+        # If header parsing fails (opaque token), fallback to introspection
+        from src.common.middleware.auth import verify_token_with_authelia
+        return verify_token_with_authelia
     return verify_token
 
 
@@ -152,6 +154,7 @@ def create_agent_app(graph: Any, title: str = "FastLangFrame API Server") -> Fas
         lifespan=lifespan,
         swagger_ui_init_oauth={
             "clientId": settings.authelia_client_id,
+            "clientSecret": settings.authelia_client_secret,
             "appName": title,
             "usePkceWithAuthorizationCodeGrant": True,
             "scopes": "openid profile email",

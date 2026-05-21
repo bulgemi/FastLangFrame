@@ -51,14 +51,17 @@ async def verify_token_with_authelia(token: str = Depends(oauth2_scheme)) -> Dic
         )
 
     try:
-        async with httpx.AsyncClient() as client:
-            # Introspection typically requires client credentials via Basic Auth or POST body
-            auth = (settings.authelia_client_id, settings.authelia_client_secret)
-            data = {"token": token}
+        async with httpx.AsyncClient(verify=False) as client:
+            # Send client_id and client_secret in the body (client_secret_post)
+            data = {
+                "token": token, 
+                "client_id": settings.authelia_client_id
+            }
+            if settings.authelia_client_secret:
+                data["client_secret"] = settings.authelia_client_secret
             
             response = await client.post(
                 settings.authelia_introspection_url,
-                auth=auth,
                 data=data
             )
             

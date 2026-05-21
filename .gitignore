@@ -209,3 +209,6 @@ __marimo__/
 
 # test sqlite db
 *.db
+
+# antigravity-cli
+.antigravitycli/
