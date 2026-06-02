@@ -363,5 +363,3 @@ FastLangFrame은 에이전트의 추론 과정을 시각화하여 디버깅을 �
 ## 라이선스
 
 이 프로젝트는 [MIT License](LICENSE)를 따릅니다.
-
-�� 프로젝트는 [MIT License](LICENSE)를 따릅니다.
