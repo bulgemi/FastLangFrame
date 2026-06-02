@@ -212,3 +212,5 @@ __marimo__/
 
 # antigravity-cli
 .antigravitycli/
+
+.DS_Store
